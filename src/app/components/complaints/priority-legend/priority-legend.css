@@ -1,0 +1,43 @@
+
+.legend-container{
+    display: flex;/* */
+    justify-content: space-around;
+    align-items:center;
+    padding:12px 16px;
+    background-color:transparent;
+}
+
+.legend-item{
+    display:flex;
+    align-items: center;
+    gap: 8px;/*nokta ile label arasındaki boşluk*/
+}
+
+.dot{
+    width: 14px;
+    height:14px;
+    border-radius:50%;/*kareyi tam bir yuvarlağa çevirir*/
+    display:inline-block;/*dotları yan yana dizmek için kullanılır*/
+
+}
+
+/*
+Tasarımdaki renk kodları
+*/
+.dot-critical{
+    background-color:#FF1A1A;/*parlak kırmızı*/
+}
+
+.dot-medium{
+    background-color:#D4FF00;/*fosforlu yeşil/ sarı*/
+}
+
+.dot-low{
+    background-color:#635BFF/*mor/mavi*/
+}
+
+.label{
+    font-weight:600;
+    font-size:15px;
+    color:#333333;
+}

@@ -1,0 +1,86 @@
+/* Arka planı hafif karartan katman */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* İPHONE EKRANINA UYGUN MODAL */
+.modal-content {
+    background-color: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 360px; /* Telefon ekranı genişliğine uygun */
+    max-height: 80vh; /* EKRANIN %80'İNDEN BÜYÜK OLAMAZ (Butonları kurtaran kod) */
+    overflow-y: auto; /* İçerik taşarsa kaydırma çubuğu çıkar */
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Üst Kısım */
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { margin: 0; font-size: 18px; font-weight: 700; }
+.close-btn { background: none; border: none; cursor: pointer; width: 24px; height: 24px; color: #9CA3AF; padding: 0; }
+
+/* MOBİLDE SÜTUNLARI ALT ALTA DİZMEK İÇİN */
+.filter-columns { 
+    display: flex; 
+    flex-direction: column; /* Yan yana değil alt alta dizer, mobilde harika durur */
+    gap: 16px; 
+    margin-bottom: 24px; 
+}
+
+.filter-column { border: 1px solid #E5E7EB; border-radius: 12px; padding: 12px; }
+.column-title { margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #111827; }
+
+/* Radio butonlarını geri getirip düzgün hizalıyoruz */
+.radio-option input[type="radio"] { 
+    margin: 0; 
+    cursor: pointer; 
+    display: block; /* Görünür yaptık */
+    width: 16px;
+    height: 16px;
+    }
+
+    /* Kutu içindeki elemanların (Radio + Renkli Nokta + Yazı) hizalaması */
+    .radio-option { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; /* Aralarındaki boşluk */
+    font-size: 14px; 
+    margin-bottom: 12px; 
+    cursor: pointer; 
+    color: #4B5563; 
+    }
+
+/* RENKLİ NOKTALARIN BOZULMAMASI İÇİN */
+.dot { 
+    width: 12px; 
+    height: 12px; 
+    border-radius: 50%; 
+    display: inline-block; 
+    flex-shrink: 0; /* Noktanın ezilmesini engeller */
+}
+
+/* Renkler */
+.critical { background-color: #FF1A1A; }
+.medium { background-color: #635BFF; }
+.low { background-color: #D4FF00; }
+.pending { background-color: #6B7280; }
+.reviewing { background-color: #F59E0B; }
+.resolved { background-color: #10B981; }
+
+/* Tarih Kutuları */
+.date-pickers { display: flex; flex-direction: column; gap: 8px; margin-top: 12px;}
+.date-pickers input { border: 1px solid #E5E7EB; border-radius: 8px; padding: 8px; font-size: 13px; outline: none; }
+
+/* En Alt Butonlar */
+.modal-footer { display: flex; gap: 12px; margin-top: auto; }
+.btn-clear { flex: 1; padding: 12px; background: white; border: 1px solid #E5E7EB; border-radius: 8px; font-weight: 600; cursor: pointer; color: #4B5563;}
+.btn-filter { flex: 1; padding: 12px; background: #635BFF; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer; }
