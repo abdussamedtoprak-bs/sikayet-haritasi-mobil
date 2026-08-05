@@ -1,0 +1,88 @@
+<div class="login-wrapper">
+
+  <div class="harita-bg">
+  </div>
+
+  @if (!yoneticiModu) {
+    <button class="geri-btn" disabled>←</button>
+
+    <div class="logo-alan">
+      <div class="logo-cerceve">
+        <img src="/logo.png" alt="Logo" class="logo" />
+      </div>
+      <h1 class="uygulama-adi">Şikayet Haritası</h1>
+      <p class="uygulama-aciklama">
+        Yaşadığın sorunları bildir,<br>
+        çözüm sürecini birlikte takip edelim.
+      </p>
+    </div>
+
+    <div class="giris-kart">
+      <h2 class="kart-baslik">Hesabınıza giriş yapın</h2>
+      <p class="kart-aciklama">Devam etmek için Outlook hesabınızı kullanın</p>
+
+      <button class="outlook-btn" (click)="outlookGiris()">
+        <span class="outlook-ikon">✉</span>
+        Outlook ile giriş yapın
+      </button>
+
+      <div class="ayirac">
+        <span></span>
+      </div>
+
+      <button class="yonetici-btn" (click)="yoneticiGirisAc()">
+        <span class="yonetici-ikon">🪪</span>
+        Yönetici Girişi
+        <span class="ok">›</span>
+      </button>
+
+      <p class="alt-metin">
+        Hesabınız yok mu? 
+        <a routerLink="/register">Hemen Kayıt Olun</a>
+      </p>
+    </div>
+
+  } @else {
+
+    <button class="geri-btn" (click)="geri()">←</button>
+
+    <div class="logo-alan">
+      <div class="logo-cerceve">
+        <img src="/logo.png" alt="Logo" class="logo" />
+      </div>
+      <h1 class="uygulama-adi">Yönetici Girişi</h1>
+      <p class="uygulama-aciklama">Yetkili hesabınızla giriş yapın</p>
+    </div>
+
+    <div class="giris-kart">
+      <h2 class="kart-baslik">Giriş bilgilerinizi girin</h2>
+
+      <input
+        class="form-input"
+        type="email"
+        placeholder="E-posta"
+        [(ngModel)]="email"   
+      />
+
+      <input
+        class="form-input"
+        type="password"
+        placeholder="Şifre"
+        [(ngModel)]="sifre"
+      />
+
+      @if (hataMesaji) {
+        <p class="hata-mesaj">{{ hataMesaji }}</p>
+      }
+
+      <button class="outlook-btn" (click)="yoneticiGirisYap()">
+        Giriş Yap
+      </button>
+
+      <p class="alt-metin test-bilgi">
+        Test: personel@test.com / 123456
+      </p>
+    </div>
+  }
+
+</div>
