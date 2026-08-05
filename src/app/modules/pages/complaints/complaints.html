@@ -1,0 +1,16 @@
+<div class="complaints-page-container">
+    <app-priority-legend></app-priority-legend>
+
+    <!-- Seçilen filtreleri içeriye yolluyoruz: [filters]="currentFilters" -->
+    <app-active-filter-badges 
+        [filters]="currentFilters" 
+        (openFilter)="isFilterModalOpen = true">
+    </app-active-filter-badges>
+
+    <!-- applyFilters olayını yakalıyoruz -->
+    <app-filter-panel 
+        [isOpen]="isFilterModalOpen" 
+        (closePanel)="isFilterModalOpen = false"
+        (applyFilters)="updateFilters($event)">
+    </app-filter-panel>
+</div>

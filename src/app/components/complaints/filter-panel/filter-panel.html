@@ -1,0 +1,56 @@
+@if (isOpen) {
+    <!-- Arka plan katmanı: Dışarı tıklanınca kapansın -->
+    <div class="modal-overlay" (click)="close()">
+        
+        <!-- İç kutu: İçeri tıklanınca kapanmayı engelle -->
+        <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header">
+            <h3 class="modal-title">Filtreleme</h3>
+            <button class="close-btn" (click)="close()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            </button>
+        </div>
+
+        <!-- Orta Kısım: Sütunlar -->
+        <div class="filter-columns">
+            <div class="filter-column">
+                <h4 class="column-title">Kategori</h4>
+                <label class="radio-option"><input type="radio" name="category" value="Tümü" [(ngModel)]="selectedCategory"> Tümü</label>
+                <label class="radio-option"><span class="dot critical"></span><input type="radio" name="category" value="Kritik" [(ngModel)]="selectedCategory"> Kritik</label>
+                <label class="radio-option"><span class="dot medium"></span><input type="radio" name="category" value="Orta" [(ngModel)]="selectedCategory"> Orta</label>
+                <label class="radio-option"><span class="dot low"></span><input type="radio" name="category" value="Düşük" [(ngModel)]="selectedCategory"> Düşük</label>
+            </div>
+            <div class="filter-column">
+                <h4 class="column-title">Durum</h4>
+                <label class="radio-option"><input type="radio" name="status" value="Tümü" [(ngModel)]="selectedStatus"> Tümü</label>
+                <label class="radio-option"><span class="dot pending"></span><input type="radio" name="status" value="Beklemede" [(ngModel)]="selectedStatus"> Beklemede</label>
+                <label class="radio-option"><span class="dot reviewing"></span><input type="radio" name="status" value="İnceleniyor" [(ngModel)]="selectedStatus"> İnceleniyor</label>
+                <label class="radio-option"><span class="dot resolved"></span><input type="radio" name="status" value="Çözüldü" [(ngModel)]="selectedStatus"> Çözüldü</label>
+            </div>
+            <div class="filter-column">
+                <h4 class="column-title">Tarih</h4>
+                <label class="radio-option"><input type="radio" name="date" value="Tümü" [(ngModel)]="selectedDate"> Tümü</label>
+                <label class="radio-option"><input type="radio" name="date" value="Bugün" [(ngModel)]="selectedDate"> Bugün</label>
+                <label class="radio-option"><input type="radio" name="date" value="Son 7 gün" [(ngModel)]="selectedDate"> Son 7 gün</label>
+                <label class="radio-option"><input type="radio" name="date" value="Son 30 gün" [(ngModel)]="selectedDate"> Son 30 gün</label>
+                <label class="radio-option"><input type="radio" name="date" value="Özel Aralık" [(ngModel)]="selectedDate"> Özel Aralık</label>
+            <div class="date-pickers">
+                <input type="date" value="2026-07-01">
+                <input type="date" value="2026-07-20">
+            </div>
+        </div>
+    </div>
+
+        <!-- Alt Kısım: Butonlar -->
+        <div class="modal-footer">
+            <button class="btn-clear" (click)="close()">Temizle</button>
+            <button class="btn-filter" (click)="onFilterClick()">Filtrele</button> <!-- Burayı güncelledik -->
+        </div>
+
+    </div>
+</div>
+}
