@@ -9,6 +9,7 @@ import { Component,Output, EventEmitter,Input } from '@angular/core';
 export class ActiveFilterBadges {
   @Output() openFilter = new EventEmitter<void>();
   // Dışarıdan gelecek olan filtre bilgileri
+
   @Input() filters = {
     category: 'Tümü',
     status: 'Tümü',

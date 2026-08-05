@@ -3,17 +3,17 @@
 
     <!--sol kısım: ikon ve başlık-->
     <div class="badges-header">
-        <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><!-- Filtre ikonunu temsil eden SVG -->
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon><!-- Filtre ikonunun şekli: bir poligon ile temsil ediliyor. -->
         </svg>
         <span class="badges-title">Filtreler:</span>
     </div>
 
     <!--sağ kısım: aktif filtre etiketleri-->
     <div class="badges-list">
-        <div class="badge">Kategori: {{ filters.category }}</div>
-        <div class="badge">Durum: {{ filters.status }}</div>
-        <div class="badge">Tarih: {{ filters.date }}</div>
+        <div class="badge">Kategori: {{ filters.category }}</div><!-- Buradaki "filters.category" ifadesi, seçilen kategori filtresini temsil eder. -->
+        <div class="badge">Durum: {{ filters.status }}</div><!-- Buradaki "filters.status" ifadesi, seçilen durum filtresini temsil eder. -->
+        <div class="badge">Tarih: {{ filters.date }}</div><!-- Buradaki "filters.date" ifadesi, seçilen tarih filtresini temsil eder. -->
     </div>
 
 </div>
