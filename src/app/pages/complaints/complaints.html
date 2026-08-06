@@ -13,4 +13,15 @@
         (closePanel)="isFilterModalOpen = false"
         (applyFilters)="updateFilters($event)">
     </app-filter-panel>
+    
+    <!-- Sekmeli Filtreleme Butonları (Tümü, Acil, Orta, Düşük) -->
+    <app-tab-filter></app-tab-filter>
+
+    <!-- Şikayet Kartları Listesi -->
+    <div style="padding: 16px;">
+    @for (item of complaintList; track item.title) {
+        <app-complaint-card [complaint]="item"></app-complaint-card>
+    }
+    </div>
+
 </div>

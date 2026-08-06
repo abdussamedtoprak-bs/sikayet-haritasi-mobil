@@ -1,0 +1,42 @@
+.tab-filter-container{
+    display:flex;/*butonları yan yana dizmek için flex kullanıyoruz*/
+    gap:12px;
+    padding:16px;
+    background-color:#f8f9fc;/*açık gri/mavi arkaplan rengi*/
+    overflow-x:auto;/*butonlar sığmazsa yatay kaydırma çubuğu ekle*/
+    white-space:nowrap;/*butonların alt satıra geçmesini engelle*/
+}
+
+.tab-btn{
+    padding:8px 16px;
+    border:none;
+    border-radius:20px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;/*butonun üzerine gelince fare imlecini değiştirir*/
+    transition:all 0.3s ease;/*butonun renginin yumuşak geçişle değişmesini sağlar*/
+
+}
+/**
+ * .tab-btn.active class'ı seçili butona uygulanır ve rengini değiştirir
+ */
+.tab-btn.active{
+    background-color:#5a4bda;/*seçili butonun arkaplan rengi*/
+    color:#ffffff;/*seçili butonun yazı rengi*/
+}
+/*pasif sekmeler-açık mavi*/
+.tab-btn:not(.active){
+    background-color:#cce4ff;/*pasif butonun arkaplan rengi*/
+    color:#6b9be2;/*pasif butonun yazı rengi*/
+}
+
+/* Üzerine gelindiğinde hafif bir efekt */
+.tab-btn:not(.active):hover {
+    background-color: #b3d4ff;
+}
+
+/* Scrollbar'ı gizlemek için (isteğe bağlı) */
+.tab-filter-container::-webkit-scrollbar {
+    display: none;
+}

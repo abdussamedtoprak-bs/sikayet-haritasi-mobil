@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,Input} from '@angular/core';
 
 @Component({
   selector: 'app-complaint-card',
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './complaint-card.html',
   styleUrl: './complaint-card.css',
 })
-export class ComplaintCard {}
+export class ComplaintCard {
+  // @Input sayesinde bu kart, parent (complaints) sayfasından veri alabilir hale geldi
+  @Input() complaint: any;
+}
