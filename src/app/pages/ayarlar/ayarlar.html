@@ -1,0 +1,102 @@
+<div class="ayarlar-wrapper">
+
+  <!-- Üst bar -->
+  <div class="header">
+    <button class="geri-btn" (click)="geriDon()">←</button>
+    <h1 class="baslik">Ayarlar</h1>
+    <div class="header-avatar">M</div>
+  </div>
+
+  <!-- Tercihler bölümü -->
+  <div class="bolum-baslik">TERCİHLER</div>
+
+  <div class="ayar-listesi">
+
+    <!-- Bildirimler toggle -->
+    <div class="ayar-satir">
+      <div class="ayar-sol">
+        <div class="ayar-ikon">🔔</div>
+        <div class="ayar-metin">
+          <span class="ayar-ad">Bildirimler</span>
+          <span class="ayar-aciklama">Şikayet güncellemeleri alır.</span>
+        </div>
+      </div>
+      <button
+        class="toggle"
+        [class.aktif]="bildirimAcik()"
+        (click)="toggleBildirim()">
+        <div class="toggle-top"></div>
+      </button>
+    </div>
+
+    <!-- Konum toggle -->
+    <div class="ayar-satir">
+      <div class="ayar-sol">
+        <div class="ayar-ikon">📍</div>
+        <div class="ayar-metin">
+          <span class="ayar-ad">Konum</span>
+          <span class="ayar-aciklama">Haritada konumunu gösterir.</span>
+        </div>
+      </div>
+      <button
+        class="toggle"
+        [class.aktif]="konumAcik()"
+        (click)="toggleKonum()">
+        <div class="toggle-top"></div>
+      </button>
+    </div>
+
+    <!-- Karanlık Mod toggle -->
+    <div class="ayar-satir">
+      <div class="ayar-sol">
+        <div class="ayar-ikon">🌙</div>
+        <div class="ayar-metin">
+          <span class="ayar-ad">Karanlık Mod</span>
+          <span class="ayar-aciklama">Göz yormayan tema</span>
+        </div>
+      </div>
+      <button
+        class="toggle"
+        [class.aktif]="karanlikMod()"
+        (click)="toggleKaranlikMod()">
+        <div class="toggle-top"></div>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Uygulama bölümü -->
+  <div class="bolum-baslik">UYGULAMA</div>
+
+  <div class="ayar-listesi">
+
+    <div class="nav-satir" (click)="sayfaAc('guvenlik')">
+  <div class="ayar-sol">
+    <div class="ayar-ikon">🛡️</div>
+    <span class="ayar-ad">Güvenlik Politikası</span>
+  </div>
+  <span class="ok">›</span>
+</div>
+
+<div class="nav-satir" (click)="sayfaAc('kullanim')">
+  <div class="ayar-sol">
+    <div class="ayar-ikon">📖</div>
+    <span class="ayar-ad">Kullanım Koşulları</span>
+  </div>
+  <span class="ok">›</span>
+</div>
+
+<div class="nav-satir" (click)="sayfaAc('hakkinda')">
+  <div class="ayar-sol">
+    <div class="ayar-ikon">ℹ️</div>
+    <span class="ayar-ad">Uygulama Hakkında</span>
+  </div>
+  <span class="ok">›</span>
+</div>
+
+  </div>
+
+  <!-- Versiyon -->
+  <div class="versiyon">Şikayet Haritası v1.0.0</div>
+
+</div>

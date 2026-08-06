@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+body.karanlik {
+  background: #121212;
+  color: white;
+}
+
+body.karanlik .ayarlar-wrapper {
+  background: #1e1e1e;
+}
+
+body.karanlik .ayar-listesi {
+  background: #2c2c2c;
+}
+
+body.karanlik .ayar-ad {
+  color: #ffffff;
+}
+
+body.karanlik .ayar-aciklama {
+  color: #aaaaaa;
+}
+
+body.karanlik .bolum-baslik {
+  color: #888888;
+}
+
+body.karanlik .nav-satir {
+  border-bottom-color: #3a3a3a;
+}
+
+body.karanlik .ayar-satir {
+  border-bottom-color: #3a3a3a;
+}
+
+body.karanlik .header {
+  background: #2c2c2c;
+  border-bottom-color: #3a3a3a;
+}
+
+body.karanlik .baslik {
+  color: #ffffff;
+}
+
+body.karanlik .geri-btn {
+  color: #ffffff;
+}
