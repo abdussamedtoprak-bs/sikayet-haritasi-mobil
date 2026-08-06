@@ -5,7 +5,6 @@
     background-color:#f8f9fc;/*açık gri/mavi arkaplan rengi*/
     overflow-x:auto;/*butonlar sığmazsa yatay kaydırma çubuğu ekle*/
     white-space:nowrap;/*butonların alt satıra geçmesini engelle*/
-
 }
 
 .tab-btn{
