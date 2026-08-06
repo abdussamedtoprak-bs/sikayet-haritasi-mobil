@@ -1,1 +1,8 @@
-<p>tab-filter works!</p>
+<div class="tab-filter-container">
+    
+    <!-- Eğer activeTab 'tumu' ise 'active' class'ını ekle, değilse çıkar .tıkladığımızda butonun renginin değişmesi için kullanılır-->
+    <button class="tab-btn" [class.active]="activeTab==='tumu'" (click)="selectTab('tumu')">Tümü (2)</button>
+    <button class="tab-btn" [class.active]="activeTab==='acil'" (click)="selectTab('acil')">Acil (2)</button>
+    <button class="tab-btn" [class.active]="activeTab==='Orta'" (click)="selectTab('Orta')">Orta(3)</button>
+    <button class="tab-btn" [class.active]="activeTab==='dusuk'" (click)="selectTab('dusuk')">Düşük(1)</button>
+</div>

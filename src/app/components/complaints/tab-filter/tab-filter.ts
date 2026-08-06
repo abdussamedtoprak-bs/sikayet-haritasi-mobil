@@ -6,4 +6,12 @@ import { Component } from '@angular/core';
   templateUrl: './tab-filter.html',
   styleUrl: './tab-filter.css',
 })
-export class TabFilter {}
+export class TabFilter {
+  //varsayılan olarak 'tumu' sekmesi seçili olacak
+  activeTab:string='tumu';
+
+  //HTML de butona tıklanınca burası çalışacak ve activeTab değişkenini güncelleyecek
+  selectTab(tabName:string){
+    this.activeTab=tabName;
+  }
+}
