@@ -1,18 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { FaqItemComponent } from '../../components/notifications/faq-item/faq-item';
+import { SSSItem } from '../../models/sss-item';
 
-interface SSSItem {
-  id: number;
-  soru: string;
-  cevap: string;
-  acik: boolean;
-}
 
 @Component({
   selector: 'app-destek',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FaqItemComponent],
   templateUrl: './destek.html',
   styleUrl: './destek.css'
 })

@@ -1,21 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-
-interface Bildirim {
-  id: number;
-  tip: 'guncelleme' | 'cozuldu' | 'yakin' | 'acil';
-  baslik: string;
-  mesaj: string;
-  zaman: string;
-  okundu: boolean;
-  yonlendirme: string;
-}
+import { NotificationItemComponent } from '../../components/notifications/notification-item/notification-item';
+import { Bildirim } from '../../models/bildirim';
 
 @Component({
   selector: 'app-bildirimler',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NotificationItemComponent],
   templateUrl: './bildirimler.html',
   styleUrl: './bildirimler.css'
 })
@@ -47,7 +39,7 @@ export class BildirimlerComponent {
       mesaj: 'Bölgenizde 3 yeni şikayet bildirildi.',
       zaman: '2 gün önce',
       okundu: true,
-      yonlendirme: '/sikayet-detay/3'
+      yonlendirme: '/guncel-sikayetler'
     },
     {
       id: 4,
@@ -61,23 +53,6 @@ export class BildirimlerComponent {
   ]);
 
   constructor(private router: Router) {}
-
-bildirimeTikla(bildirim: Bildirim): void {
-  this.okunduIsaretle(bildirim.id);
-
-  const mevcutRotalar: Record<string, string> = {
-    '/guncel-sikayetler': '/guncel-sikayetler',
-    '/ayarlar': '/ayarlar',
-    '/bildirimler': '/bildirimler'
-  };
-
-  if (mevcutRotalar[bildirim.yonlendirme]) {
-    this.router.navigate([bildirim.yonlendirme]);
-  } else {
-    alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);
-  }
-}
-
 
   okunduIsaretle(id: number): void {
     this.bildirimler.update(liste =>
@@ -99,13 +74,15 @@ bildirimeTikla(bildirim: Bildirim): void {
     this.router.navigate(['/anasayfa']);
   }
 
-  ikonGetir(tip: string): string {
-    const ikonlar: Record<string, string> = {
-      guncelleme: '👤',
-      cozuldu: '✅',
-      yakin: '📍',
-      acil: '👤'
-    };
-    return ikonlar[tip] || '🔔';
+ bildirimeTikla(bildirim: Bildirim): void {
+  this.okunduIsaretle(bildirim.id);
+
+  const hazirSayfalar = ['/ayarlar', '/bildirimler'];
+
+  if (hazirSayfalar.includes(bildirim.yonlendirme)) {
+    this.router.navigate([bildirim.yonlendirme]);
+  } else {
+    alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);
   }
+}
 }

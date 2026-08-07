@@ -1,0 +1,12 @@
+<div class="sss-kart">
+  <button class="sss-soru" (click)="toggle()">
+    <div class="sss-soru-sol">
+      <span class="soru-ikon">?</span>
+      <span class="soru-metin">{{ item.soru }}</span>
+    </div>
+    <span class="sss-ok">{{ item.acik ? '▲' : '▼' }}</span>
+  </button>
+  @if (item.acik) {
+    <div class="sss-cevap">{{ item.cevap }}</div>
+  }
+</div>
