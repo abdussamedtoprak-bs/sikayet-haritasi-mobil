@@ -4,6 +4,7 @@ import { RegisterComponent } from './pages/register/register';
 import { AyarlarComponent } from "./pages/ayarlar/ayarlar";
 import {Complaints} from './pages/complaints/complaints';
 import { BildirimlerComponent } from './pages/bildirimler/bildirimler';
+import { DestekComponent } from './pages/destek/destek';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'ayarlar', component: AyarlarComponent },
   { path: 'complaints', component: Complaints },
-  { path: 'bildirimler', component: BildirimlerComponent }
+  { path: 'bildirimler', component: BildirimlerComponent },
+  { path: 'destek', component: DestekComponent }
 ];

@@ -1,0 +1,58 @@
+<div class="destek-wrapper">
+
+  <!-- Üst bar -->
+  <div class="header">
+    <button class="geri-btn" (click)="geriDon()">←</button>
+    <h1 class="baslik">Destek</h1>
+    <div style="width:36px"></div>
+  </div>
+
+  <!-- Hero bölümü -->
+  <div class="hero-alan">
+    <div class="hero-ikon">🎧</div>
+    <h2 class="hero-baslik">Size Nasıl Yardımcı Olabiliriz?</h2>
+    <p class="hero-aciklama">Sorularınız için 7/24 destek ekibimiz yanınızda</p>
+  </div>
+
+  <!-- İletişim bölümü -->
+  <div class="bolum-baslik">İLETİŞİM</div>
+
+  <!-- Telefon — tıklayınca telefon uygulaması açılır -->
+<a href="tel:+908000000000" class="iletisim-kart">
+  <div class="iletisim-ikon">📞</div>
+  <div class="iletisim-icerik">
+    <div class="iletisim-label">Telefon</div>
+    <div class="iletisim-deger">0800 000 000</div>
+  </div>
+</a>
+
+<!-- E-posta — tıklayınca mail uygulaması açılır -->
+<a href="mailto:destek@gov.tr" class="iletisim-kart">
+  <div class="iletisim-ikon">✉️</div>
+  <div class="iletisim-icerik">
+    <div class="iletisim-label">E-posta</div>
+    <div class="iletisim-deger">destek&#64;gov.tr</div>
+  </div>
+</a>
+
+  <!-- SSS bölümü -->
+  <div class="bolum-baslik">SIKÇA SORULAN SORULAR ? </div>
+
+  <div class="sss-listesi">
+    @for (item of sssList(); track item.id) {
+      <div class="sss-kart">
+        <button class="sss-soru" (click)="toggleSSS(item.id)">
+          <div class="sss-soru-sol">
+            <span class="soru-ikon">?</span>
+            <span class="soru-metin">{{ item.soru }}</span>
+          </div>
+          <span class="sss-ok">{{ item.acik ? '▲' : '▼' }}</span>
+        </button>
+        @if (item.acik) {
+          <div class="sss-cevap">{{ item.cevap }}</div>
+        }
+      </div>
+    }
+  </div>
+
+</div>
