@@ -1,0 +1,15 @@
+<div class="toggle-satir">
+  <div class="toggle-sol">
+    <div class="toggle-ikon">{{ ikon }}</div>
+    <div class="toggle-metin">
+      <span class="toggle-ad">{{ baslik }}</span>
+      <span class="toggle-aciklama">{{ aciklama }}</span>
+    </div>
+  </div>
+  <button
+    class="toggle"
+    [class.aktif]="aktif"
+    (click)="toggle()">
+    <div class="toggle-top"></div>
+  </button>
+</div>

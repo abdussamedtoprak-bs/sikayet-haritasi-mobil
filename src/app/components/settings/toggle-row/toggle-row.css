@@ -1,0 +1,72 @@
+.toggle-satir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.toggle-satir:last-child {
+  border: none;
+}
+
+.toggle-sol {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-ikon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+}
+
+.toggle-metin {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toggle-ad {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+.toggle-aciklama {
+  font-size: 12px;
+  color: #999;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.toggle.aktif {
+  background: #1a73e8;
+}
+
+.toggle-top {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.toggle.aktif .toggle-top {
+  left: 22px;
+}

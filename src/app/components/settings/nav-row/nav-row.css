@@ -1,0 +1,40 @@
+.nav-satir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nav-satir:last-child {
+  border: none;
+}
+
+.nav-satir:hover {
+  background: #f9f9f9;
+}
+
+.nav-sol {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-ikon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+}
+
+.nav-ad {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+.ok {
+  font-size: 20px;
+  color: #ccc;
+}
