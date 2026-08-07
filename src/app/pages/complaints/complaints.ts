@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PriorityLegend } from '../../components/complaints/priority-legend/priority-legend';
 import{ActiveFilterBadges} from '../../components/complaints/active-filter-badges/active-filter-badges';
 import{FilterPanel} from '../../components/complaints/filter-panel/filter-panel';
 import { TabFilter } from '../../components/complaints/tab-filter/tab-filter';
 import { ComplaintCard } from '../../components/complaints/complaint-card/complaint-card';
+import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
 
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
@@ -57,6 +59,22 @@ export class Complaints {
       priority: 'Düşük'
     }
   ];
+
+  //Hangi şikayete tıklandığını ve panelin açık/kapalı durumunu tutacak değişkenler
+  selectedComplaint:any=null;
+  isSheetOpen:boolean=false;
+
+  //karta tıklandığında çalışacak fonksiyon
+  openDetail(complaint:any){
+    this.selectedComplaint=complaint;
+    this.isSheetOpen=true;
+  }
+
+  //panrldeki 'x' butonuna basıldığında çalışacak fonksiyon
+  closeDetail(){
+    this.isSheetOpen=false;
+    this.selectedComplaint=null;
+  }
 
   // Modaldan seçimler gelince bu fonksiyon çalışacak
   updateFilters(newFilters: any) {

@@ -1,1 +1,47 @@
-<p>complaint-detail-sheet works!</p>
+<div class="sheet-container" *ngIf="complaint">
+
+    <!--Üst Bar: navigasyon ve rozetler-->
+    <div class="sheet-header">
+        <div class="nav-controls">
+            <button class="nav-btn">&lt;</button>
+
+            <div class="badges">
+
+                <!--ileride bu renkleri dinamik yapacağız-->
+                <span class="badge priority-badge">Acil</span>
+                <span class="badge upvote-badge">
+                    <i class="icon-user"></i>55
+                </span>
+            </div>
+
+            <button class="nav-btn">&gt;</button>
+
+        </div>
+        <!-- Kapatma butonuna click eventi eklendi -->
+        <button class="close-btn" (click)="closeSheet()">X</button>
+    </div>
+
+    <!--İçerik alanı-->
+    <div class="Info-section">
+        <div class="title-row">
+            <i class="icon-helmet"></i><!--ikon için-->
+            <h3>{{complaint.title || 'Kırık Cam Tehlikesi'}}</h3>
+        </div>
+        <p class="decription">
+            {{complaint.description || 'Kütüphane önü: Girişe yaklaşık 2 m2 alana yayılmış cam kırıkları yayalar için tehlike oluşturuyor.'}}
+        </p>
+        <div class="category">
+            <i class="icon-bag"></i>
+            {{complaint.category || 'Güvenlik'}}
+        </div>
+    </div>
+
+    <!--sağ kısım: medya ve tarih-->
+    <div class="media-section">
+        <img src="şikayet-fotoğrafı.png" alt="Şikayet Fotoğrafı" class="complaint-image">
+        <div class="date">
+            <i class="icon-calendar"></i>
+            {{complaint.date || '31.07.2026'}}
+        </div>
+    </div>
+</div>
