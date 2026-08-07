@@ -1,0 +1,48 @@
+<div class="bildirimler-wrapper">
+
+  <!-- Üst bar -->
+  <div class="header">
+    <button class="geri-btn" (click)="geriDon()">←</button>
+    <h1 class="baslik">Bildirimler</h1>
+    <div class="header-avatar">M</div>
+  </div>
+
+  <!-- Okunmamış varsa tümünü oku butonu -->
+  @if (okunmamisSayisi() > 0) {
+    <div class="tumunu-oku-bar">
+      <span>{{ okunmamisSayisi() }} okunmamış bildirim</span>
+      <button class="tumunu-oku-btn" (click)="tumunuOku()">Tümünü Oku</button>
+    </div>
+  }
+
+  <!-- Bildirim listesi -->
+  <div class="bildirim-listesi">
+
+    @for (bildirim of bildirimler(); track bildirim.id) {
+              <div
+            class="bildirim-kart"
+            [class.okunmamis]="!bildirim.okundu"
+            (click)="bildirimeTikla(bildirim)">
+
+        <div class="bildirim-ikon-alan">
+          <div class="bildirim-ikon" [class]="'ikon-' + bildirim.tip">
+            {{ ikonGetir(bildirim.tip) }}
+          </div>
+        </div>
+
+        <div class="bildirim-icerik">
+          <div class="bildirim-baslik">{{ bildirim.baslik }}</div>
+          <div class="bildirim-mesaj">{{ bildirim.mesaj }}</div>
+          <div class="bildirim-zaman">{{ bildirim.zaman }}</div>
+        </div>
+
+        @if (!bildirim.okundu) {
+          <div class="okunmamis-nokta"></div>
+        }
+
+      </div>
+    }
+
+  </div>
+
+</div>
