@@ -1,10 +1,10 @@
 @if (isOpen) {
-    <!-- Arka plan katmanı: Dışarı tıklanınca kapansın -->
+    <!-- Arka plan hafif karartan katman: Dışarı tıklanınca kapansın -->
     <div class="modal-overlay" (click)="close()">
-        
+
         <!-- İç kutu: İçeri tıklanınca kapanmayı engelle -->
         <div class="modal-content" (click)="$event.stopPropagation()">
-        
+
         <div class="modal-header">
             <h3 class="modal-title">Filtreleme</h3>
             <button class="close-btn" (click)="close()">
@@ -17,40 +17,61 @@
 
         <!-- Orta Kısım: Sütunlar -->
         <div class="filter-columns">
-            <div class="filter-column">
+
+            <!-- SOL TARAF (Kategori, Durum ve Butonları kapsar) -->
+            <div class="left-section">
+            
+            <!-- Kategori ve Durum sütunları yan yana -->
+            <div class="top-columns">
+                
+                <div class="filter-column">
                 <h4 class="column-title">Kategori</h4>
-                <label class="radio-option"><input type="radio" name="category" value="Tümü" [(ngModel)]="selectedCategory"> Tümü</label>
-                <label class="radio-option"><span class="dot critical"></span><input type="radio" name="category" value="Kritik" [(ngModel)]="selectedCategory"> Kritik</label>
-                <label class="radio-option"><span class="dot medium"></span><input type="radio" name="category" value="Orta" [(ngModel)]="selectedCategory"> Orta</label>
-                <label class="radio-option"><span class="dot low"></span><input type="radio" name="category" value="Düşük" [(ngModel)]="selectedCategory"> Düşük</label>
-            </div>
-            <div class="filter-column">
+                <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="category" value="Tümü" [(ngModel)]="selectedCategory"> Tümü</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-red" name="category" value="Kritik" [(ngModel)]="selectedCategory"> Kritik</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-blue" name="category" value="Orta" [(ngModel)]="selectedCategory"> Orta</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-yellow" name="category" value="Düşük" [(ngModel)]="selectedCategory"> Düşük</label>
+                </div>
+
+                <div class="filter-column">
                 <h4 class="column-title">Durum</h4>
-                <label class="radio-option"><input type="radio" name="status" value="Tümü" [(ngModel)]="selectedStatus"> Tümü</label>
-                <label class="radio-option"><span class="dot pending"></span><input type="radio" name="status" value="Beklemede" [(ngModel)]="selectedStatus"> Beklemede</label>
-                <label class="radio-option"><span class="dot reviewing"></span><input type="radio" name="status" value="İnceleniyor" [(ngModel)]="selectedStatus"> İnceleniyor</label>
-                <label class="radio-option"><span class="dot resolved"></span><input type="radio" name="status" value="Çözüldü" [(ngModel)]="selectedStatus"> Çözüldü</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="status" value="Tümü" [(ngModel)]="selectedStatus"> Tümü</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-gray" name="status" value="Beklemede" [(ngModel)]="selectedStatus"> Beklemede</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-orange" name="status" value="İnceleniyor" [(ngModel)]="selectedStatus"> İnceleniyor</label>
+                <label class="radio-option"><input type="radio" class="custom-radio radio-green" name="status" value="Çözüldü" [(ngModel)]="selectedStatus"> Çözüldü</label>
+                </div>
+                
             </div>
-            <div class="filter-column">
-                <h4 class="column-title">Tarih</h4>
-                <label class="radio-option"><input type="radio" name="date" value="Tümü" [(ngModel)]="selectedDate"> Tümü</label>
-                <label class="radio-option"><input type="radio" name="date" value="Bugün" [(ngModel)]="selectedDate"> Bugün</label>
-                <label class="radio-option"><input type="radio" name="date" value="Son 7 gün" [(ngModel)]="selectedDate"> Son 7 gün</label>
-                <label class="radio-option"><input type="radio" name="date" value="Son 30 gün" [(ngModel)]="selectedDate"> Son 30 gün</label>
-                <label class="radio-option"><input type="radio" name="date" value="Özel Aralık" [(ngModel)]="selectedDate"> Özel Aralık</label>
+
+            <!-- BUTONLAR (Sol tarafın altına yerleşir) -->
+            <div class="modal-footer">
+                <button class="btn-clear" (click)="close()">Temizle</button>
+                <button class="btn-filter" (click)="onFilterClick()">Filtrele</button>
+            </div>
+
+            </div>
+
+            <!-- SAĞ TARAF (Sadece Tarih sütunu) -->
+            <div class="filter-column date-column">
+            <h4 class="column-title">Tarih</h4>
+            <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="date" value="Tümü" [(ngModel)]="selectedDate"> Tümü</label>
+            <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="date" value="Bugün" [(ngModel)]="selectedDate"> Bugün</label>
+            <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="date" value="Son 7 gün" [(ngModel)]="selectedDate"> Son 7 gün</label>
+            <label class="radio-option"><input type="radio" class="custom-radio radio-black" name="date" value="Son 30 gün" [(ngModel)]="selectedDate"> Son 30 gün</label>
+            
+            <!-- Özel Aralık ve Tarih Seçiciler -->
+            <label class="radio-option custom-range-label">
+                <input type="radio" class="custom-radio radio-black" name="date" value="Özel Aralık" [(ngModel)]="selectedDate"> Özel Aralık
+            </label>
+            
+            
             <div class="date-pickers">
                 <input type="date" value="2026-07-01">
                 <input type="date" value="2026-07-20">
             </div>
-        </div>
-    </div>
+            </div>
 
-        <!-- Alt Kısım: Butonlar -->
-        <div class="modal-footer">
-            <button class="btn-clear" (click)="close()">Temizle</button>
-            <button class="btn-filter" (click)="onFilterClick()">Filtrele</button> <!-- Burayı güncelledik -->
         </div>
 
+        </div>
     </div>
-</div>
 }

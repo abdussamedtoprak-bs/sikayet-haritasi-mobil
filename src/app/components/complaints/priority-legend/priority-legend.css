@@ -28,12 +28,13 @@ Tasarımdaki renk kodları
     background-color:#FF1A1A;/*parlak kırmızı*/
 }
 
-.dot-medium{
-    background-color:#D4FF00;/*fosforlu yeşil/ sarı*/
+/* Orta (Lacivert) */
+.dot-medium {
+    background-color: #1E3A8A;
 }
 
 .dot-low{
-    background-color:#635BFF/*mor/mavi*/
+    background-color: #e0a800;
 }
 
 .label{
