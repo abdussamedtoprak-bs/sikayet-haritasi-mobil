@@ -20,8 +20,19 @@
     <!-- Şikayet Kartları Listesi -->
     <div style="padding: 16px;">
     @for (item of complaintList; track item.title) {
-        <app-complaint-card [complaint]="item"></app-complaint-card>
+        <app-complaint-card [complaint]="item"
+            (click)="openDetail(item)"
+            style="cursor:pointer;">
+        </app-complaint-card>
     }
     </div>
+    <!--Detay Paneli: sadece karta tıklandığında görünür-->
+    @if(isSheetOpen){
+        <app-complaint-detail-sheet
+        [complaint]="selectedComplaint"
+        (close)="closeDetail()">
+            
+        </app-complaint-detail-sheet>
+    }
 
 </div>
