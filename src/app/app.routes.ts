@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { AyarlarComponent } from "./pages/ayarlar/ayarlar";
 import {Complaints} from './pages/complaints/complaints';
+import { BildirimlerComponent } from './pages/bildirimler/bildirimler';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -10,5 +11,5 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'ayarlar', component: AyarlarComponent },
   { path: 'complaints', component: Complaints },
-
+  { path: 'bildirimler', component: BildirimlerComponent }
 ];
