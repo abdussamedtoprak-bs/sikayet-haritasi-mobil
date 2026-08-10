@@ -1,0 +1,16 @@
+.konum-butonu-alani {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9999;
+}
+
+.ikon-butonu {
+    width: 60px;
+    height: 60px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 30px;
+}
