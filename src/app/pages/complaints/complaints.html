@@ -11,15 +11,16 @@
     <app-filter-panel 
         [isOpen]="isFilterModalOpen" 
         (closePanel)="isFilterModalOpen = false"
-        (applyFilters)="updateFilters($event)">
+        (applyFilters)="updateFilters($event)"
+        (clearFilters)="clearAllFilters()">
     </app-filter-panel>
     
     <!-- Sekmeli Filtreleme Butonları (Tümü, Acil, Orta, Düşük) -->
-    <app-tab-filter></app-tab-filter>
+    <app-tab-filter (tabSelected)="onFilterChange($event)"></app-tab-filter>
 
     <!-- Şikayet Kartları Listesi -->
     <div style="padding: 16px;">
-    @for (item of complaintList; track item.title) {
+    @for (item of filteredComplaints; track item.title) {
         <app-complaint-card [complaint]="item"
             (click)="openDetail(item)"
             style="cursor:pointer;">
@@ -28,7 +29,7 @@
     </div>
     <!--Detay Paneli: sadece karta tıklandığında görünür-->
     @if(isSheetOpen){
-        <app-complaint-detail-sheet
+        <app-complaint-detail-sheet 
         [complaint]="selectedComplaint"
         (close)="closeDetail()">
             

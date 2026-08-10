@@ -60,6 +60,59 @@ export class Complaints {
     }
   ];
 
+  // 1. O an seçili olan sekmeyi tutacak değişken (Sayfa açıldığında 'Tümü' aktif olsun)
+  currentFilter: string='Tümü';
+  //2.Tab bileşeninden tıklama gelince bu fonksiyon çalışacak ve seçimi güncelleyecek
+  onFilterChange(selectedTab:string){
+    this.currentFilter=selectedTab;
+  }
+  //3. HTML'e tüm listeyi değil, sadece seçilen filtreye uyanları gönderen dinamik liste
+  get filteredComplaints() {
+    let result = this.complaintList;
+
+    // 1. Sekme (Tab) Filtresi (Tümü, Acil, Orta vb.)
+    if (this.currentFilter && this.currentFilter !== 'Tümü') {
+      result = result.filter(complaint => complaint.priority === this.currentFilter);
+    }
+
+    // 2. Üst Panel (Modal) Filtreleri
+    if (this.currentFilters) {
+      
+      // Kategori (aslında Öncelik) Filtresi
+      if (this.currentFilters.category && this.currentFilters.category !== 'Tümü') {
+        let aranacakDeger = this.currentFilters.category.trim(); // Boşlukları temizle
+        
+        // Modaldaki 'Kritik' kelimesini verilerimizdeki 'Acil' ile eşleştir
+        if (aranacakDeger === 'Kritik') {
+          aranacakDeger = 'Acil'; 
+        }
+        
+        result = result.filter(c => c.priority.trim() === aranacakDeger);
+      }
+
+      // Durum Filtresi (Çözüldü, Beklemede vb.)
+      if (this.currentFilters.status && this.currentFilters.status !== 'Tümü') {
+        result = result.filter(c => c.status.trim() === this.currentFilters.status.trim());
+      }
+
+      // Tarih Filtresi
+      if (this.currentFilters.date && this.currentFilters.date !== 'Tümü') {
+        result = result.filter(c => c.metaInfo.includes(this.currentFilters.date.trim()));
+      }
+    }
+
+    return result; // Son listeyi ekrana gönder
+  }
+
+  // Temizle butonuna basıldığında filtreleri sıfırlayacak fonksiyon
+  clearAllFilters() {
+    this.currentFilters = {
+      category: 'Tümü',
+      status: 'Tümü',
+      date: 'Tümü'
+    };
+  }
+
   //Hangi şikayete tıklandığını ve panelin açık/kapalı durumunu tutacak değişkenler
   selectedComplaint:any=null;
   isSheetOpen:boolean=false;
