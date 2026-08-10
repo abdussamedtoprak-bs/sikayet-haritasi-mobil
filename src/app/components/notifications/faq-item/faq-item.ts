@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SSSItem } from '../../models/sss-item';
+import { SSSItem } from '../../../models/sss-item';
 
 @Component({
   selector: 'app-faq-item',
