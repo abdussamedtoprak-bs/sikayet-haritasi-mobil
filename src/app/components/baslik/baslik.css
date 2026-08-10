@@ -1,0 +1,64 @@
+.baslik{
+    height:70px;
+    width:100%;
+    position:fixed;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:15000;
+    padding:0 0px;
+
+    
+    background:white;
+
+    border-bottom:1px solid #E5E7EB;
+}
+
+.logo-alani{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo-alani img{
+    width:42px;
+    height:42px;
+}
+
+.logo-alani span{
+    font-size:12px;
+    font-weight:600;
+}
+
+.sag-alan{
+    display:flex;
+    gap:12px;
+}
+
+.ikon-butonu{
+
+    
+
+    width:42px;
+    height:42px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:white;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    transition:.2s;
+     transform: translateX(-15px);
+}
+
+.ikon-butonu:hover{
+
+    background:#EEF5FC;
+
+}
