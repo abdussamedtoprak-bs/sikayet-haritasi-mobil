@@ -31,7 +31,9 @@
     @if(isSheetOpen){
         <app-complaint-detail-sheet 
         [complaint]="selectedComplaint"
-        (close)="closeDetail()">
+        (close)="closeDetail()"
+        (next)="goToNextComplaint()"
+        (prev)="goToPrevComplaint()">
             
         </app-complaint-detail-sheet>
     }

@@ -18,19 +18,39 @@
     margin-bottom: 20px;
 }
 
-.nav-controls {
+/* Sol kısım alanın 3'te 1'ini kaplayıp içeriği sola yaslar */
+.header-left {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    justify-content: flex-start;
 }
 
+/* Orta kısım sadece içeriği kadar yer kaplar ve rozetleri yan yana dizer */
+.header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Sağ kısım alanın 3'te 1'ini kaplayıp içeriği sağa yaslar */
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  gap: 15px; /* İleri oku ile X arasındaki boşluk */
+}
+
+/* Butonların Ortak Stili */
 .nav-btn, .close-btn {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     color: #333;
+    padding: 5px; /* Tıklama alanını biraz genişletir */
 }
 
 .badges {
@@ -56,52 +76,74 @@
 
 .sheet-body {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px; 
+    align-items: stretch; /* En önemli kısım! İki sütunu aynı boya çeker */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Tırnaklı fontu düzeltir */
 }
 
+/* --- SOL SÜTUN --- */
 .info-section {
-    flex: 1;
-}
-
-.title-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px; /* Baret ile yazılar arasındaki boşluk */
+    flex: 1; /* Ortadaki boşluğu doldur */
 }
 
-.title-row h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #333;
+.icon-wrapper {
+    flex-shrink: 0;
+    padding-top: 2px; /* Baret ikonunu başlıkla hizalar */
+    font-size: 20px; 
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1; 
+}
+
+.title {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
 }
 
 .description {
-    font-size: 14px;
+    margin: 0 0 10px 0;
+    font-size: 12px;
     color: #666;
-    line-height: 1.5;
-    margin-bottom: 15px;
+    line-height: 1.4;
+    /* Uzun metni 3 satırla sınırlayıp sonuna ... koyar */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.category, .date {
-    font-size: 13px;
-    color: #888;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
+/* --- SAĞ SÜTUN --- */
 .media-section {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
+    flex-shrink: 0; 
+    width: 140px; /* Resim genişliğini sabitler */
 }
 
 .complaint-image {
-    width: 120px;
-    height: 80px;
+    width: 100%;
+    height: 75px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
+    margin-bottom: 8px; /* Resim ile tarih arasındaki boşluk */
+}
+
+/* --- EN ALT KISIM (Güvenlik ve Tarih Hizalaması) --- */
+.category, .date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #444;
+    margin-top: auto;
+    white-space: nowrap; /* YENİ: Metnin kesinlikle tek satırda kalmasını sağlar */
 }

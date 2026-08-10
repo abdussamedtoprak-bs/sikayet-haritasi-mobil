@@ -6,6 +6,7 @@ import {Complaints} from './pages/complaints/complaints';
 import { BildirimlerComponent } from './pages/bildirimler/bildirimler';
 import { DestekComponent } from './pages/destek/destek';
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },

@@ -1,47 +1,70 @@
 <div class="sheet-container" *ngIf="complaint">
 
-    <!--Üst Bar: navigasyon ve rozetler-->
+
+    <!-- Üst Bar: navigasyon ve rozetler -->
     <div class="sheet-header">
-        <div class="nav-controls">
-            <button class="nav-btn">&lt;</button>
+        
+        <!-- 1. Sol: Geri Butonu -->
+        <div class="header-left">
+            <button class="nav-btn" (click)="onPrev()">&lt;</button>
+        </div>
 
-            <div class="badges">
+        <!-- 2. Orta: Rozetler -->
+        <div class="header-center badges">
+            <!-- Dinamik öncelik verisi (Örn: Acil, Orta) -->
+            <span class="badge priority-badge">{{ complaint?.priority }}</span>
+            
+            <!-- Dinamik destek sayısı verisi -->
+            <span class="badge upvote-badge">
+            <i class="icon-user"></i> {{ complaint?.supportCount }}
+            </span>
+        </div>
 
-                <!--ileride bu renkleri dinamik yapacağız-->
-                <span class="badge priority-badge">Acil</span>
-                <span class="badge upvote-badge">
-                    <i class="icon-user"></i>55
-                </span>
+        <!-- 3. Sağ: İleri ve Kapat Butonları -->
+        <div class="header-right">
+            <button class="nav-btn" (click)="onNext()">&gt;</button>
+            <button class="close-btn" (click)="closeSheet()">X</button>
+        </div>
+
+    </div>
+
+    <!-- İçerik alanı -->
+    <div class="sheet-body"> 
+        
+        <!-- Sol Kısım: Baret + Metinler -->
+        <div class="info-section">
+        <!-- Baret İkonu Alanı -->
+        <div class="icon-wrapper">
+            <i class="icon-helmet"></i>
+            <!-- EĞER ikonun görünmüyorsa geçici olarak şu emojiyi test için açabilirsin: ⛑️ -->
+        </div>
+        
+        <!-- Başlık, Açıklama ve Kategori (Dikey dizilim) -->
+        <div class="text-content">
+            <h3 class="title">{{complaint.title || 'Kırık Cam Tehlikesi'}}</h3>
+            <p class="description">
+            {{complaint.description || 'Kütüphane önü: Girişe yaklaşık 2 m2 alana yayılmış cam kırıkları yayalar için tehlike oluşturuyor.'}}
+            </p>
+            <!-- Kategori Kısmı -->
+            <div class="category">
+                <i class="icon-bag"></i> 
+                <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split(' . ')[0] : 'Güvenlik' }}</span>
             </div>
 
-            <button class="nav-btn">&gt;</button>
-
         </div>
-        <!-- Kapatma butonuna click eventi eklendi -->
-        <button class="close-btn" (click)="closeSheet()">X</button>
-    </div>
-
-    <!--İçerik alanı-->
-    <div class="Info-section">
-        <div class="title-row">
-            <i class="icon-helmet"></i><!--ikon için-->
-            <h3>{{complaint.title || 'Kırık Cam Tehlikesi'}}</h3>
         </div>
-        <p class="decription">
-            {{complaint.description || 'Kütüphane önü: Girişe yaklaşık 2 m2 alana yayılmış cam kırıkları yayalar için tehlike oluşturuyor.'}}
-        </p>
-        <div class="category">
-            <i class="icon-bag"></i>
-            {{complaint.category || 'Güvenlik'}}
-        </div>
-    </div>
 
-    <!--sağ kısım: medya ve tarih-->
-    <div class="media-section">
+        <!-- Sağ Kısım: Resim + Tarih -->
+        <div class="media-section">
         <img src="şikayet-fotoğrafı.png" alt="Şikayet Fotoğrafı" class="complaint-image">
+        <!-- Tarih Kısmı -->
         <div class="date">
-            <i class="icon-calendar"></i>
-            {{complaint.date || '31.07.2026'}}
+            <i class="icon-calendar"></i> 
+            <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split(' . ')[1] : '31.07.2026' }}</span>
+            </div>
         </div>
+        
     </div>
+
+
 </div>

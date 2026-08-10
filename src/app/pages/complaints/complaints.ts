@@ -134,4 +134,32 @@ export class Complaints {
     this.currentFilters = newFilters;
   }
 
+  // Sonraki şikayete geç
+  goToNextComplaint() {
+    // Şu an açık olan şikayetin listedeki sırasını (index) bul
+    const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
+    
+    // Eğer son şikayette değilsek, bir sonrakine geç
+    if (currentIndex !== -1 && currentIndex < this.filteredComplaints.length - 1) {
+      this.selectedComplaint = this.filteredComplaints[currentIndex + 1];
+    } else {
+      // Eğer listedeki son şikayetteysek, en başa (ilk şikayete) dön
+      this.selectedComplaint = this.filteredComplaints[0];
+    }
+  }
+
+  // Önceki şikayete dön
+  goToPrevComplaint() {
+    const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
+    
+    // Eğer ilk şikayette değilsek, bir öncekine geç
+    if (currentIndex > 0) {
+      this.selectedComplaint = this.filteredComplaints[currentIndex - 1];
+    } else {
+      // Eğer en baştaysak, en sondaki şikayete git
+      this.selectedComplaint = this.filteredComplaints[this.filteredComplaints.length - 1];
+    }
+  }
+
 }
+
