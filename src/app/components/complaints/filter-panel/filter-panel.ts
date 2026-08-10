@@ -12,6 +12,7 @@ export class FilterPanel {
 
   // Seçimleri tutacağımız nesne (Dışarıya bunu fırlatacağız)
   @Output() applyFilters = new EventEmitter<{category: string, status: string, date: string}>();
+  @Output() clearFilters = new EventEmitter<void>();
 
   // Modal içindeki anlık seçimler (Varsayılan olarak "Tümü")
   selectedCategory: string = 'Tümü';
@@ -31,4 +32,17 @@ export class FilterPanel {
     });
     this.close(); // Ve paneli kapat
   }
+
+  onClearClick() {
+  // 1. Önce panelin kendi içindeki seçimleri varsayılana döndürüyoruz
+  this.selectedCategory = 'Tümü';
+  this.selectedStatus = 'Tümü';
+  this.selectedDate = 'Tümü';
+
+  // 2. Ana bileşene "Filtreleri Temizle" haberini fırlatıyoruz
+  this.clearFilters.emit();
+  
+  // 3. İsteğe bağlı: Temizledikten sonra paneli kapat
+  this.close(); 
+}
 }
