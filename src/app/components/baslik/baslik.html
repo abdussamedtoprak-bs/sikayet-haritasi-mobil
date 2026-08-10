@@ -1,0 +1,25 @@
+<header class="baslik">
+
+    <div class="logo-alani">
+        <img src="logo.png" alt="Logo">
+        <span>Sikayet <br>&nbsp;&nbsp; Haritasi</span>
+    </div>
+
+    <div class="sag-alan">
+
+        <div class="ikon-wrapper">
+            <button class="ikon-butonu">
+                👤
+            </button>
+        </div>
+
+        <button class="ikon-butonu"
+                (click)="menuAcik = !menuAcik">
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+<app-yan-menu *ngIf="menuAcik"></app-yan-menu>

@@ -1,0 +1,10 @@
+<app-baslik></app-baslik>
+
+
+<app-konum-butonu
+    (tiklandi)="paneliAcKapat()">
+</app-konum-butonu>
+
+@if (panelAcik) {
+    <app-sorun-bildirme-paneli></app-sorun-bildirme-paneli>
+}
