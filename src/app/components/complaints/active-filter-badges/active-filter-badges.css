@@ -7,6 +7,10 @@
     padding: 10px 16px;
     margin:12px 16px;
     box-shadow:0 2px 4px rgba(0, 0, 0, 0.02);
+    width: 100%; 
+    box-sizing: border-box;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .badges-header{
