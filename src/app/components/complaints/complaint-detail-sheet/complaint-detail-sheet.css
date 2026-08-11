@@ -92,7 +92,6 @@
 .icon-wrapper {
     flex-shrink: 0;
     padding-top: 2px; /* Baret ikonunu başlıkla hizalar */
-    font-size: 20px; 
 }
 
 .text-content {
@@ -146,4 +145,36 @@
     color: #444;
     margin-top: auto;
     white-space: nowrap; /* YENİ: Metnin kesinlikle tek satırda kalmasını sağlar */
+}
+
+/* --- SVG İKON STİLLERİ --- */
+
+/* Başlığın yanındaki büyük baret */
+    .large-helmet-icon {
+    width: 28px;
+    height: 28px;
+    fill: #111827; /* Figma'daki koyu siyah/gri tonu */
+    display: block;
+}
+
+/* Kategori yanındaki küçük baret */
+.small-helmet-icon {
+    width: 14px;
+    height: 14px;
+    fill: #111827;
+    flex-shrink: 0;
+}
+
+/* Tarih yanındaki küçük takvim */
+.small-calendar-icon {
+    width: 14px;
+    height: 14px;
+    stroke: #444444; /* Metin rengiyle uyumlu gri */
+    flex-shrink: 0;
+}
+
+/* .icon-wrapper için ufak düzeltme (Eğer SVG yukarıda kalırsa padding-top'u artırabilirsin) */
+.icon-wrapper {
+    flex-shrink: 0;
+    padding-top: 4px; /* Başlıkla aynı hizada olması için hafifçe aşağı ittik */
 }

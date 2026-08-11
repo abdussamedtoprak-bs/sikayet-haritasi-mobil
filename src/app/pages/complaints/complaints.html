@@ -20,7 +20,10 @@
     </app-filter-panel>
     
     <!-- Sekmeli Filtreleme Butonları (Tümü, Acil, Orta, Düşük) -->
-    <app-tab-filter (tabSelected)="onFilterChange($event)"></app-tab-filter>
+    <app-tab-filter
+        [counts]="tabCounts"
+        (onFilterChange)="onFilterChange($event)">
+    </app-tab-filter>
 
     <!-- Şikayet Kartları Listesi -->
     <div style="padding: 16px;">

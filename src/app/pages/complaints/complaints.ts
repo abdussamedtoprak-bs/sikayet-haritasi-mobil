@@ -39,7 +39,7 @@ export class Complaints {
       title: 'Kırık Yönlendirme Levhası',
       supportCount:45,
       description:'Kampüs Haritasını Gösteren levha...',
-      metaInfo:'Güvenlik . 31.07.2026',
+      metaInfo:'Güvenlik . 28.07.2026',
       status:'İnceleniyor',
       priority:'Acil'
     },
@@ -55,7 +55,7 @@ export class Complaints {
       title: 'Hasarlı Bank',
       supportCount: 20,
       description: 'Kampüs bahçesindeki bankın otur ...',
-      metaInfo: 'Çevre . 31.07.2026',
+      metaInfo: 'Çevre . 26.08.2026',
       status: 'Beklemede',
       priority: 'Düşük'
     }
@@ -66,6 +66,16 @@ export class Complaints {
 
   // Arama çubuğuna yazılan metni tutacak değişken
   searchText: string = '';
+
+  // Tab filtrelerindeki sayıları dinamik hesaplayan getter
+  get tabCounts() {
+    return {
+      tumu: this.complaintList.length,
+      acil: this.complaintList.filter(c => c.priority === 'Acil').length,
+      orta: this.complaintList.filter(c => c.priority === 'Orta').length,
+      dusuk: this.complaintList.filter(c => c.priority === 'Düşük').length
+    };
+  }
 
   //2.Tab bileşeninden tıklama gelince bu fonksiyon çalışacak ve seçimi güncelleyecek
   onFilterChange(selectedTab:string){

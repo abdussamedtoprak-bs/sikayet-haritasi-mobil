@@ -6,6 +6,10 @@
     border-radius: 25px;
     padding: 10px 16px;
     margin-bottom: 16px;
+    width: 100%; /* Satırı tamamen kaplamasını sağlar */
+    box-sizing: border-box; /* Padding ve border değerlerini genişliğe dahil eder, taşmayı önler */
+    margin-left: 0; 
+    margin-right: 0;
 }
 
 .search-icon-svg {
