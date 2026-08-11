@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { YanMenu } from '../ana-sayfa/yan-menu/yan-menu';
+import { YanMenu } from '../yan-menu/yan-menu';
 
 
 @Component({
   selector: 'app-baslik',
   standalone: true,
-  imports: [CommonModule, YanMenu],
+  imports: [
+    CommonModule,
+    YanMenu
+  ],
   templateUrl: './baslik.html',
   styleUrl: './baslik.css'
 })
