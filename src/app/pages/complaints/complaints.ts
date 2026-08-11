@@ -7,10 +7,10 @@ import { TabFilter } from '../../components/complaints/tab-filter/tab-filter';
 import { ComplaintCard } from '../../components/complaints/complaint-card/complaint-card';
 import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
 import { Baslik } from '../../components/baslik/baslik';
-
+import { SearchBar } from '../../components/search-bar/search-bar';
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
@@ -63,6 +63,10 @@ export class Complaints {
 
   // 1. O an seçili olan sekmeyi tutacak değişken (Sayfa açıldığında 'Tümü' aktif olsun)
   currentFilter: string='Tümü';
+
+  // Arama çubuğuna yazılan metni tutacak değişken
+  searchText: string = '';
+
   //2.Tab bileşeninden tıklama gelince bu fonksiyon çalışacak ve seçimi güncelleyecek
   onFilterChange(selectedTab:string){
     this.currentFilter=selectedTab;
@@ -99,6 +103,14 @@ export class Complaints {
       // Tarih Filtresi
       if (this.currentFilters.date && this.currentFilters.date !== 'Tümü') {
         result = result.filter(c => c.metaInfo.includes(this.currentFilters.date.trim()));
+      }
+
+      // YENİ EKLENEN: Arama Çubuğu Filtresi
+      if (this.searchText) {
+        result = result.filter(c => 
+          c.title.toLowerCase().includes(this.searchText) || 
+          c.description.toLowerCase().includes(this.searchText)
+        );
       }
     }
 
@@ -161,6 +173,12 @@ export class Complaints {
       this.selectedComplaint = this.filteredComplaints[this.filteredComplaints.length - 1];
     }
   }
+
+  // Arama çubuğuna her harf girildiğinde veya silindiğinde bu fonksiyon çalışacak
+  onSearch(arananKelime: string) {
+  // Gelen metni küçük harfe çevirip başındaki/sonundaki boşlukları siliyoruz (daha sağlıklı arama için)
+  this.searchText = arananKelime.toLowerCase().trim();
+}
 
 }
 

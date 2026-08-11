@@ -2,6 +2,9 @@
     <app-baslik title="Güncel Şikayetler" [showBackBtn]="true"></app-baslik>
     <app-priority-legend></app-priority-legend>
 
+    <!-- ARAMA ÇUBUĞU BİLEŞENİ -->
+<app-search-bar (searchChanged)="onSearch($event)"></app-search-bar>
+
     <!-- Seçilen filtreleri içeriye yolluyoruz: [filters]="currentFilters" -->
     <app-active-filter-badges 
         [filters]="currentFilters" 
