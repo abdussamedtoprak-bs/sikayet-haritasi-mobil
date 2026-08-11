@@ -1,21 +1,25 @@
 <div class="login-wrapper">
 
-  <div class="harita-bg">
-  </div>
+  <div class="harita-bg"></div>
 
-  @if (!yoneticiModu) {
-    <button class="geri-btn" disabled>←</button>
-
+  <!-- Tekrar eden header kısmı template olarak tanımlandı -->
+  <ng-template #authHeader let-baslik="baslik" let-aciklama="aciklama">
     <div class="logo-alan">
       <div class="logo-cerceve">
         <img src="/logo.png" alt="Logo" class="logo" />
       </div>
-      <h1 class="uygulama-adi">Şikayet Haritası</h1>
-      <p class="uygulama-aciklama">
-        Yaşadığın sorunları bildir,<br>
-        çözüm sürecini birlikte takip edelim.
-      </p>
+      <h1 class="uygulama-adi">{{ baslik }}</h1>
+      <p class="uygulama-aciklama">{{ aciklama }}</p>
     </div>
+  </ng-template>
+
+  @if (!yoneticiModu) {
+    <button class="geri-btn" disabled>←</button>
+
+    <ng-container *ngTemplateOutlet="authHeader; context: {
+      baslik: 'Şikayet Haritası',
+      aciklama: 'Yaşadığın sorunları bildir, çözüm sürecini birlikte takip edelim.'
+    }"></ng-container>
 
     <div class="giris-kart">
       <h2 class="kart-baslik">Hesabınıza giriş yapın</h2>
@@ -26,9 +30,7 @@
         Outlook ile giriş yapın
       </button>
 
-      <div class="ayirac">
-        <span></span>
-      </div>
+      <div class="ayirac"><span></span></div>
 
       <button class="yonetici-btn" (click)="yoneticiGirisAc()">
         <span class="yonetici-ikon">🪪</span>
@@ -37,7 +39,7 @@
       </button>
 
       <p class="alt-metin">
-        Hesabınız yok mu? 
+        Hesabınız yok mu?
         <a routerLink="/register">Hemen Kayıt Olun</a>
       </p>
     </div>
@@ -46,13 +48,10 @@
 
     <button class="geri-btn" (click)="geri()">←</button>
 
-    <div class="logo-alan">
-      <div class="logo-cerceve">
-        <img src="/logo.png" alt="Logo" class="logo" />
-      </div>
-      <h1 class="uygulama-adi">Yönetici Girişi</h1>
-      <p class="uygulama-aciklama">Yetkili hesabınızla giriş yapın</p>
-    </div>
+    <ng-container *ngTemplateOutlet="authHeader; context: {
+      baslik: 'Yönetici Girişi',
+      aciklama: 'Yetkili hesabınızla giriş yapın'
+    }"></ng-container>
 
     <div class="giris-kart">
       <h2 class="kart-baslik">Giriş bilgilerinizi girin</h2>
@@ -61,7 +60,7 @@
         class="form-input"
         type="email"
         placeholder="E-posta"
-        [(ngModel)]="email"   
+        [(ngModel)]="email"
       />
 
       <input
