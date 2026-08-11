@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { YanMenu } from '../yan-menu/yan-menu';
-=======
-import { Component,Input } from '@angular/core';
-import { CommonModule,Location} from '@angular/common';
-import { YanMenu } from '../ana-sayfa/yan-menu/yan-menu';
->>>>>>> origin/develop
 
 
 @Component({
