@@ -4,11 +4,12 @@ import { Router, RouterModule } from '@angular/router';
 import { ToggleRowComponent } from '../../components/settings/toggle-row/toggle-row';
 import { NavRowComponent } from '../../components/settings/nav-row/nav-row';
 import { SettingsSectionComponent } from '../../components/settings/settings-section/settings-section';
+import { Baslik } from '../../components/baslik/baslik';
 
 @Component({
   selector: 'app-ayarlar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ToggleRowComponent, NavRowComponent, SettingsSectionComponent],
+  imports: [CommonModule, RouterModule, ToggleRowComponent, NavRowComponent, SettingsSectionComponent, Baslik],
   templateUrl: './ayarlar.html',
   styleUrl: './ayarlar.css'
 })

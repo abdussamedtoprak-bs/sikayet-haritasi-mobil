@@ -1,10 +1,6 @@
 <div class="ayarlar-wrapper">
 
-  <div class="header">
-    <button class="geri-btn" (click)="geriDon()">←</button>
-    <h1 class="baslik">Ayarlar</h1>
-    <div class="header-avatar">M</div>
-  </div>
+  <app-baslik title="Ayarlar" [showBackBtn]="true"></app-baslik>
 
   <app-settings-section baslik="TERCİHLER"></app-settings-section>
 
