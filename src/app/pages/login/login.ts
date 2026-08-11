@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
-import { Router,RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NgTemplateOutlet],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
-
   yoneticiModu = false;
   email = '';
   sifre = '';
