@@ -6,23 +6,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    padding: 16px; /* EKLENDİ: Beyaz kutunun kenarlara değmesini engelleyen görünmez kalkan */
-    box-sizing: border-box; /* Padding'in sayfa dışına taşmasını engeller */
+    z-index: 9999; /* DEĞİŞTİRİLDİ: Başlığın üstünde kalması için 1000'den 9999'a çıkarıldı */
+    padding: 16px; 
+    box-sizing: border-box; 
 }
 
 /* MODAL KUTUSU */
 .modal-content {
     background-color: white;
     border-radius: 16px;
-    width: 100%; /* DEĞİŞTİRİLDİ: Artık %100 olabilir, çünkü dışındaki padding onu kenarlardan sıkıştıracak */
-    max-width: 400px; 
+    width: 100%; 
+    max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
     padding: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
+    position: relative; /* EKLENDİ: Z-index'in düzgün çalışması için */
+    z-index: 10000; /* EKLENDİ: Beyaz kutunun da karanlık arka planın üstünde kalmasını garantiler */
 }
 
     /* Üst Kısım */
