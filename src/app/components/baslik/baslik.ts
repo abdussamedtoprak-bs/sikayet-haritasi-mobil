@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component,Input } from '@angular/core';
+import { CommonModule,Location} from '@angular/common';
 import { YanMenu } from '../ana-sayfa/yan-menu/yan-menu';
 
 
@@ -11,8 +11,21 @@ import { YanMenu } from '../ana-sayfa/yan-menu/yan-menu';
   styleUrl: './baslik.css'
 })
 export class Baslik {
+  //dışarıdan alınacak ayarlar
+  @Input() title: string='';
+  @Input() showBackBtn: boolean= false;
+
 
   menuAcik =false;
+
+  //geri gitmek için servisi tanımlıyoruz
+  constructor(private location: Location){}
+
+  //sol oka basıldığında çalışacak fonksiyon
+  goBack(){
+    this.location.back();
+  }
+
   profilAc() {
 
   }

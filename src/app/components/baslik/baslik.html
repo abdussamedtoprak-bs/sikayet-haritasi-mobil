@@ -1,4 +1,4 @@
-<header class="baslik">
+<header class="baslik" *ngIf="!showBackBtn">
 
     <div class="logo-alani">
         <img src="logo.png" alt="Logo">
@@ -20,6 +20,11 @@
 
     </div>
 
+</header>
+
+<header class="baslik sub-header" *ngIf="showBackBtn">
+    <button class="back-btn" (click)="goBack()">&#8592;</button>
+    <h2 class="page-title">{{title}}</h2>
 </header>
 
 <app-yan-menu *ngIf="menuAcik"></app-yan-menu>

@@ -6,10 +6,11 @@ import{FilterPanel} from '../../components/complaints/filter-panel/filter-panel'
 import { TabFilter } from '../../components/complaints/tab-filter/tab-filter';
 import { ComplaintCard } from '../../components/complaints/complaint-card/complaint-card';
 import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
+import { Baslik } from '../../components/baslik/baslik';
 
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
