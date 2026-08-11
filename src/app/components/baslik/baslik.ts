@@ -14,27 +14,18 @@ import { YanMenu } from '../yan-menu/yan-menu';
   styleUrl: './baslik.css'
 })
 export class Baslik {
-  //dışarıdan alınacak ayarlar
-  @Input() title: string='';
-  @Input() showBackBtn: boolean= false;
+  @Input() title: string = '';
+  @Input() showBackBtn: boolean = false;
 
+  menuAcik = false;
 
-  menuAcik =false;
+  constructor(private location: Location) {}
 
-  //geri gitmek için servisi tanımlıyoruz
-  constructor(private location: Location){}
-
-  //sol oka basıldığında çalışacak fonksiyon
-  goBack(){
+  goBack() {
     this.location.back();
   }
 
-  profilAc() {
+  profilAc() {}
 
-  }
-
-  menuAc() {
-    
-  }
-
+  menuAc() {}
 }

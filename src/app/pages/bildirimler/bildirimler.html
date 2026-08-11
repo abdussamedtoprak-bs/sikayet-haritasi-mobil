@@ -1,10 +1,6 @@
 <div class="bildirimler-wrapper">
 
-  <div class="header">
-    <button class="geri-btn" (click)="geriDon()">←</button>
-    <h1 class="baslik">Bildirimler</h1>
-    <div class="header-avatar">M</div>
-  </div>
+  <app-baslik title="Bildirimler" [showBackBtn]="true"></app-baslik>
 
   @if (okunmamisSayisi() > 0) {
     <div class="tumunu-oku-bar">

@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FaqItemComponent } from '../../components/notifications/faq-item/faq-item';
 import { SSSItem } from '../../models/sss-item';
-
+import { Baslik } from '../../components/baslik/baslik';
 
 @Component({
   selector: 'app-destek',
   standalone: true,
-  imports: [CommonModule, RouterModule, FaqItemComponent],
+  imports: [CommonModule, RouterModule, FaqItemComponent, Baslik],
   templateUrl: './destek.html',
   styleUrl: './destek.css'
 })
@@ -24,13 +24,13 @@ export class DestekComponent {
     {
       id: 2,
       soru: 'Şikayetim ne zaman çözülür?',
-      cevap: 'Şikayetiniz ilgili birime iletildikten sonra en geç 7 iş günü içinde değerlendirilir. Durum güncellemelerini bildirimler sayfasından takip edebilirsiniz.',
+      cevap: 'Şikayetiniz ilgili birime iletildikten sonra en geç 7 iş günü içinde değerlendirilir.',
       acik: false
     },
     {
       id: 3,
       soru: 'Şikayetimi nasıl takip ederim?',
-      cevap: 'Ana sayfadaki haritada şikayetinizin durumunu renkli pinler üzerinden görebilirsiniz. Ayrıca bildirimler sayfasından anlık güncellemeleri takip edebilirsiniz.',
+      cevap: 'Ana sayfadaki haritada şikayetinizin durumunu renkli pinler üzerinden görebilirsiniz.',
       acik: false
     },
     {

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotificationItemComponent } from '../../components/notifications/notification-item/notification-item';
 import { Bildirim } from '../../models/bildirim';
+import { Baslik } from '../../components/baslik/baslik';
 
 @Component({
   selector: 'app-bildirimler',
   standalone: true,
-  imports: [CommonModule, RouterModule, NotificationItemComponent],
+  imports: [CommonModule, RouterModule, NotificationItemComponent, Baslik],
   templateUrl: './bildirimler.html',
   styleUrl: './bildirimler.css'
 })
@@ -74,15 +75,15 @@ export class BildirimlerComponent {
     this.router.navigate(['/anasayfa']);
   }
 
- bildirimeTikla(bildirim: Bildirim): void {
-  this.okunduIsaretle(bildirim.id);
+  bildirimeTikla(bildirim: Bildirim): void {
+    this.okunduIsaretle(bildirim.id);
 
-  const hazirSayfalar = ['/ayarlar', '/bildirimler'];
+    const hazirSayfalar = ['/ayarlar', '/bildirimler'];
 
-  if (hazirSayfalar.includes(bildirim.yonlendirme)) {
-    this.router.navigate([bildirim.yonlendirme]);
-  } else {
-    alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);
+    if (hazirSayfalar.includes(bildirim.yonlendirme)) {
+      this.router.navigate([bildirim.yonlendirme]);
+    } else {
+      alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);
+    }
   }
-}
 }
