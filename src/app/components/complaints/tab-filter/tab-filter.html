@@ -1,8 +1,7 @@
 <div class="tab-filter-container">
-    
-    <!-- Eğer activeTab 'tumu' ise 'active' class'ını ekle, değilse çıkar .tıkladığımızda butonun renginin değişmesi için kullanılır-->
-    <button class="tab-btn" [class.active]="activeTab==='Tümü'" (click)="onTabClick('Tümü')">Tümü (2)</button>
-    <button class="tab-btn" [class.active]="activeTab==='Acil'" (click)="onTabClick('Acil')">Acil (2)</button>
-    <button class="tab-btn" [class.active]="activeTab==='Orta'" (click)="onTabClick('Orta')">Orta(3)</button>
-    <button class="tab-btn" [class.active]="activeTab==='Düşük'" (click)="onTabClick('Düşük')">Düşük(1)</button>
+    <!-- Eğer activeTab 'Tümü' ise 'active' class'ını ekle, değilse çıkar. Tıkladığımızda butonun renginin değişmesi için kullanılır -->
+    <button class="tab-btn" [class.active]="activeTab==='Tümü'" (click)="onTabClick('Tümü')">Tümü ({{ counts.tumu }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='Acil'" (click)="onTabClick('Acil')">Acil ({{ counts.acil }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='Orta'" (click)="onTabClick('Orta')">Orta ({{ counts.orta }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='Düşük'" (click)="onTabClick('Düşük')">Düşük ({{ counts.dusuk }})</button>
 </div>

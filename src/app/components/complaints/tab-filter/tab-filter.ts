@@ -1,4 +1,4 @@
-import { Component,EventEmitter,Output } from '@angular/core';
+import { Component,EventEmitter,Output,Input } from '@angular/core';
 
 @Component({
   selector: 'app-tab-filter',
@@ -8,8 +8,11 @@ import { Component,EventEmitter,Output } from '@angular/core';
 })
 export class TabFilter {
 
+  // Dışarıdan gelecek dinamik sayılar
+  @Input() counts: any = { tumu: 0, acil: 0, orta: 0, dusuk: 0 };
+
   //dışarıya seçilen sekmeyi haber verecek olan olay(event) tanımlıyoruz.
-  @Output() tabSelected=new EventEmitter<string>();
+  @Output() onFilterChange=new EventEmitter<string>();
 
   //sayfa ilk açıldığında varsayılan olarak 'tumu' sekmesi seçili olacak
   activeTab:string='Tümü';
@@ -17,6 +20,6 @@ export class TabFilter {
   //HTML de butona tıklanınca burası çalışacak ve activeTab değişkenini güncelleyecek
   onTabClick(tabName:string){
     this.activeTab=tabName;//tıklanan butonu aktif yap renklendirme için
-    this.tabSelected.emit(tabName);//hangi butona tıklandığını ana bileşene gönder
+    this.onFilterChange.emit(tabName);//hangi butona tıklandığını ana bileşene gönder
   }
 }

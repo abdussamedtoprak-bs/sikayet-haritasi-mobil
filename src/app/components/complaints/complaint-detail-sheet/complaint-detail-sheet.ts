@@ -14,6 +14,18 @@ export class ComplaintDetailSheet {
 
   //kapatma işlemi için bir event(olay)fırlatıcı tanımlıyoruz
   @Output() close=new EventEmitter<void>();
+  @Output() next = new EventEmitter<void>();  //  İleri tuşu için
+  @Output() prev = new EventEmitter<void>();  //  Geri tuşu için
+
+  // İleri tuşuna basılınca çalışacak
+  onNext() {
+    this.next.emit();
+  }
+
+  // Geri tuşuna basılınca çalışacak
+  onPrev() {
+    this.prev.emit();
+  }
 
   closeSheet(){
     this.close.emit(); // ana sayfaya "kapat" sinyali gönderir  

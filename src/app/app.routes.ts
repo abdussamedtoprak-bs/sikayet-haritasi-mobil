@@ -8,6 +8,7 @@ import { DestekComponent } from './pages/destek/destek';
 import { AnaSayfa } from './pages/ana-sayfa/ana-sayfa';
 
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },

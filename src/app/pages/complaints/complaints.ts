@@ -6,10 +6,11 @@ import{FilterPanel} from '../../components/complaints/filter-panel/filter-panel'
 import { TabFilter } from '../../components/complaints/tab-filter/tab-filter';
 import { ComplaintCard } from '../../components/complaints/complaint-card/complaint-card';
 import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
-
+import { Baslik } from '../../components/baslik/baslik';
+import { SearchBar } from '../../components/search-bar/search-bar';
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
@@ -38,7 +39,7 @@ export class Complaints {
       title: 'Kırık Yönlendirme Levhası',
       supportCount:45,
       description:'Kampüs Haritasını Gösteren levha...',
-      metaInfo:'Güvenlik . 31.07.2026',
+      metaInfo:'Güvenlik . 28.07.2026',
       status:'İnceleniyor',
       priority:'Acil'
     },
@@ -54,7 +55,7 @@ export class Complaints {
       title: 'Hasarlı Bank',
       supportCount: 20,
       description: 'Kampüs bahçesindeki bankın otur ...',
-      metaInfo: 'Çevre . 31.07.2026',
+      metaInfo: 'Çevre . 26.08.2026',
       status: 'Beklemede',
       priority: 'Düşük'
     }
@@ -62,6 +63,20 @@ export class Complaints {
 
   // 1. O an seçili olan sekmeyi tutacak değişken (Sayfa açıldığında 'Tümü' aktif olsun)
   currentFilter: string='Tümü';
+
+  // Arama çubuğuna yazılan metni tutacak değişken
+  searchText: string = '';
+
+  // Tab filtrelerindeki sayıları dinamik hesaplayan getter
+  get tabCounts() {
+    return {
+      tumu: this.complaintList.length,
+      acil: this.complaintList.filter(c => c.priority === 'Acil').length,
+      orta: this.complaintList.filter(c => c.priority === 'Orta').length,
+      dusuk: this.complaintList.filter(c => c.priority === 'Düşük').length
+    };
+  }
+
   //2.Tab bileşeninden tıklama gelince bu fonksiyon çalışacak ve seçimi güncelleyecek
   onFilterChange(selectedTab:string){
     this.currentFilter=selectedTab;
@@ -99,6 +114,14 @@ export class Complaints {
       if (this.currentFilters.date && this.currentFilters.date !== 'Tümü') {
         result = result.filter(c => c.metaInfo.includes(this.currentFilters.date.trim()));
       }
+
+      // YENİ EKLENEN: Arama Çubuğu Filtresi
+      if (this.searchText) {
+        result = result.filter(c => 
+          c.title.toLowerCase().includes(this.searchText) || 
+          c.description.toLowerCase().includes(this.searchText)
+        );
+      }
     }
 
     return result; // Son listeyi ekrana gönder
@@ -134,4 +157,38 @@ export class Complaints {
     this.currentFilters = newFilters;
   }
 
+  // Sonraki şikayete geç
+  goToNextComplaint() {
+    // Şu an açık olan şikayetin listedeki sırasını (index) bul
+    const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
+    
+    // Eğer son şikayette değilsek, bir sonrakine geç
+    if (currentIndex !== -1 && currentIndex < this.filteredComplaints.length - 1) {
+      this.selectedComplaint = this.filteredComplaints[currentIndex + 1];
+    } else {
+      // Eğer listedeki son şikayetteysek, en başa (ilk şikayete) dön
+      this.selectedComplaint = this.filteredComplaints[0];
+    }
+  }
+
+  // Önceki şikayete dön
+  goToPrevComplaint() {
+    const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
+    
+    // Eğer ilk şikayette değilsek, bir öncekine geç
+    if (currentIndex > 0) {
+      this.selectedComplaint = this.filteredComplaints[currentIndex - 1];
+    } else {
+      // Eğer en baştaysak, en sondaki şikayete git
+      this.selectedComplaint = this.filteredComplaints[this.filteredComplaints.length - 1];
+    }
+  }
+
+  // Arama çubuğuna her harf girildiğinde veya silindiğinde bu fonksiyon çalışacak
+  onSearch(arananKelime: string) {
+  // Gelen metni küçük harfe çevirip başındaki/sonundaki boşlukları siliyoruz (daha sağlıklı arama için)
+  this.searchText = arananKelime.toLowerCase().trim();
 }
+
+}
+

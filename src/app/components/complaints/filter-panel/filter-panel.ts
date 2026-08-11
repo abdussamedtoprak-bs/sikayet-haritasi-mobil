@@ -42,7 +42,6 @@ export class FilterPanel {
   // 2. Ana bileşene "Filtreleri Temizle" haberini fırlatıyoruz
   this.clearFilters.emit();
   
-  // 3. İsteğe bağlı: Temizledikten sonra paneli kapat
-  this.close(); 
+  
 }
 }

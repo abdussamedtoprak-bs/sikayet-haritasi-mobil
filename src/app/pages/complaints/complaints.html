@@ -1,5 +1,9 @@
 <div class="complaints-page-container">
+    <app-baslik title="Güncel Şikayetler" [showBackBtn]="true"></app-baslik>
     <app-priority-legend></app-priority-legend>
+
+    <!-- ARAMA ÇUBUĞU BİLEŞENİ -->
+<app-search-bar (searchChanged)="onSearch($event)"></app-search-bar>
 
     <!-- Seçilen filtreleri içeriye yolluyoruz: [filters]="currentFilters" -->
     <app-active-filter-badges 
@@ -16,7 +20,10 @@
     </app-filter-panel>
     
     <!-- Sekmeli Filtreleme Butonları (Tümü, Acil, Orta, Düşük) -->
-    <app-tab-filter (tabSelected)="onFilterChange($event)"></app-tab-filter>
+    <app-tab-filter
+        [counts]="tabCounts"
+        (onFilterChange)="onFilterChange($event)">
+    </app-tab-filter>
 
     <!-- Şikayet Kartları Listesi -->
     <div style="padding: 16px;">
@@ -31,7 +38,9 @@
     @if(isSheetOpen){
         <app-complaint-detail-sheet 
         [complaint]="selectedComplaint"
-        (close)="closeDetail()">
+        (close)="closeDetail()"
+        (next)="goToNextComplaint()"
+        (prev)="goToPrevComplaint()">
             
         </app-complaint-detail-sheet>
     }
