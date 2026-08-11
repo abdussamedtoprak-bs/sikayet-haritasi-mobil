@@ -62,3 +62,29 @@
     background:#EEF5FC;
 
 }
+
+/*alt sayfa: güncel şikayetler veya diğer sayfalar için özel tasarım*/
+.baslik.sub-header{
+    justify-content: center;/*yazıyı tam ortaya hizalar*/
+    position:relative;/*ok tuşunu serbestçe yerleştirmek için*/
+
+}
+.back-btn{
+    position:absolute;
+    left:24px;/*sol tarafa sabitler*/
+    background:none;
+    border:none;
+    font-size:28px;/*okun büyüklüğü*/
+    font-weight: 500;
+    cursor:pointer;
+    color:#000;
+    display:flex;
+    align-items:center;
+
+}
+.page-title{
+    font-size: 22px;
+    font-weight: 700;
+    margin:0;
+    color:#000;
+}
