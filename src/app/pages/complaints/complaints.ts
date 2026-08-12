@@ -8,6 +8,7 @@ import { ComplaintCard } from '../../components/complaints/complaint-card/compla
 import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
 import { Baslik } from '../../components/baslik/baslik';
 import { SearchBar } from '../../components/search-bar/search-bar';
+import { Complaint } from '../../models/complaint';
 
 
 @Component({
@@ -50,9 +51,9 @@ export class Complaints {
 
   /**
    * @description Veritabanından (veya servisten) gelen tüm şikayetlerin tutulduğu ham (raw) veri listesidir.
-   * @type {Array<any>} // (Not: Modeller klasörü oluşturulduğunda 'Complaint[]' interface'i alacaktır)
+   * @type {Complaint[]} 
    */
-  complaintList=[
+  complaintList:Complaint[]=[
     {
       title:'Kırık Cam Tehlikesi',
       supportCount:55,
@@ -197,9 +198,10 @@ export class Complaints {
 
   /**
    * @description Detay paneli (bottom sheet) açıldığında görüntülenecek olan seçili şikayet nesnesini tutar.
-   * @type {any}
+   * Henüz bir kart seçilmediğinde veya panel kapatıldığında null değerini alır.
+   * @type {Complaint | null}
    */
-  selectedComplaint:any=null;
+  selectedComplaint:Complaint | null = null;
 
 
 
@@ -214,9 +216,9 @@ export class Complaints {
   /**
    * @description Listedeki bir şikayet kartına tıklandığında çalışır. Seçilen şikayeti 
    * `selectedComplaint` değişkenine atar ve detay panelini görünür hale getirir.
-   * @param {any} complaint - Tıklanan şikayet nesnesi.
+   * @param {Complaint} complaint - Tıklanan şikayet nesnesi.
    */
-  openDetail(complaint:any){
+  openDetail(complaint:Complaint){
     this.selectedComplaint=complaint;
     this.isSheetOpen=true;
   }

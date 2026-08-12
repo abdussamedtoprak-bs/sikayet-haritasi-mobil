@@ -1,4 +1,5 @@
 import { Component ,Input} from '@angular/core';
+import { Complaint } from '../../../models/complaint';
 
 @Component({
   selector: 'app-complaint-card',
@@ -17,7 +18,7 @@ export class ComplaintCard {
   /**
    * @description Üst bileşenden (liste veya kapsayıcı) gelen tekil şikayet nesnesidir. 
    * Kartın içerisindeki tüm dinamik veriler ve renk (durum/öncelik) atamaları bu nesne üzerinden beslenir.
-   * @type {any} // (Not: İleride 'any' yerine 'Complaint' interface'i tanımlanarak tip güvenliği sağlanacaktır.)
+   * @type {Complaint}
    */
-  @Input() complaint: any;
+  @Input() complaint!: Complaint;
 }
