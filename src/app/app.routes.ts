@@ -13,7 +13,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'ana-sayfa', component: AnaSayfa },
+  { path: 'anasayfa', component: AnaSayfa },
   { path: 'ayarlar', component: AyarlarComponent },
   { path: 'complaints', component: Complaints },
   { path: 'bildirimler', component: BildirimlerComponent },
