@@ -1,4 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-harita-alani',
@@ -11,23 +12,27 @@ export class HaritaAlani implements AfterViewInit {
 
   private map: any;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   async ngAfterViewInit(): Promise<void> {
+    // Sadece tarayıcı ortamında çalışmasını sağlıyoruz (SSR hatasını önler)
+    if (isPlatformBrowser(this.platformId)) {
+      const L = await import('leaflet');
 
-    const L = await import('leaflet');
+      this.map = L.map('map', {
+        minZoom: 15,
+        maxZoom: 19,
+        zoomControl: true
+      }).setView(
+        [38.8847, 40.4939],
+        19
+      );
 
-    this.map = L.map('map', {
-      minZoom: 15,
-      maxZoom: 19,
-      zoomControl: true
-    }).setView(
-      [38.8847, 40.4939],
-      19
-    );
-
- L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-    maxZoom: 21, // Yakınlaştırma sınırını 21'e kadar çıkarıyoruz (Çok daha detaylı)
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    attribution: '© Google Maps'
-}).addTo(this.map); // 'this.map'
+      L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 21,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google Maps'
+      }).addTo(this.map);
+    }
   }
 }
