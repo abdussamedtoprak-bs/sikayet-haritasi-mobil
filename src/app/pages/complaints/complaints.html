@@ -35,9 +35,9 @@
     }
     </div>
     <!--Detay Paneli: sadece karta tıklandığında görünür-->
-    @if(isSheetOpen){
+    @if(isSheetOpen && selectedComplaint){
         <app-complaint-detail-sheet 
-        [complaint]="selectedComplaint"
+        [complaint]="selectedComplaint!"
         (close)="closeDetail()"
         (next)="goToNextComplaint()"
         (prev)="goToPrevComplaint()">
