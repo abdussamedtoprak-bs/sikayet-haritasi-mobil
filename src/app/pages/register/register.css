@@ -1,3 +1,9 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .login-wrapper {
   min-height: 100vh;
   background: #f0f4f8;
@@ -7,88 +13,97 @@
   position: relative;
   overflow: hidden;
   padding-bottom: 2rem;
+  max-width: 430px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .harita-bg {
-  
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 260px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
   width: 100%;
-    background-image: url('/arkaplan.png'); 
+  background-image: url('/arkaplan.png');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
+  z-index: 0;
 }
-
 
 .geri-btn {
   position: absolute;
-  top: 16px; left: 16px;
+  top: 16px;
+  left: 16px;
   background: white;
   border: none;
   border-radius: 50%;
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   font-size: 18px;
   cursor: pointer;
-  z-index: 10;
+  z-index: 2;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-
-.logo {
-  width: 100%;
-  max-width: 48px; /* 72px'lik çerçevenin içinde şık durması için */
-  height: auto;
-  object-fit: contain;
-}
-/* ------------------------------------------ */
-
 .logo-alan {
-  margin-top: 60px;
+  position: relative;
+  z-index: 1;
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1;
+  padding: 0 20px;
 }
 
 .logo-cerceve {
-  width: 72px; height: 72px;
+  width: 80px;
+  height: 80px;
   background: white;
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.logo-ikon { font-size: 36px; }
+.logo {
+  width: 100%;
+  max-width: 52px;
+  height: auto;
+  object-fit: contain;
+}
 
 .uygulama-adi {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: #1a1a2e;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
+  text-align: center;
 }
 
 .uygulama-aciklama {
   font-size: 13px;
-  color: #666;
+  color: #555;
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
 .giris-kart {
+  position: relative;
+  z-index: 1;
   background: white;
   border-radius: 24px;
   padding: 28px 24px;
-  margin-top: 28px;
+  margin-top: 24px;
   width: 90%;
-  max-width: 360px;
+  max-width: 380px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -102,56 +117,23 @@
   text-align: center;
 }
 
-.kart-aciklama {
-  font-size: 12px;
-  color: #888;
-  text-align: center;
-  margin: 0;
-}
-
 .outlook-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: white;
-  border: 1.5px solid #e0e0e0;
+  background: #1a1a2e;
+  border: none;
   border-radius: 12px;
   padding: 14px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  color: #1a1a2e;
-}
-.outlook-btn:hover { background: #f5f5f5; }
-
-.outlook-ikon { font-size: 20px; }
-
-.ayirac {
-  height: 1px;
-  background: #f0f0f0;
-  margin: 4px 0;
-}
-
-.yonetici-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: white;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
+  color: white;
   width: 100%;
-  color: #1a1a2e;
-  transition: background 0.2s;
 }
-.yonetici-btn:hover { background: #f5f5f5; }
-.yonetici-ikon { font-size: 20px; }
-.ok { margin-left: auto; font-size: 18px; color: #aaa; }
+.outlook-btn:hover { background: #2d2d4e; }
 
 .alt-metin {
   font-size: 11px;
@@ -179,11 +161,4 @@
   font-size: 12px;
   text-align: center;
   margin: 0;
-}
-
-.test-bilgi {
-  background: #fff8e1;
-  border-radius: 8px;
-  padding: 8px;
-  color: #888 !important;
 }

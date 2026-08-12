@@ -1,6 +1,9 @@
 .bildirimler-wrapper {
   min-height: 100vh;
-  background: #f0f2f5;
+  background-image: url('/arkaplan.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   max-width: 430px;
@@ -8,17 +11,18 @@
   width: 100%;
 }
 
-
 .tumunu-oku-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: #e8f0fe;
+  background: rgba(232, 240, 254, 0.9);
   font-size: 13px;
   color: #1a73e8;
   margin: 12px 12px 0;
   border-radius: 12px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .tumunu-oku-btn {
@@ -42,12 +46,14 @@
   align-items: flex-start;
   gap: 12px;
   padding: 14px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.15s;
   position: relative;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .bildirim-kart:hover {
@@ -56,7 +62,7 @@
 }
 
 .bildirim-kart.okunmamis {
-  background: #f0f4ff;
+  background: rgba(240, 244, 255, 0.9);
   border-left: 3px solid #1a73e8;
 }
 
