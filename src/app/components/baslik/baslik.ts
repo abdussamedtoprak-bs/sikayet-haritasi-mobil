@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { YanMenu } from '../yan-menu/yan-menu';
 
+
 @Component({
   selector: 'app-baslik',
   standalone: true,
