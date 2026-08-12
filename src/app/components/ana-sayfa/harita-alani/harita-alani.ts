@@ -15,9 +15,13 @@ export class HaritaAlani implements AfterViewInit {
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   async ngAfterViewInit(): Promise<void> {
-    // Sadece tarayıcı ortamında çalışmasını sağlıyoruz (SSR hatasını önler)
-    if (isPlatformBrowser(this.platformId)) {
-      const L = await import('leaflet');
+  if (!isPlatformBrowser(this.platformId)) {
+    return;
+  }
+
+  const L = await import('leaflet');
+
+
 
       this.map = L.map('map', {
         minZoom: 15,
@@ -28,11 +32,9 @@ export class HaritaAlani implements AfterViewInit {
         19
       );
 
-      L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-        maxZoom: 21,
+      L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {  maxZoom: 21,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '© Google Maps'
       }).addTo(this.map);
     }
   }
-}
