@@ -1,5 +1,6 @@
 import { Component,Input,Output,EventEmitter} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Complaint } from '../../../models/complaint';
 
 @Component({
   selector: 'app-complaint-detail-sheet',
@@ -18,9 +19,9 @@ export class ComplaintDetailSheet {
   /**
    * @description Detayları gösterilecek olan aktif şikayet nesnesidir. 
    * Üst bileşen tarafından (kullanıcının tıkladığı şikayet verisi) buraya aktarılır.
-   * @type {any} // (Not: Modeller oluşturulduğunda 'Complaint' interface'i ile güncellenecektir.)
+   * @type {Complaint}
    */
-  @Input() complaint: any;
+  @Input() complaint!: Complaint;
 
   /**
    * @description Kullanıcı paneli kapatmak istediğinde (çarpı butonuna basıldığında) 
