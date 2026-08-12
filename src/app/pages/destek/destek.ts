@@ -5,6 +5,10 @@ import { FaqItemComponent } from '../../components/notifications/faq-item/faq-it
 import { SSSItem } from '../../models/sss-item';
 import { Baslik } from '../../components/baslik/baslik';
 
+/**
+ * @description Kullanıcıların destek alabildiği sayfa bileşenidir.
+ * İletişim bilgileri ve sıkça sorulan sorular (SSS) accordion yapısında sunulur.
+ */
 @Component({
   selector: 'app-destek',
   standalone: true,
@@ -14,6 +18,10 @@ import { Baslik } from '../../components/baslik/baslik';
 })
 export class DestekComponent {
 
+  /**
+   * @description Firebase entegrasyonuna kadar kullanılan geçici SSS listesi.
+   * Firebase gelince bu liste Firestore'dan asenkron olarak çekilecektir.
+   */
   sssList = signal<SSSItem[]>([
     {
       id: 1,
@@ -43,6 +51,10 @@ export class DestekComponent {
 
   constructor(private router: Router) {}
 
+  /**
+   * @description SSS accordion öğesine tıklandığında açık/kapalı durumunu tersine çevirir.
+   * @param {number} id - Durumu değiştirilecek SSS öğesinin id'si
+   */
   toggleSSS(id: number): void {
     this.sssList.update(liste =>
       liste.map(item =>
@@ -51,6 +63,9 @@ export class DestekComponent {
     );
   }
 
+  /**
+   * @description Ana sayfaya geri yönlendirir.
+   */
   geriDon(): void {
     this.router.navigate(['/anasayfa']);
   }
