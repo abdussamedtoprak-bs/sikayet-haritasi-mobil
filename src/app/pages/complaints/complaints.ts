@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PriorityLegend } from '../../components/complaints/priority-legend/priority-legend';
 import{ActiveFilterBadges} from '../../components/complaints/active-filter-badges/active-filter-badges';
@@ -9,7 +9,7 @@ import { ComplaintDetailSheet } from '../../components/complaints/complaint-deta
 import { Baslik } from '../../components/baslik/baslik';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Complaint } from '../../models/complaint';
-
+import { ComplaintService } from '../../services/complaint';
 
 @Component({
   selector: 'app-complaints',
@@ -26,7 +26,7 @@ import { Complaint } from '../../models/complaint';
  * Şikayet verilerini tutar ve kullanıcı etkileşimlerine göre (arama, sekme değişimi, detaylı filtreleme) 
  * listeyi dinamik olarak günceller.
  */
-export class Complaints {
+export class Complaints implements OnInit {
 
 
   /**
@@ -47,46 +47,41 @@ export class Complaints {
     date: 'Tümü'
   };
 
-  
+  /**
+   * @description ComplaintService'i sayfaya dahil ediyoruz.
+   */
+  constructor(private complaintService: ComplaintService) {}
 
   /**
-   * @description Veritabanından (veya servisten) gelen tüm şikayetlerin tutulduğu ham (raw) veri listesidir.
+   * @description Bileşen ekrana basıldığı anda otomatik olarak tetiklenir ve verileri yükler.
+   */
+  ngOnInit(): void {
+    this.loadComplaints();
+  }
+
+
+  /**
+   * @description Şikayet servisi üzerinden asenkron veri akışına abone olur (subscribe) 
+   * ve gelen verileri yerel `complaintList` dizisine aktarır.
+   */
+  loadComplaints(): void {
+    this.complaintService.getComplaints().subscribe({
+      next: (data) => {
+        // Servisten gelen tertemiz veriyi sayfamızdaki listeye aktardık
+        this.complaintList = data; 
+      },
+      error: (err) => {
+        console.error('Şikayetler yüklenirken bir hata oluştu:', err);
+      }
+    });
+  }
+
+  /**
+   * @description Veritabanından (veya servisten) gelen tüm şikayetlerin tutulduğu veri listesi.
+   * İçini boşalttık, artık veriler servisten asenkron olarak dolacak.
    * @type {Complaint[]} 
    */
-  complaintList:Complaint[]=[
-    {
-      title:'Kırık Cam Tehlikesi',
-      supportCount:55,
-      description:'Kütüphane önünde yaklaşık 2 metre...',
-      metaInfo: 'Güvenlik . 31.07.2026',
-      status:'İnceleniyor',
-      priority:'Acil'
-    },
-    {
-      title: 'Kırık Yönlendirme Levhası',
-      supportCount:45,
-      description:'Kampüs Haritasını Gösteren levha...',
-      metaInfo:'Güvenlik . 28.07.2026',
-      status:'İnceleniyor',
-      priority:'Acil'
-    },
-    {
-      title:'Yabani Ot Temizliği',
-      supportCount:25,
-      description:'Yürüyüş yollarının kenarındaki ot ...',
-      metaInfo:'Çevre . 31.07.2026 - 04.08.2026',
-      status:'Çözüldü',
-      priority:'Düşük'
-    },
-    {
-      title: 'Hasarlı Bank',
-      supportCount: 20,
-      description: 'Kampüs bahçesindeki bankın otur ...',
-      metaInfo: 'Çevre . 26.08.2026',
-      status: 'Beklemede',
-      priority: 'Düşük'
-    }
-  ];
+  complaintList:Complaint[]=[];
 
   
   
