@@ -2,6 +2,11 @@ import { Component,EventEmitter,Output } from '@angular/core';
 import{CommonModule} from '@angular/common';
 import{FormsModule} from '@angular/forms';
 
+/**
+ * @description Kullanıcının şikayetler içerisinde metin tabanlı arama yapmasını sağlayan arama çubuğu bileşenidir.
+ * Girilen metni anlık olarak dinler ve üst bileşenlere (parent components) iletir.
+ */
+
 @Component({
   selector: 'app-search-bar',
   imports: [CommonModule,FormsModule],
@@ -12,15 +17,25 @@ export class SearchBar {
 
   searchText:string='';
 
-  //yazılan metni üst bileşene kullanıldığı sayfaya fırlatır
+  /**
+   * @description Arama kutusuna girilen metin her değiştiğinde tetiklenir ve güncel metni dışarı fırlatır.
+   * @event searchChanged
+   * @type {EventEmitter<string>}
+   */
   @Output() searchChanged= new EventEmitter<string>();
 
-  //input alanına her harf  girildiğinde tetiklenir
+  /**
+   * @description Input alanındaki metin model (`ngModel`) üzerinden her güncellendiğinde çalışır 
+   * ve yeni değeri EventEmitter aracılığıyla yayınlar.
+   */
   onSearchChange(){
     this.searchChanged.emit(this.searchText);
   }
 
-  //çarpı ikonuna basıldığında metni temizler
+  /**
+   * @description Arama kutusundaki çarpı (x) butonuna tıklandığında çalışır.
+   * Arama metnini sıfırlar ve temizlenmiş (boş) durumu üst bileşene iletir.
+   */
   clearSearch(){
     this.searchText='';
     this.searchChanged.emit(this.searchText);

@@ -8,24 +8,50 @@ import { ComplaintCard } from '../../components/complaints/complaint-card/compla
 import { ComplaintDetailSheet } from '../../components/complaints/complaint-detail-sheet/complaint-detail-sheet';
 import { Baslik } from '../../components/baslik/baslik';
 import { SearchBar } from '../../components/search-bar/search-bar';
+
+
 @Component({
   selector: 'app-complaints',
   imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
+
+
+
+/**
+ * @description "Güncel Şikayetler" sayfasının ana (container) bileşenidir. 
+ * Harita, arama çubuğu, filtreleme modülleri ve şikayet listesi gibi tüm alt bileşenleri orkestre eder. 
+ * Şikayet verilerini tutar ve kullanıcı etkileşimlerine göre (arama, sekme değişimi, detaylı filtreleme) 
+ * listeyi dinamik olarak günceller.
+ */
 export class Complaints {
-  // Panelin açık/kapalı durumunu tutan değişken:
+
+
+  /**
+   * @description Detaylı filtreleme modalının (panelinin) açık veya kapalı olma durumunu yönetir.
+   * @type {boolean}
+   */
   isFilterModalOpen = false;
 
-  // Seçilen filtreleri burada tutacağız
+  
+
+  /**
+   * @description Modal üzerinden seçilen aktif filtre kriterlerini (Kategori, Durum, Tarih) tutar.
+   * @type {Object}
+   */
   currentFilters = {
     category: 'Tümü',
     status: 'Tümü',
     date: 'Tümü'
   };
 
-  //arayüzdeki kartlar
+  
+
+  /**
+   * @description Veritabanından (veya servisten) gelen tüm şikayetlerin tutulduğu ham (raw) veri listesidir.
+   * @type {Array<any>} // (Not: Modeller klasörü oluşturulduğunda 'Complaint[]' interface'i alacaktır)
+   */
   complaintList=[
     {
       title:'Kırık Cam Tehlikesi',
@@ -61,13 +87,29 @@ export class Complaints {
     }
   ];
 
-  // 1. O an seçili olan sekmeyi tutacak değişken (Sayfa açıldığında 'Tümü' aktif olsun)
+  
+  
+  /**
+   * @description Sekme (tab) üzerinden seçilen öncelik filtresini (örn: 'Tümü', 'Acil', 'Orta') tutar.
+   * @type {string}
+   */
   currentFilter: string='Tümü';
 
-  // Arama çubuğuna yazılan metni tutacak değişken
+  
+
+  /**
+   * @description Arama çubuğuna kullanıcı tarafından girilen metni tutar.
+   * @type {string}
+   */
   searchText: string = '';
 
-  // Tab filtrelerindeki sayıları dinamik hesaplayan getter
+  
+
+  /**
+   * @description Mevcut şikayet listesi üzerinden (complaintList) her bir öncelik durumunun 
+   * (Tümü, Acil, Orta, Düşük) toplam sayısını hesaplar ve sekmeler bileşenine dinamik veri sağlar.
+   * @returns {Object} Öncelik durumlarına göre şikayet sayılarını içeren nesne.
+   */
   get tabCounts() {
     return {
       tumu: this.complaintList.length,
@@ -77,11 +119,23 @@ export class Complaints {
     };
   }
 
-  //2.Tab bileşeninden tıklama gelince bu fonksiyon çalışacak ve seçimi güncelleyecek
+  /**
+   * @description Sekme (tab) bileşeninden tıklama geldiğinde çalışır. Yeni seçim değerini alarak 
+   * `currentFilter` değişkenini günceller.
+   * @param {string} selectedTab - Seçilen sekmenin adı (örn: 'Acil').
+   */
   onFilterChange(selectedTab:string){
     this.currentFilter=selectedTab;
   }
-  //3. HTML'e tüm listeyi değil, sadece seçilen filtreye uyanları gönderen dinamik liste
+  
+  
+
+
+  /**
+   * @description Ham şikayet listesini (complaintList) sırasıyla sekme filtresi, detaylı modal filtreleri 
+   * ve arama çubuğu metnine göre süzerek (filter) ekranda gösterilecek nihai dinamik listeyi oluşturur.
+   * @returns {Array<any>} Tüm filtrelerin uygulandığı nihai şikayet dizisi.
+   */
   get filteredComplaints() {
     let result = this.complaintList;
 
@@ -127,7 +181,10 @@ export class Complaints {
     return result; // Son listeyi ekrana gönder
   }
 
-  // Temizle butonuna basıldığında filtreleri sıfırlayacak fonksiyon
+  /**
+   * @description "Temizle" butonuna tıklandığında detaylı filtre panelindeki tüm seçimleri varsayılan 
+   * 'Tümü' durumuna sıfırlar.
+   */
   clearAllFilters() {
     this.currentFilters = {
       category: 'Tümü',
@@ -136,28 +193,53 @@ export class Complaints {
     };
   }
 
-  //Hangi şikayete tıklandığını ve panelin açık/kapalı durumunu tutacak değişkenler
+
+
+  /**
+   * @description Detay paneli (bottom sheet) açıldığında görüntülenecek olan seçili şikayet nesnesini tutar.
+   * @type {any}
+   */
   selectedComplaint:any=null;
+
+
+
+  /**
+   * @description Detay panelinin görünürlük durumunu kontrol eder.
+   * @type {boolean}
+   */
   isSheetOpen:boolean=false;
 
-  //karta tıklandığında çalışacak fonksiyon
+  
+  
+  /**
+   * @description Listedeki bir şikayet kartına tıklandığında çalışır. Seçilen şikayeti 
+   * `selectedComplaint` değişkenine atar ve detay panelini görünür hale getirir.
+   * @param {any} complaint - Tıklanan şikayet nesnesi.
+   */
   openDetail(complaint:any){
     this.selectedComplaint=complaint;
     this.isSheetOpen=true;
   }
 
-  //panrldeki 'x' butonuna basıldığında çalışacak fonksiyon
+  /**
+   * @description Detay panelindeki 'x' (kapat) butonuna tıklandığında paneli gizler ve seçili şikayeti sıfırlar.
+   */
   closeDetail(){
     this.isSheetOpen=false;
     this.selectedComplaint=null;
   }
 
-  // Modaldan seçimler gelince bu fonksiyon çalışacak
+  /**
+   * @description Detay panelindeki 'x' (kapat) butonuna tıklandığında paneli gizler ve seçili şikayeti sıfırlar.
+   */
   updateFilters(newFilters: any) {
     this.currentFilters = newFilters;
   }
 
-  // Sonraki şikayete geç
+  /**
+   * @description Detay panelinde sağ ok (ileri) tuşuna basıldığında çalışır.
+   * Mevcut filtrelenmiş listedeki bir sonraki şikayeti bulur. Listenin sonundaysa en başa döner.
+   */
   goToNextComplaint() {
     // Şu an açık olan şikayetin listedeki sırasını (index) bul
     const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
@@ -171,7 +253,10 @@ export class Complaints {
     }
   }
 
-  // Önceki şikayete dön
+  /**
+   * @description Detay panelinde sol ok (geri) tuşuna basıldığında çalışır.
+   * Mevcut filtrelenmiş listedeki bir önceki şikayeti bulur. Listenin başındaysa en sona gider.
+   */
   goToPrevComplaint() {
     const currentIndex = this.filteredComplaints.findIndex(c => c === this.selectedComplaint);
     
@@ -184,9 +269,12 @@ export class Complaints {
     }
   }
 
-  // Arama çubuğuna her harf girildiğinde veya silindiğinde bu fonksiyon çalışacak
+  /**
+   * @description Arama çubuğuna her harf girildiğinde çalışır. Gelen metni küçük harfe çevirir, 
+   * başındaki ve sonundaki boşlukları temizleyerek (trim) daha sağlıklı bir arama verisi oluşturur.
+   * @param {string} arananKelime - Kullanıcının girdiği ham arama metni.
+   */
   onSearch(arananKelime: string) {
-  // Gelen metni küçük harfe çevirip başındaki/sonundaki boşlukları siliyoruz (daha sağlıklı arama için)
   this.searchText = arananKelime.toLowerCase().trim();
 }
 
