@@ -11,15 +11,16 @@ import { SearchBar } from '../../components/search-bar/search-bar';
 import { Complaint } from '../../models/complaint';
 import { ComplaintService } from '../../services/complaint';
 import { ActivatedRoute } from '@angular/router';
-
-
+import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alani';
+import { YanMenu } from '../../components/yan-menu/yan-menu';
 
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar,HaritaAlani,YanMenu],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
+
 
 
 
@@ -30,6 +31,15 @@ import { ActivatedRoute } from '@angular/router';
  * listeyi dinamik olarak günceller.
  */
 export class Complaints implements OnInit {
+
+
+  // Menünün görünürlüğünü kontrol eden değişken
+  isMenuOpen: boolean = false;
+
+  // Menüyü açıp kapatan fonksiyon
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 
 
   /**
