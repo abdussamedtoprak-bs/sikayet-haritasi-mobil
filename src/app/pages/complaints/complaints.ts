@@ -10,6 +10,9 @@ import { Baslik } from '../../components/baslik/baslik';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Complaint } from '../../models/complaint';
 import { ComplaintService } from '../../services/complaint';
+import { ActivatedRoute } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-complaints',
@@ -35,7 +38,12 @@ export class Complaints implements OnInit {
    */
   isFilterModalOpen = false;
 
-  
+  /**
+   * @description Harita üzerinden yönlendirmeyle gelen spesifik yorumu tutar
+   */
+  mapLocation:string='';
+
+
 
   /**
    * @description Modal üzerinden seçilen aktif filtre kriterlerini (Kategori, Durum, Tarih) tutar.
@@ -48,15 +56,29 @@ export class Complaints implements OnInit {
   };
 
   /**
-   * @description ComplaintService'i sayfaya dahil ediyoruz.
+   * @description ComplaintService ve ActivatedRoute'u sayfaya dahil ediyoruz.
    */
-  constructor(private complaintService: ComplaintService) {}
+  constructor(
+    private complaintService: ComplaintService,
+    private route:ActivatedRoute) {}//URL parametrelerini okumak için eklendi.
 
   /**
    * @description Bileşen ekrana basıldığı anda otomatik olarak tetiklenir ve verileri yükler.
    */
   ngOnInit(): void {
     this.loadComplaints();
+
+    //URL den gelen harita parametrelerini dinliyoruz
+    this.route.queryParams.subscribe(params=>{
+      if(params['priority']){
+        //haritadan  gelen orta acil gibi degeri sekmefiltresine eşitliyoruz
+        this.currentFilter=params['priority'];
+      }
+      if(params['location']){
+        //haritadan gelen konumu değikene atıyoruz
+        this.mapLocation=params['location'];
+      }
+    });
   }
 
 
@@ -173,6 +195,10 @@ export class Complaints implements OnInit {
         );
       }
     }
+    //Yeni eklenen: harita (konum) filtresi
+    if(this.mapLocation){
+      result=result.filter(c=>c.location===this.mapLocation);
+    }
 
     return result; // Son listeyi ekrana gönder
   }
@@ -187,6 +213,9 @@ export class Complaints implements OnInit {
       status: 'Tümü',
       date: 'Tümü'
     };
+    //Yeni eklenen: harita sekmesini ve filtreyi sıfırlıyoruz
+    this.mapLocation='';
+    this.currentFilter='Tümü';
   }
 
 
