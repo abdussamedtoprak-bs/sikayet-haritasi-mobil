@@ -1,5 +1,12 @@
 <div class="complaints-page-container">
     <app-baslik title="Güncel Şikayetler" [showBackBtn]="true"></app-baslik>
+    
+    
+    <!-- HARİTA BURAYA EKLENDİ -->
+    <div class="harita-wrapper">
+        <app-harita-alani></app-harita-alani>
+    </div>
+
     <app-priority-legend></app-priority-legend>
 
     <!-- ARAMA ÇUBUĞU BİLEŞENİ -->
@@ -15,7 +22,7 @@
     <app-filter-panel 
         [isOpen]="isFilterModalOpen" 
         (closePanel)="isFilterModalOpen = false"
-        ( applyFilters)="updateFilters($event)"
+        (applyFilters)="updateFilters($event)"
         (clearFilters)="clearAllFilters()">
     </app-filter-panel>
     

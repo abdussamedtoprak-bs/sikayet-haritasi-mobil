@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, Inject, PLATFORM_ID,OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -12,9 +12,11 @@ import { ComplaintService } from '../../../services/complaint';
   templateUrl: './harita-alani.html',
   styleUrl: './harita-alani.css'
 })
-export class HaritaAlani implements AfterViewInit {
+export class HaritaAlani implements AfterViewInit,OnDestroy {
 
   private map: any;
+
+  
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -26,6 +28,12 @@ async ngAfterViewInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
       const L = await import('leaflet');
 
+      // 1. GÜVENLİK KONTROLÜ: Harita daha önce çizilmişse temizle
+      if (this.map) {
+        this.map.off(); // Tüm event listener'ları kaldırır
+        this.map.remove();
+      }
+
       if (this.map) {
         this.map.remove();
       }
@@ -36,6 +44,12 @@ async ngAfterViewInit(): Promise<void> {
         [38.9080, 40.5000]  
       );
 
+
+      // Haritanın bağlı olduğu HTML elementini zorla temizleme (Leaflet'in inatçılığına karşı)
+      let mapContainer = document.getElementById('map');
+      if (mapContainer && mapContainer.innerHTML) {
+          mapContainer.innerHTML = '';
+}
       // 2. HARİTA AYARLARI
       this.map = L.map('map', {
         maxBounds: kampusSinirlari, 
@@ -172,6 +186,17 @@ async ngAfterViewInit(): Promise<void> {
       }
     });
   }
+
+// 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı tamamen yok et
+ngOnDestroy(): void {
+  if (this.map) {
+    this.map.off();
+    this.map.remove();
+    this.map = undefined;
+  }
+}
+  
+
 
   
 }

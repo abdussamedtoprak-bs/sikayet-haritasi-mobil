@@ -6,7 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* DEĞİŞTİRİLDİ: Başlığın üstünde kalması için 1000'den 9999'a çıkarıldı */
+    z-index: 15001 !important; /* DEĞİŞTİRİLDİ: Başlığın üstünde kalması için */
     padding: 16px; 
     box-sizing: border-box; 
 }
@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     position: relative; /* EKLENDİ: Z-index'in düzgün çalışması için */
-    z-index: 10000; /* EKLENDİ: Beyaz kutunun da karanlık arka planın üstünde kalmasını garantiler */
+    z-index: 1502 !important; /* EKLENDİ: Beyaz kutunun da karanlık arka planın üstünde kalmasını garantiler */
 }
 
     /* Üst Kısım */
