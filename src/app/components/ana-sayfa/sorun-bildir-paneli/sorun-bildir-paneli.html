@@ -7,13 +7,19 @@
   </div>
 
   <!-- Konum Alanı -->
-  <div class="form-group">
-    <label>Konum</label>
-    <div class="location-input">
-      <i class="icon-location">📍</i>
-      <input type="text" [(ngModel)]="reportData.konum" name="konum" placeholder="Mevcut konumunuz" readonly />
-    </div>
+ <div class="form-group">
+  <label>Konum</label>
+  <div class="location-input">
+    <i class="fa-solid fa-location-dot"></i>
+    <input
+      type="text"
+      [(ngModel)]="reportData.konum"
+      name="konum"
+      placeholder="Mevcut konumunuz"
+      readonly
+    />
   </div>
+</div>
 
   <!-- Sorun Kategorisi -->
   <div class="form-group">
