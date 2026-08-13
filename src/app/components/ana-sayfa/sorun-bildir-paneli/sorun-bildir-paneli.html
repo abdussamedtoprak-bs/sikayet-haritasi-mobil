@@ -1,64 +1,78 @@
 <div class="report-container">
+
   <div class="report-header">
     <div class="drag-handle"></div>
     <h2>Sorun Bildir</h2>
     <p>Yaşadığınız sorunu bize bildirerek çözüm sürecine katkıda bulunun.</p>
   </div>
 
-  <form (ngSubmit)="gonder()">
-    <!-- Konum Alanı -->
-    <div class="form-group">
-      <label>Konum</label>
-      <div class="location-input">
-        <i class="icon-location">📍</i>
-        <input type="text" [(ngModel)]="reportData.konum" name="konum" placeholder="Mevcut konumunuz" readonly />
-      </div>
+  <!-- Konum Alanı -->
+  <div class="form-group">
+    <label>Konum</label>
+    <div class="location-input">
+      <i class="icon-location">📍</i>
+      <input type="text" [(ngModel)]="reportData.konum" name="konum" placeholder="Mevcut konumunuz" readonly />
     </div>
+  </div>
 
-    <!-- Sorun Kategorisi -->
-    <div class="form-group">
-      <label>Sorun Kategorisi</label>
-      <div class="category-grid">
-        <div 
-          *ngFor="let cat of categories" 
-          class="category-card" 
+  <!-- Sorun Kategorisi -->
+  <div class="form-group">
+    <label>Sorun Kategorisi</label>
+    <div class="category-grid">
+      @for (cat of categories; track cat.id) {
+        <div
+          class="category-card"
           [class.active]="reportData.kategori === cat.id"
           (click)="kategoriSec(cat.id)">
           <span class="cat-icon">{{ cat.icon }}</span>
           <span class="cat-label">{{ cat.name }}</span>
         </div>
-      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Açıklama -->
+  <div class="form-group">
+    <label>Açıklama</label>
+    <textarea
+      [(ngModel)]="reportData.aciklama"
+      name="aciklama"
+      rows="3"
+      placeholder="Sorununuzu detaylı olarak açıklayın...">
+    </textarea>
+  </div>
+
+  <!-- Fotoğraf Ekle -->
+  <div class="form-group">
+    <label>Fotoğraf Ekle</label>
+    <div class="upload-box" (click)="fileInput.click()">
+      <div class="upload-icon">📷</div>
+      <p>Fotoğraf çekin veya yükleyin</p>
+      <small>Maks 3 fotoğraf yükleyebilirsiniz</small>
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        multiple
+        (change)="fotografSec($event)"
+        style="display: none;" />
     </div>
 
-    <!-- Açıklama / Yorum -->
-    <!-- Açıklama / Yorum -->
-    <div class="form-group">
-      <label>Açıklama</label>
-      <textarea [(ngModel)]="reportData.aciklama" name="aciklama" rows="3" placeholder="Sorununuzu detaylı olarak açıklayın..."></textarea>
-    </div>
-
-    <!-- Fotoğraf Ekle -->
-    <div class="form-group">
-      <label>Fotoğraf Ekle</label>
-      <div class="upload-box" (click)="fileInput.click()">
-        <div class="upload-icon">📷</div>
-        <p>Fotoğraf çekin veya yükleyin</p>
-        <small>Maks 3 fotoğraf yükleyebilirsiniz</small>
-        <input #fileInput type="file" accept="image/*" multiple (change)="fotografSec($event)" style="display: none;" />
+    @if (fotograflar().length > 0) {
+      <div class="preview-container">
+        @for (foto of fotograflar(); track $index) {
+          <div class="preview-thumb">
+            <img [src]="foto" alt="Önizleme" />
+            <button type="button" class="remove-btn" (click)="fotografSil($index)">×</button>
+          </div>
+        }
       </div>
+    }
+  </div>
 
-      <!-- Yüklenen Fotoğraf Önizlemeleri -->
-      <div class="preview-container" *ngIf="fotograflar.length > 0">
-        <div class="preview-thumb" *ngFor="let foto of fotograflar; let i = index">
-          <img [src]="foto" alt="Önizleme" />
-          <button type="button" class="remove-btn" (click)="fotografSil(i)">×</button>
-        </div>
-      </div>
-    </div>
+  <!-- Gönder Butonu -->
+  <button class="submit-btn" (click)="gonder()">
+    <span>🚀</span> Gönder
+  </button>
 
-    <!-- Gönder Butonu -->
-    <button type="submit" class="submit-btn">
-      <span>🚀</span> Gönder
-    </button>
-  </form>
 </div>
