@@ -15,7 +15,7 @@
     <app-filter-panel 
         [isOpen]="isFilterModalOpen" 
         (closePanel)="isFilterModalOpen = false"
-        ( )="updateFilters($event)"
+        ( applyFilters)="updateFilters($event)"
         (clearFilters)="clearAllFilters()">
     </app-filter-panel>
     

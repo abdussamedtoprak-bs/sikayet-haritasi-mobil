@@ -6,22 +6,25 @@
     width: 280px;
     height:100vh;
     background-color: #fdfdfd;
+    
 
     box-shadow:-3px 0 12px rgba(0,0,0,0.25);
     z-index:1000;
     padding-top:65px;
     z-index: 10000;
 
+    transition: transform s ease-in-out;
+
 }
 
-.menu-item{
-
-    display:flex;
-    justify-content:flex-start;
-    padding:18px 24px;
-    cursor:pointer;
-    font-size:20px;
-
+.menu-item { 
+    display: flex; 
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 15px;
+    padding: 18px 24px; 
+    cursor: pointer; 
+    font-size: 20px; 
 }
 
 .cikis{
