@@ -5,8 +5,9 @@
   <app-settings-section baslik="TERCİHLER"></app-settings-section>
 
   <div class="ayar-listesi">
+
     <app-toggle-row
-      ikon="🔔"
+      ikon="fa-solid fa-bell"
       baslik="Bildirimler"
       aciklama="Şikayet güncellemeleri alır."
       [aktif]="bildirimAcik()"
@@ -14,7 +15,7 @@
     </app-toggle-row>
 
     <app-toggle-row
-      ikon="📍"
+      ikon="fa-solid fa-location-dot"
       baslik="Konum"
       aciklama="Haritada konumunu gösterir."
       [aktif]="konumAcik()"
@@ -22,34 +23,37 @@
     </app-toggle-row>
 
     <app-toggle-row
-      ikon="🌙"
+      ikon="fa-solid fa-moon"
       baslik="Karanlık Mod"
       aciklama="Göz yormayan tema"
       [aktif]="karanlikMod()"
       (toggleChanged)="toggleKaranlikMod()">
     </app-toggle-row>
+
   </div>
 
   <app-settings-section baslik="UYGULAMA"></app-settings-section>
 
   <div class="ayar-listesi">
+
     <app-nav-row
-      ikon="🛡️"
+      ikon="fa-solid fa-shield"
       baslik="Güvenlik Politikası"
       (satirTiklandi)="sayfaAc('guvenlik')">
     </app-nav-row>
 
     <app-nav-row
-      ikon="📖"
+      ikon="fa-solid fa-book-open"
       baslik="Kullanım Koşulları"
       (satirTiklandi)="sayfaAc('kullanim')">
     </app-nav-row>
 
     <app-nav-row
-      ikon="ℹ️"
+      ikon="fa-solid fa-info"
       baslik="Uygulama Hakkında"
       (satirTiklandi)="sayfaAc('hakkinda')">
     </app-nav-row>
+
   </div>
 
   <div class="versiyon">Şikayet Haritası v1.0.0</div>
