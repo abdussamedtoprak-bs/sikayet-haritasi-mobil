@@ -2,3 +2,39 @@
   width: 100%;
   height: 100vh;
 }
+
+/* Harita üzerindeki temel nokta (pin) tasarımı */
+::ng-deep .siyah-kampus-tooltip {
+  background-color: #1a1a1a !important; /* Koyu siyah arka plan */
+  color: #ffffff !important;           /* Beyaz yazı rengi */
+  border: 1px solid #333333 !important;
+  border-radius: 4px !important;       /* Hafif yumuşatılmış köşeler */
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  padding: 4px 8px !important;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Tooltip'in küçük ok işaretini de siyaha çevirelim */
+::ng-deep .siyah-kampus-tooltip::before {
+  border-right-color: #1a1a1a !important; 
+}
+
+
+/* Öncelik durumlarına göre dinamik renk sınıfları */
+::ng-deep.pin-acil {
+  background-color: #FF1A1A; /* Kırmızı */
+}
+
+::ng-deep.pin-orta {
+  background-color: #1E3A8A; /* Mavi */
+}
+
+::ng-deep.pin-dusuk {
+  background-color: #e0a800; /* sarı */
+}
+
+::ng-deep .custom-map-pin {
+  background: transparent;
+  border: none;
+}

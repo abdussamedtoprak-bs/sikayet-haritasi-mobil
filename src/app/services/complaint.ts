@@ -19,7 +19,11 @@ export class ComplaintService {
         description: 'Kütüphane önünde yaklaşık 2 metre kare...',
         metaInfo: 'Güvenlik . 31.07.2026',
         status: 'İnceleniyor',
-        priority: 'Acil'
+        priority: 'Acil',
+        location: 'kütüphane önü',
+        lat: 38.8835,  // Kütüphane civarı koordinat
+        lng: 40.5042
+
         },
         {
         title: 'Kırık Yönlendirme Levhası',
@@ -27,7 +31,10 @@ export class ComplaintService {
         description: 'Kampüs haritasını gösteren levha...',
         metaInfo: 'Güvenlik . 28.07.2026',
         status: 'İnceleniyor',
-        priority: 'Acil'
+        priority: 'Acil',
+        location: 'kütüphane önü',
+        lat: 38.8835,  // Kütüphane civarı koordinat
+        lng: 40.5042
         },
         {
         title: 'Yabani Ot Temizliği',
@@ -35,7 +42,10 @@ export class ComplaintService {
         description: 'Yürüyüş yollarının kenarındaki ot...',
         metaInfo: 'Çevre . 31.07.2026 - 04.08.2026',
         status: 'Çözüldü',
-        priority: 'Düşük'
+        priority: 'Düşük',
+        location: 'Yürüyüş Yolu',
+        lat: 38.8845,  // Kampüs içinde başka bir nokta (Örnek)
+        lng: 40.5055
         },
         {
         title: 'Hasarlı Bank',
@@ -43,7 +53,10 @@ export class ComplaintService {
         description: 'Kampüs bahçesindeki bankın oturma...',
         metaInfo: 'Çevre . 26.08.2026',
         status: 'Beklemede',
-        priority: 'Düşük'
+        priority: 'Düşük',
+        location: 'Merkez Kampüs Bahçe',
+        lat: 38.8825,  // Kampüs içinde başka bir nokta (Örnek)
+        lng: 40.5030
         }
     ];
 
