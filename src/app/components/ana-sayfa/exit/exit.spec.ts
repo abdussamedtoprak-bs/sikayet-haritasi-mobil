@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { YanMenu } from './yan-menu';
+import { Exit } from './exit';
 
-describe('YanMenu', () => {
-  let component: YanMenu;
-  let fixture: ComponentFixture<YanMenu>;
+describe('Exit', () => {
+  let component: Exit;
+  let fixture: ComponentFixture<Exit>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [YanMenu]
-    })
-    .compileComponents();
+      imports: [Exit],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(YanMenu);
+    fixture = TestBed.createComponent(Exit);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

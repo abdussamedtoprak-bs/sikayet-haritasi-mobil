@@ -34,13 +34,14 @@ export class NotificationItemComponent {
    * @param {string} tip - Bildirim tipi (guncelleme/cozuldu/yakin/acil)
    * @returns {string} İlgili emoji ikonu
    */
-  ikonGetir(tip: string): string {
-    const ikonlar: Record<string, string> = {
-      guncelleme: '👤',
-      cozuldu: '✅',
-      yakin: '📍',
-      acil: '👤'
-    };
-    return ikonlar[tip] || '🔔';
-  }
+ikonGetir(tip: string): string {
+  const ikonlar: Record<string, string> = {
+    guncelleme: 'fa-solid fa-user-clock',
+    cozuldu: 'fa-solid fa-circle-check',
+    yakin: 'fa-solid fa-location-dot',
+    acil: 'fa-solid fa-user-clock'
+  };
+
+  return ikonlar[tip] || 'fa-solid fa-bell';
+}
 }
