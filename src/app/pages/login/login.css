@@ -1,3 +1,9 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .login-wrapper {
   min-height: 100vh;
   background: #f0f4f8;
@@ -17,11 +23,11 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 260px;
+  height: 55%;
   width: 100%;
   background-image: url('/arkaplan.png');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
@@ -46,43 +52,45 @@
 .logo-alan {
   position: relative;
   z-index: 1;
-  margin-top: 60px;
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 20px;
 }
 
 .logo-cerceve {
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   background: white;
-  border-radius: 18px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .logo {
   width: 100%;
-  max-width: 48px;
+  max-width: 52px;
   height: auto;
   object-fit: contain;
 }
 
 .uygulama-adi {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: #1a1a2e;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
+  text-align: center;
 }
 
 .uygulama-aciklama {
   font-size: 13px;
-  color: #666;
+  color: #555;
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -92,9 +100,9 @@
   background: white;
   border-radius: 24px;
   padding: 28px 24px;
-  margin-top: 28px;
+  margin-top: 24px;
   width: 90%;
-  max-width: 360px;
+  max-width: 380px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;

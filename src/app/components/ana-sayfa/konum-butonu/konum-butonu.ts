@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
+
 @Component({
   selector: 'app-konum-butonu',
   standalone: true,
@@ -13,6 +14,11 @@ export class KonumButonu {
 
   butonaBas() {
     this.tiklandi.emit();
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.log('Konum:', position.coords.latitude, position.coords.longitude);
+    });
+    
   }
+
 
 }

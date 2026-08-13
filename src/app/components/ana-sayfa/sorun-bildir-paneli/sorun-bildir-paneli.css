@@ -12,7 +12,7 @@
   
   /* Ortalamayı ezip tamamen sola dayama ve istenilen boşluğu verme */
   position: relative !important;
-top: 90px;
+  top: 90px;
 
 
   margin-left: 60px !important;       /* Sol kenardan tam istediğiniz mesafe */
