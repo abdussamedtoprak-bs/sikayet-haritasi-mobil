@@ -1,9 +1,18 @@
 <app-baslik (menuAcildi)="paneliKapat()"></app-baslik>
 <app-harita-alani></app-harita-alani>
 <app-konum-butonu (tiklandi)="paneliAcKapat()"></app-konum-butonu>
+<app-baslik></app-baslik>
+<!-- 1. Haritaya #haritaBileseni diyerek bir etiket veriyoruz -->
+<app-harita-alani #haritaBileseni></app-harita-alani>
+
+<!-- 2. Butona basıldığında 3 işi aynı anda yapıyoruz: Zoom yap, Konumu kaydet, Paneli aç -->
+<app-konum-butonu 
+  (konumAlindi)="haritaBileseni.onKonumGeldi($event); secilenKonum = $event; paneliAc()">
+</app-konum-butonu>
 
 @if (panelAcik) {
   <app-sorun-bildirme-paneli
+    [gelenKonum]="secilenKonum"
     (panelKapat)="panelAcik = false">
   </app-sorun-bildirme-paneli>
 }

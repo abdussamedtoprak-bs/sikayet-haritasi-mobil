@@ -3,18 +3,30 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ComplaintService } from '../../../services/complaint';
-
+import { SorunBildirmePaneli } from '../sorun-bildir-paneli/sorun-bildir-paneli';
+import { KonumButonu } from '../konum-butonu/konum-butonu';
+import { Complaint } from '../../../models/complaint';
 
 @Component({
   selector: 'app-harita-alani',
   standalone: true,
-  imports: [],
+  imports: [SorunBildirmePaneli,KonumButonu],
   templateUrl: './harita-alani.html',
   styleUrl: './harita-alani.css'
 })
 export class HaritaAlani implements AfterViewInit,OnDestroy {
 
   private map: any;
+
+  //modalın görünürlüğü ve alınan koordinatları tutacağımız değişkenler
+  isSorunBildirModalOpen=false;
+  secilenKonum: {lat:number,lng:number} | null=null;
+
+onKonumGeldi(koordinat: { lat: number, lng: number } | null) {
+  if (koordinat && this.map) {
+    this.map.flyTo([koordinat.lat, koordinat.lng], 18, { animate: true, duration: 1.5 });
+  }
+}
 
   
 
@@ -160,32 +172,106 @@ async ngAfterViewInit(): Promise<void> {
           });
       });
 
-      
+    // YENİ KOD: Bina pinleri eklendikten sonra şikayet pinlerini ekle
+    this.addComplaintPins(L);
 
     }
   }
 
+// 'L' parametresini Leaflet instance'ı olarak alıyoruz
+  addComplaintPins(L: any) {
+    this.complaintService.getComplaints().subscribe((complaints) => {
+      complaints.forEach((complaint: Complaint) => {
 
+        // 1. Önceliğe göre pin rengini belirle
+        let pinColor = '#eab308'; // Varsayılan: Sarı (Düşük)
+        // (Eski verilerde Acil kalmış olma ihtimaline karşı onu da Kırmızı yapıyoruz)
+        if (complaint.priority === 'Kritik' || complaint.priority === 'Acil') pinColor = '#ef4444'; // Kırmızı
+        if (complaint.priority === 'Orta') pinColor = '#3b82f6'; // Mavi
 
-  /**
-   * @description Haritadaki renkli pinlere tıklandığında tetiklenir.
-   * @param priority Tıklanan noktanın önceliği (Acil, Orta, Düşük)
-   * @param location Tıklanan noktanın konumu
-   */
-
-  onPinClick(priority: string,location:string):void{
-    this.authService.getRole().subscribe(role=>{
-      if(role==='yönetici'){
-        //Yönetici senaryosu: şikayetler sayfasına yönlendir ve filtreleri gönder
-        this.router.navigate(['/complaints'],{
-          queryParams:{priority:priority,location:location}
+        // 2. Binalarla karışmaması için şık, yuvarlak bir nokta (dot) oluştur
+        const dotIcon = L.divIcon({
+          className: 'complaint-dot-icon',
+          html: `<div style="
+            background-color: ${pinColor}; 
+            width: 18px; 
+            height: 18px; 
+            border-radius: 50%; 
+            border: 3px solid white; 
+            box-shadow: 0 0 6px rgba(0,0,0,0.6);">
+          </div>`,
+          iconSize: [18, 18],
+          iconAnchor: [9, 9] // Pinin merkez noktasını koordinata tam oturtur
         });
-      }else{
-        //öğrenci senaryosu: yönlendirme yapma,sadece log bas(pop up daha sonra eklenecek)
-        console.log('Uyarı: ${location} konumunda tıkllama yapıldı.sadece sayı gösterilecek');
-      }
+
+        
+        // 3. Pini haritaya ekle ve tıklama olayını bağla
+        if (this.map) {
+          const marker = L.marker([complaint.lat, complaint.lng], { icon: dotIcon }).addTo(this.map);
+
+          // Pine tıklandığında marker ve şikayet objesini gönderiyoruz
+          marker.on('click', () => {
+            this.onPinClick(complaint, marker);
+          });
+        }
+
+      });
     });
   }
+
+/**
+   * @description Haritadaki renkli pinlere tıklandığında tetiklenir.
+   */
+  onPinClick(complaint: Complaint, marker: any): void {
+    // AuthService üzerinden anlık giriş yapan kullanıcının rolünü alıyoruz
+    this.authService.getRole().subscribe(role => {
+      
+      console.log('Giriş yapan kullanıcının rolü:', role); // Konsoldan kontrol edebilirsin
+
+      if (role === 'yönetici') {
+        // YÖNETİCİ SENARYOSU: Şikayetler sayfasına yönlendir ve filtreleri gönder
+        this.router.navigate(['/complaints'], {
+          queryParams: { 
+            priority: complaint.priority, 
+            location: complaint.location 
+          }
+        });
+      } else {
+        // ÖĞRENCİ SENARYOSU (veya rol yoksa): Baloncuk (Popup) Aç ve Destek Butonu Ver
+        const popupHTML = `
+          <div style="text-align: center; padding: 5px; min-width: 150px; font-family: sans-serif;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #1f2937;">📍 ${complaint.location}</h4>
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: #4b5563;">
+              👥 Destekçi: <strong id="destek-sayisi" style="color: #3b82f6; font-size: 16px;">${complaint.supportCount}</strong>
+            </p>
+            <button id="destek-butonu" style="background-color: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;">
+              + Destekle
+            </button>
+          </div>
+        `;
+
+        marker.bindPopup(popupHTML).openPopup();
+
+        setTimeout(() => {
+          const destekButonu = document.getElementById('destek-butonu');
+          const destekSayisiMetni = document.getElementById('destek-sayisi');
+
+          if (destekButonu && destekSayisiMetni) {
+            destekButonu.onclick = () => {
+              complaint.supportCount += 1;
+              destekSayisiMetni.innerText = complaint.supportCount.toString();
+              destekButonu.innerText = 'Desteklendi ✓';
+              destekButonu.style.backgroundColor = '#10b981';
+              destekButonu.setAttribute('disabled', 'true');
+              destekButonu.style.cursor = 'default';
+            };
+          }
+        }, 10);
+      }
+      
+    });
+  }
+
 
 // 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı tamamen yok et
 ngOnDestroy(): void {

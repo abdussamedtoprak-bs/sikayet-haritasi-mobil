@@ -21,8 +21,8 @@ export class ComplaintService {
         status: 'İnceleniyor',
         priority: 'Acil',
         location: 'kütüphane önü',
-        lat: 38.8835,  // Kütüphane civarı koordinat
-        lng: 40.5042
+        lat: 38.89860734018667, 
+        lng: 40.48585394300411
 
         },
         {
@@ -33,8 +33,8 @@ export class ComplaintService {
         status: 'İnceleniyor',
         priority: 'Acil',
         location: 'kütüphane önü',
-        lat: 38.8835,  // Kütüphane civarı koordinat
-        lng: 40.5042
+        lat: 38.89745422243869, 
+        lng: 40.49077315851337
         },
         {
         title: 'Yabani Ot Temizliği',
@@ -44,8 +44,8 @@ export class ComplaintService {
         status: 'Çözüldü',
         priority: 'Düşük',
         location: 'Yürüyüş Yolu',
-        lat: 38.8845,  // Kampüs içinde başka bir nokta (Örnek)
-        lng: 40.5055
+        lat: 38.89801482869674, 
+        lng: 40.4879569074668
         },
         {
         title: 'Hasarlı Bank',
@@ -55,8 +55,8 @@ export class ComplaintService {
         status: 'Beklemede',
         priority: 'Düşük',
         location: 'Merkez Kampüs Bahçe',
-        lat: 38.8825,  // Kampüs içinde başka bir nokta (Örnek)
-        lng: 40.5030
+        lat: 38.898996440173754, 
+        lng: 40.48619827302908
         }
     ];
 
@@ -70,5 +70,26 @@ export class ComplaintService {
     getComplaints(): Observable<Complaint[]> {
         // of() metodu, statik verimizi Firestore'dan geliyormuş gibi asenkron bir akışa çevirir
         return of(this.mockComplaints); 
+    }
+
+    /**
+     * @description 
+     */
+    addComplaint(yeniSikayet: Complaint): void{
+        //yeni şikayeti dizinin en başına ekliyoruz ki listelendiğinde en üstte görünsün
+        this.mockComplaints.unshift(yeniSikayet);
+    }
+
+    /**
+     * @description destekçi sayısına göre şikayetin önceliğini dinamik olarak hesaplar
+     */
+    hesaplaOncelik(destekSayisi:number):string{
+        if(destekSayisi>=20){
+            return 'Acil';
+        }else if(destekSayisi>=10){
+            return 'Orta';
+        }else{
+            return 'Düşük';
+        }
     }
 }
