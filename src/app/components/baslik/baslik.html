@@ -5,20 +5,19 @@
         <span>Sikayet <br>&nbsp;&nbsp; Haritasi</span>
     </div>
 
-    <div class="sag-alan">
+<div class="sag-alan">
 
-            <div class="ikon-wrapper">
-        <button class="ikon-butonu">
+    <div class="ikon-wrapper">
+        <button class="ikon-butonu" (click)="profilGit()">
             <i class="fa-solid fa-circle-user"></i>
         </button>
-        </div>
-
-                <button class="ikon-butonu" (click)="menuAcik = !menuAcik">
-        <i class="fa-solid fa-bars"></i>
-        </button>
-
     </div>
 
+    <button class="ikon-butonu" (click)="menuAcik = !menuAcik">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+</div>
 </header>
 
 <header class="baslik sub-header" *ngIf="showBackBtn">

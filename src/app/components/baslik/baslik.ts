@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { YanMenu } from '../yan-menu/yan-menu';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-baslik',
@@ -19,13 +19,18 @@ export class Baslik {
 
   menuAcik = false;
 
-  constructor(private location: Location) {}
+  constructor(
+    private location: Location,
+    private router: Router
+  ) {}
 
   goBack() {
     this.location.back();
   }
 
-  profilAc() {}
+  profilGit() {
+    this.router.navigate(['/profil']);
+  }
 
   menuAc() {}
 }

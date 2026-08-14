@@ -4,6 +4,7 @@ import { KonumButonu } from '../../components/ana-sayfa/konum-butonu/konum-buton
 import { SorunBildirmePaneli} from '../../components/ana-sayfa/sorun-bildir-paneli/sorun-bildir-paneli';
 import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alani';
 
+
 @Component({
   selector: 'app-ana-sayfa',
   standalone: true,
@@ -11,7 +12,7 @@ import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alan
   Baslik,
   HaritaAlani,
   KonumButonu,
-  SorunBildirmePaneli
+  SorunBildirmePaneli,
 ],
   templateUrl: './ana-sayfa.html',
   styleUrl: './ana-sayfa.css',

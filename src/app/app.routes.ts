@@ -6,6 +6,8 @@ import {Complaints} from './pages/complaints/complaints';
 import { BildirimlerComponent } from './pages/bildirimler/bildirimler';
 import { DestekComponent } from './pages/destek/destek';
 import { AnaSayfa } from './pages/ana-sayfa/ana-sayfa';
+import { Profil } from './pages/profil/profil';
+
 
 
 
@@ -18,4 +20,5 @@ export const routes: Routes = [
   { path: 'complaints', component: Complaints },
   { path: 'bildirimler', component: BildirimlerComponent },
   { path: 'destek', component: DestekComponent },
+  {path: 'profil',component: Profil},
 ];
