@@ -179,10 +179,7 @@ export class Complaints implements OnInit {
       if (this.currentFilters.category && this.currentFilters.category !== 'Tümü') {
         let aranacakDeger = this.currentFilters.category.trim(); // Boşlukları temizle
         
-        // Modaldaki 'Kritik' kelimesini verilerimizdeki 'Acil' ile eşleştir
-        if (aranacakDeger === 'Kritik') {
-          aranacakDeger = 'Acil'; 
-        }
+        
         
         result = result.filter(c => c.priority.trim() === aranacakDeger);
       }

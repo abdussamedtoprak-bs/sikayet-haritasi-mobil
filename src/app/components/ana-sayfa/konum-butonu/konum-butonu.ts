@@ -1,5 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-
+import { Component, Output, EventEmitter, NgZone } from '@angular/core'; // NgZone eklendi
 
 @Component({
   selector: 'app-konum-butonu',
@@ -9,16 +8,36 @@ import { Component, Output, EventEmitter } from '@angular/core';
   styleUrl: './konum-butonu.css'
 })
 export class KonumButonu {
+  
+  @Output() konumAlindi = new EventEmitter<{lat: number, lng: number} | null>();
 
-  @Output() tiklandi = new EventEmitter<void>();
+  // Angular'ın değişim algılayıcısını (Zone) kurucu metoda (constructor) ekliyoruz
+  constructor(private zone: NgZone) {}
 
   butonaBas() {
-    this.tiklandi.emit();
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log('Konum:', position.coords.latitude, position.coords.longitude);
-    });
-    
+    console.log('1. ADIM: Butona tıklandı (konum-butonu.ts)');
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Angular'ı zorla uyandırıyoruz (zone.run)
+          this.zone.run(() => {
+            console.log('Konum bulundu! Haritaya fırlatılıyor...');
+            this.konumAlindi.emit({ 
+              lat: position.coords.latitude, 
+              lng: position.coords.longitude 
+            });
+          });
+        },
+        (error) => {
+          this.zone.run(() => {
+            console.warn('Konum izni reddedildi, null fırlatılıyor...');
+            this.konumAlindi.emit(null);
+          });
+        }
+      );
+    } else {
+      this.konumAlindi.emit(null);
+    }
   }
-
-
 }
