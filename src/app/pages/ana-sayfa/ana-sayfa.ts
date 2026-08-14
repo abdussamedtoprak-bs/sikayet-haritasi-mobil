@@ -17,17 +17,20 @@ import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alan
   styleUrl: './ana-sayfa.css',
 })
 export class AnaSayfa {
-  panelAcik= false;
+panelAcik = false;
   secilenKonum: any = null;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
   paneliAc() {
-  // Uçuş animasyonu (flyTo) için zaman tanıyalım
-  setTimeout(() => {
-    this.panelAcik = true;
-    //aşağıdaki satır ekranı zorla güncelleyecek
-    this.cdr.detectChanges();
-  }, 1000); // 1 saniye sonra paneli aç
-}
+    setTimeout(() => {
+      this.panelAcik = true;
+      this.cdr.detectChanges();
+    }, 1000);
+  }
+
+  /** @description Yan-menü açıldığında Sorun Bildir panelini kapatır, ikisinin aynı anda görünmesini engeller. */
+  paneliKapat(){
+    this.panelAcik = false;
+  }
 }
