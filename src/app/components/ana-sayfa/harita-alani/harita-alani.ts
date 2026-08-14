@@ -3,14 +3,12 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ComplaintService } from '../../../services/complaint';
-import { SorunBildirmePaneli } from '../sorun-bildir-paneli/sorun-bildir-paneli';
-import { KonumButonu } from '../konum-butonu/konum-butonu';
 import { Complaint } from '../../../models/complaint';
 
 @Component({
   selector: 'app-harita-alani',
   standalone: true,
-  imports: [SorunBildirmePaneli,KonumButonu],
+  imports: [],
   templateUrl: './harita-alani.html',
   styleUrl: './harita-alani.css'
 })
