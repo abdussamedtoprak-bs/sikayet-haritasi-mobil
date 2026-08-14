@@ -16,7 +16,7 @@ import { YanMenu } from '../../components/yan-menu/yan-menu';
 
 @Component({
   selector: 'app-complaints',
-  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar,HaritaAlani,YanMenu],
+  imports: [PriorityLegend, ActiveFilterBadges, FilterPanel, TabFilter,ComplaintCard,ComplaintDetailSheet,Baslik,SearchBar,HaritaAlani],
   templateUrl: './complaints.html',
   styleUrl: './complaints.css',
 })
