@@ -1,13 +1,15 @@
-<div class="card-container" 
-        [class.border-red]="complaint.priority === 'Acil'" 
-        [class.border-purple]="complaint.priority === 'Düşük'">
+<div class="card-container"
+        [class.border-red]="complaint.priority === 'Acil'"
+        [class.border-blue]="complaint.priority === 'Orta'"
+        [class.border-yellow]="complaint.priority === 'Düşük'">
     
     <div class="card-header">
         <h3 class="title">{{ complaint.title }}</h3>
         <!-- Destek Sayısı Rozeti -->
-        <div class="support-badge" 
-            [class.bg-red]="complaint.priority === 'Acil'" 
-            [class.bg-purple]="complaint.priority === 'Düşük'">
+        <div class="support-badge"
+            [class.bg-red]="complaint.priority === 'Acil'"
+            [class.bg-blue]="complaint.priority === 'Orta'"
+            [class.bg-yellow]="complaint.priority === 'Düşük'">
         👤 {{ complaint.supportCount }}
         </div>
     </div>
@@ -18,8 +20,8 @@
 
     <div class="card-footer">
         <span class="meta-info">{{ complaint.metaInfo }}</span>
-        <!-- Durum Rozeti -->
-        <div class="status-badge" 
+        <!-- Durum Rozeti (Burası aynı kalıyor) -->
+        <div class="status-badge"
             [class.status-review]="complaint.status === 'İnceleniyor'"
             [class.status-resolved]="complaint.status === 'Çözüldü'"
             [class.status-pending]="complaint.status === 'Beklemede'">

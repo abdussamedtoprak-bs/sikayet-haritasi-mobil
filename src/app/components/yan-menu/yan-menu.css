@@ -1,20 +1,19 @@
-.yan-menu{
-    
+.yan-menu {
     position: fixed;
-    top: 70px;;
-    right:0;
+    top: 70px;
+    right: 0;
     width: 280px;
-    height:100vh;
+    height: 100vh;
     background-color: #fdfdfd;
-    
+    box-shadow: -3px 0 12px rgba(0,0,0,0.25);
+    z-index: 10500;
+    padding-top: 65px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
 
-    box-shadow:-3px 0 12px rgba(0,0,0,0.25);
-    z-index:1000;
-    padding-top:65px;
-    z-index: 10000;
-
-    transition: transform s ease-in-out;
-
+.yan-menu.acik {
+    transform: translateX(0);
 }
 
 .menu-item { 
@@ -28,10 +27,9 @@
 }
 
 .cikis{
-    position:absolute;
-    bottom:180px;
-    right:20px;
-    cursor:pointer;
-    font-size:40px;
-
+    position: absolute;
+    bottom: 180px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 40px;
 }

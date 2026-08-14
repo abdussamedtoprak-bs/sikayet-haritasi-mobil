@@ -23,6 +23,9 @@
 <header class="baslik sub-header" *ngIf="showBackBtn">
     <button class="back-btn" (click)="goBack()">&#8592;</button>
     <h2 class="page-title">{{title}}</h2>
+    <button class="menu-btn" (click)="menuAc()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 </header>
 
-<app-yan-menu *ngIf="menuAcik"></app-yan-menu>
+<app-yan-menu [menuAcik]="menuAcik"></app-yan-menu>

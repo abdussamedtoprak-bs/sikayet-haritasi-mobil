@@ -1,6 +1,8 @@
-import { Component, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Output, EventEmitter, signal,Input,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Complaint } from '../../../models/complaint';
+import { ComplaintService } from '../../../services/complaint';
 
 /**
  * @description Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
@@ -14,7 +16,24 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './sorun-bildir-paneli.html',
   styleUrl: './sorun-bildir-paneli.css',
 })
-export class SorunBildirmePaneli {
+export class SorunBildirmePaneli implements OnInit{
+
+  /**
+   * @description haritadan gelen anlık koordinat bilgisini karşılar
+   * 
+   */
+  @Input() gelenKonum:{lat:number,lng:number}|null=null;
+  
+
+  constructor(private complaintService:ComplaintService){}
+
+  ngOnInit(): void {
+    if (this.gelenKonum) {
+      // DİKKAT: Sağ ve soldaki işaretler normal tırnak değil, ters tırnaktır (backtick)
+      this.reportData.konum = `${this.gelenKonum.lat.toFixed(4)}, ${this.gelenKonum.lng.toFixed(4)}`;
+    }
+  } 
+
 
   /** @description Paneli kapatmak için üst bileşene event fırlatır */
   @Output() panelKapat = new EventEmitter<void>();
@@ -80,12 +99,32 @@ export class SorunBildirmePaneli {
    * @description Formu gönderir ve paneli kapatır.
    * Firebase entegrasyonunda Firestore'a kaydedilecektir.
    */
-  gonder(): void {
-    console.log('Gönderilen Veriler:', {
-      ...this.reportData,
-      fotograflar: this.fotograflar()
-    });
-    alert('Sorunuz başarıyla bildirildi!');
-    this.panelKapat.emit();
+  gonder() {
+    // 1. Konum string'ini ("38.9052, 40.4824") parçalayıp enlem ve boylam (number) olarak ayırıyoruz
+    const konumParcalari = this.reportData.konum.split(',');
+    const enlem = parseFloat(konumParcalari[0].trim());
+    const boylam = parseFloat(konumParcalari[1].trim());
+
+    const baslangicDestek=1;
+    // 2. Servisin beklediği Complaint (Şikayet) yapısını oluşturuyoruz
+    const yeniSikayet: Complaint = {
+      title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(), 
+      supportCount: baslangicDestek, // İlk destekleyeni kullanıcının kendisi sayıyoruz
+      description: this.reportData.aciklama,
+      metaInfo: 'Genel - ' + new Date().toLocaleDateString('tr-TR'),
+      status: 'İnceleniyor', 
+      // ÖNCELİK ARTIK SERVİSTEKİ KURALA GÖRE OTOMATİK BELİRLENİYOR
+      priority: this.complaintService.hesaplaOncelik(baslangicDestek),
+      location: 'Haritadan Bildirildi',
+      lat: enlem,
+      lng: boylam
+    };
+
+    // 3. Veriyi servisteki havuza gönderiyoruz
+    this.complaintService.addComplaint(yeniSikayet);
+
+    // 4. Kullanıcıya bilgi verip paneli kapatıyoruz
+    alert('Sorunuz başarıyla bildirildi ve sisteme kaydedildi!');
+    this.panelKapat.emit(); // Modalı kapatma sinyali
   }
 }

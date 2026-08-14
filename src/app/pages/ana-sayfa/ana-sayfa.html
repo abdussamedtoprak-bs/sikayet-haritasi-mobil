@@ -1,9 +1,12 @@
-<app-baslik></app-baslik>
-<app-harita-alani></app-harita-alani>
-<app-konum-butonu (tiklandi)="paneliAcKapat()"></app-konum-butonu>
+<app-baslik (menuAcildi)="paneliKapat()"></app-baslik>
+<app-harita-alani #haritaBileseni></app-harita-alani>
+<app-konum-butonu 
+  (konumAlindi)="haritaBileseni.onKonumGeldi($event); secilenKonum = $event; paneliAc()">
+</app-konum-butonu>
 
 @if (panelAcik) {
   <app-sorun-bildirme-paneli
+    [gelenKonum]="secilenKonum"
     (panelKapat)="panelAcik = false">
   </app-sorun-bildirme-paneli>
 }
