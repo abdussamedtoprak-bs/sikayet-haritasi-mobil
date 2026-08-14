@@ -13,6 +13,14 @@
   box-sizing: border-box;
 }
 
+
+/* app-baslik, wrapper'ın 16px'lik yan padding'inden etkilenmesin diye
+   negatif margin ile dışarı taşırılıyor -> Ayarlar'daki gibi kenara tam oturuyor. */
+app-baslik {
+  display: block;
+  margin: 0 -16px;
+}
+
 .hero-alan {
   background: rgba(232, 240, 254, 0.9);
   margin: 16px 0;

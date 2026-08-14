@@ -17,9 +17,14 @@ import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alan
   styleUrl: './ana-sayfa.css',
 })
 export class AnaSayfa {
-  panelAcik= false;
+  panelAcik = false;
 
   paneliAcKapat(){
-    this.panelAcik =!this.panelAcik;
+    this.panelAcik = !this.panelAcik;
+  }
+
+  /** @description Yan-menü açıldığında Sorun Bildir panelini kapatır, ikisinin aynı anda görünmesini engeller. */
+  paneliKapat(){
+    this.panelAcik = false;
   }
 }

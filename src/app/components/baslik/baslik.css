@@ -2,16 +2,12 @@
     height:70px;
     width:100%;
     position:fixed;
-
     display:flex;
     justify-content:space-between;
     align-items:center;
     z-index:15000;
     padding:0 0px;
-
-    
     background:white;
-
     border-bottom:1px solid #E5E7EB;
 }
 
@@ -37,38 +33,26 @@
 }
 
 .ikon-butonu{
-
-    
-
     width:42px;
     height:42px;
     color:#5B7FD9;
-
     border:none;
-
     border-radius:50%;
-
     background:white;
-
     cursor:pointer;
-
     font-size:22px;
-
     transition:.2s;
      transform: translateX(-15px);
 }
 
 .ikon-butonu:hover{
-
     background:#EEF5FC;
-
 }
 
 /*alt sayfa: güncel şikayetler veya diğer sayfalar için özel tasarım*/
 .baslik.sub-header{
     justify-content: center;/*yazıyı tam ortaya hizalar*/
     position:relative;/*ok tuşunu serbestçe yerleştirmek için*/
-
 }
 .back-btn{
     position:absolute;
@@ -81,7 +65,17 @@
     color:#000;
     display:flex;
     align-items:center;
-
+}
+.menu-btn{
+    position:absolute;
+    right:24px;/*back-btn ile simetrik, sağ tarafa sabitler*/
+    background:none;
+    border:none;
+    font-size:22px;
+    cursor:pointer;
+    color:#000;
+    display:flex;
+    align-items:center;
 }
 .page-title{
     font-size: 22px;
