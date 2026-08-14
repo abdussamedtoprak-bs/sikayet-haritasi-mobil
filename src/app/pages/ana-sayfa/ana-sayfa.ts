@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,ChangeDetectorRef } from '@angular/core';
 import { Baslik } from '../../components/baslik/baslik';
 import { KonumButonu } from '../../components/ana-sayfa/konum-butonu/konum-butonu';
 import { SorunBildirmePaneli} from '../../components/ana-sayfa/sorun-bildir-paneli/sorun-bildir-paneli';
@@ -18,8 +18,16 @@ import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alan
 })
 export class AnaSayfa {
   panelAcik= false;
+  secilenKonum: any = null;
 
-  paneliAcKapat(){
-    this.panelAcik =!this.panelAcik;
-  }
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  paneliAc() {
+  // Uçuş animasyonu (flyTo) için zaman tanıyalım
+  setTimeout(() => {
+    this.panelAcik = true;
+    //aşağıdaki satır ekranı zorla güncelleyecek
+    this.cdr.detectChanges();
+  }, 1000); // 1 saniye sonra paneli aç
+}
 }
