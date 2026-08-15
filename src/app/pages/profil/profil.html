@@ -1,186 +1,88 @@
 <div class="profil-sayfasi">
 
-  <!-- ÜST BAŞLIK -->
   <div class="profil-baslik">
-
     <button class="geri-buton" (click)="geriDon()">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
-
     <h2>Profil</h2>
-
   </div>
 
-
-  <!-- PROFİL KARTI -->
   <div class="profil-karti">
 
     <div class="avatar-alani">
-
-      <div class="avatar">
-        M
-      </div>
-
+      <div class="avatar">M</div>
       <button class="kamera-buton">
         <i class="fa-solid fa-camera"></i>
       </button>
-
     </div>
 
-
     <div class="profil-bilgileri">
-
       <h3>Mehmet Yılmaz</h3>
-
       <p>24605010001@bingol.edu.tr</p>
-
       <button class="dogrulama-buton">
         <i class="fa-solid fa-circle-check"></i>
         Doğrulanmış Kullanıcı
       </button>
-
     </div>
 
   </div>
 
-
-  <!-- İSTATİSTİKLER -->
   <div class="istatistikler">
 
     <div class="istatistik-karti bildirim">
-
       <i class="fa-regular fa-clock"></i>
-
       <strong>12</strong>
-
       <span>Bildirim</span>
-
     </div>
-
 
     <div class="istatistik-karti onaylanan">
-
       <i class="fa-regular fa-clock"></i>
-
       <strong>7</strong>
-
       <span>Onaylanan</span>
-
     </div>
 
-
     <div class="istatistik-karti bekleyen">
-
       <i class="fa-regular fa-clock"></i>
-
       <strong>2</strong>
-
       <span>Bekleyen</span>
-
     </div>
 
   </div>
 
-
-  <!-- MENÜLER -->
   <div class="profil-menusu">
 
-
-    <!-- KİŞİSEL BİLGİLER -->
-    <button
-      class="menu-karti"
-      (click)="kisiselBilgiler()">
-
+    <button class="menu-karti" (click)="kisiselBilgiler()">
       <div class="menu-ikon">
         <i class="fa-regular fa-user"></i>
       </div>
-
       <div class="menu-yazi">
-
         <strong>Kişisel Bilgiler</strong>
-
-        <span>
-          Ad, soyad, e-posta...
-        </span>
-
+        <span>Ad, soyad, e-posta...</span>
       </div>
-
       <i class="fa-solid fa-chevron-right menu-ok"></i>
-
     </button>
 
-
-    <!-- ŞİFRE DEĞİŞTİR -->
-    <button
-      class="menu-karti"
-      (click)="sifreDegistir()">
-
-      <div class="menu-ikon">
-        <i class="fa-solid fa-user-lock"></i>
-      </div>
-
-      <div class="menu-yazi">
-
-        <strong>Şifre Değiştir</strong>
-
-        <span>
-          Hesap şifresini güncelleyin
-        </span>
-
-      </div>
-
-      <i class="fa-solid fa-chevron-right menu-ok"></i>
-
-    </button>
-
-
-    <!-- BİLDİRİM TERCİHLERİ -->
-    <button
-      class="menu-karti"
-      (click)="bildirimTercihleri()">
-
+    <button class="menu-karti" (click)="bildirimTercihleri()">
       <div class="menu-ikon">
         <i class="fa-regular fa-bell"></i>
       </div>
-
       <div class="menu-yazi">
-
         <strong>Bildirim Tercihleri</strong>
-
-        <span>
-          Bildirim ayarlarınızı yönetin
-        </span>
-
+        <span>Bildirim ayarlarınızı yönetin</span>
       </div>
-
       <i class="fa-solid fa-chevron-right menu-ok"></i>
-
     </button>
 
-
-    <!-- YARDIM -->
-    <button
-      class="menu-karti"
-      (click)="yardimDestek()">
-
+    <button class="menu-karti" (click)="yardimDestek()">
       <div class="menu-ikon">
         <i class="fa-solid fa-question"></i>
       </div>
-
       <div class="menu-yazi">
-
         <strong>Yardım & Destek</strong>
-
-        <span>
-          Sıkça sorulan sorular
-        </span>
-
+        <span>Sıkça sorulan sorular</span>
       </div>
-
       <i class="fa-solid fa-chevron-right menu-ok"></i>
-
     </button>
-
 
   </div>
 
