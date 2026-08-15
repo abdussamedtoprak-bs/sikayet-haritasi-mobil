@@ -17,6 +17,7 @@ export class Profil {
 
   kisiselBilgiler() {
     console.log('Kişisel bilgiler');
+    this.router.navigate(['/profil-duzenleme']);
   }
 
   sifreDegistir() {
