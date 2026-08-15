@@ -1,116 +1,81 @@
 /* ANA SAYFA */
-
 .profil-sayfasi {
   width: 100%;
-  max-width: 390px;
+  max-width: 420px;
   min-height: 100vh;
   margin: 0 auto;
-
   background-color: #ffffff;
-
-  padding: 18px 16px 30px;
-
+  padding: 24px 20px 40px;
   box-sizing: border-box;
-
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-
 /* ÜST BAŞLIK */
-
 .profil-baslik {
   position: relative;
-
-  height: 34px;
-
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-bottom: 14px;
+  margin-bottom: 24px;
 }
 
 .profil-baslik h2 {
   margin: 0;
-
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-
-  color: #222;
+  color: #111;
 }
 
 .geri-buton {
   position: absolute;
   left: 0;
-
-  width: 32px;
-  height: 32px;
-
+  width: 40px;
+  height: 40px;
   border: none;
   background: transparent;
-
   cursor: pointer;
-
   display: flex;
   align-items: center;
-  justify-content: center;
-
-  color: #222;
+  justify-content: flex-start;
+  color: #111;
 }
 
 .geri-buton i {
-  font-size: 14px;
+  font-size: 20px;
 }
-
 
 /* PROFİL KARTI */
-
 .profil-karti {
   width: 100%;
-  min-height: 80px;
-
   border: 1px solid #e3e3e3;
-  border-radius: 9px;
-
+  border-radius: 16px;
   display: flex;
   align-items: center;
-
-  padding: 8px;
-
+  padding: 16px;
   box-sizing: border-box;
-
-  margin-bottom: 14px;
+  margin-bottom: 24px;
 }
 
-
 /* AVATAR */
-
 .avatar-alani {
   position: relative;
-
-  width: 76px;
-  height: 76px;
-
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
-
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-
   background-color: #65a7ed;
-
   color: white;
-
-  font-size: 23px;
-  font-weight: 400;
-
+  font-size: 32px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,191 +83,131 @@
 
 .kamera-buton {
   position: absolute;
-
-  right: 2px;
-  bottom: 2px;
-
-  width: 20px;
-  height: 20px;
-
+  right: 0;
+  bottom: 0;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-
-  border: 1px solid #bdbdbd;
-
+  border: 1px solid #e3e3e3;
   background-color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .kamera-buton i {
-  font-size: 9px;
-  color: #777;
+  font-size: 12px;
+  color: #555;
 }
 
-
 /* PROFİL BİLGİLERİ */
-
 .profil-bilgileri {
   min-width: 0;
-
-  margin-left: 6px;
-
+  margin-left: 16px;
   display: flex;
   flex-direction: column;
-
   align-items: flex-start;
 }
 
 .profil-bilgileri h3 {
-  margin: 0 0 3px;
-
-  font-size: 11px;
+  margin: 0 0 4px;
+  font-size: 18px;
   font-weight: 600;
-
   color: #222;
 }
 
 .profil-bilgileri p {
-  margin: 0 0 6px;
-
-  font-size: 7px;
-
+  margin: 0 0 10px;
+  font-size: 13px;
   color: #555;
-
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-
 /* DOĞRULAMA */
-
 .dogrulama-buton {
   border: none;
-  border-radius: 5px;
-
+  border-radius: 6px;
   background-color: #eaf4ff;
-
   color: #4387c9;
-
-  padding: 5px 7px;
-
-  font-size: 7px;
-
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 4px;
-
+  gap: 6px;
   cursor: pointer;
 }
 
 .dogrulama-buton i {
-  font-size: 8px;
+  font-size: 14px;
 }
 
-
 /* İSTATİSTİKLER */
-
 .istatistikler {
   display: grid;
-
   grid-template-columns: repeat(3, 1fr);
-
-  gap: 8px;
-
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .istatistik-karti {
-  height: 66px;
-
+  height: 90px;
   border: 1px solid #e5e5e5;
-
-  border-radius: 6px;
-
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-
   align-items: flex-start;
   justify-content: center;
-
-  padding-left: 11px;
-
+  padding-left: 16px;
   box-sizing: border-box;
 }
 
 .istatistik-karti i {
-  font-size: 13px;
-
-  margin-bottom: 4px;
+  font-size: 20px;
+  margin-bottom: 8px;
 }
 
 .istatistik-karti strong {
-  font-size: 10px;
-
+  font-size: 18px;
   color: #222;
-
   margin-bottom: 2px;
 }
 
 .istatistik-karti span {
-  font-size: 7px;
-
+  font-size: 13px;
   color: #777;
 }
 
-
 /* İSTATİSTİK RENKLERİ */
-
-.bildirim i {
-  color: #5d9cf0;
-}
-
-.onaylanan i {
-  color: #5bb879;
-}
-
-.bekleyen i {
-  color: #f29a38;
-}
-
+.bildirim i { color: #5d9cf0; }
+.onaylanan i { color: #5bb879; }
+.bekleyen i { color: #f29a38; }
 
 /* MENÜ */
-
 .profil-menusu {
   display: flex;
-
   flex-direction: column;
-
-  gap: 8px;
+  gap: 12px;
 }
 
-
 /* MENÜ KARTI */
-
 .menu-karti {
   width: 100%;
-  min-height: 54px;
-
-  border: 1px solid #dcdcdc;
-
-  border-radius: 7px;
-
+  min-height: 72px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
   background-color: white;
-
   display: flex;
   align-items: center;
-
-  padding: 7px 10px;
-
+  padding: 12px 16px;
   box-sizing: border-box;
-
   cursor: pointer;
-
   text-align: left;
-
   transition: background-color 0.2s;
 }
 
@@ -310,87 +215,55 @@
   background-color: #f8fbff;
 }
 
-
 /* MENÜ İKONU */
-
 .menu-ikon {
-  width: 27px;
-  height: 27px;
-
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
 }
 
 .menu-ikon i {
   color: #5b9de7;
-
-  font-size: 14px;
+  font-size: 22px;
 }
 
-
 /* MENÜ YAZISI */
-
 .menu-yazi {
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
-  margin-left: 7px;
+  margin-left: 12px;
 }
 
 .menu-yazi strong {
-  font-size: 9px;
-
+  font-size: 16px;
   font-weight: 600;
-
   color: #222;
-
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 .menu-yazi span {
-  font-size: 7px;
-
+  font-size: 13px;
   color: #777;
 }
 
-
 /* OK */
-
 .menu-ok {
-  font-size: 9px;
-
-  color: #333;
-
-  margin-left: 5px;
+  font-size: 14px;
+  color: #999;
+  margin-left: 8px;
 }
 
-
-/* MOBİL */
-
-@media (max-width: 400px) {
-
-  .profil-sayfasi {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .profil-karti {
-    min-height: 76px;
-  }
-
-  .avatar {
-    width: 60px;
-    height: 60px;
-  }
-
-  .avatar-alani {
-    width: 70px;
-    height: 70px;
-  }
-
+/* MOBİL (Daha küçük ekranlar için ince ayar) */
+@media (max-width: 360px) {
+  .profil-sayfasi { padding-left: 16px; padding-right: 16px; }
+  .profil-karti { padding: 12px; }
+  .avatar { width: 64px; height: 64px; font-size: 28px; }
+  .avatar-alani { width: 68px; height: 68px; }
+  .profil-bilgileri h3 { font-size: 16px; }
+  .profil-bilgileri p { font-size: 12px; }
+  .istatistik-karti { padding-left: 12px; }
 }
