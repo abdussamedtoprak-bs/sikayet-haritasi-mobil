@@ -217,57 +217,59 @@ async ngAfterViewInit(): Promise<void> {
     });
   }
 
-/**
-   * @description Haritadaki renkli pinlere tıklandığında tetiklenir.
+  /**
+   * @description Haritadaki renkli şikayet pinlerine tıklandığında tetiklenir.
+   *
+   * Yönetici ve öğrenci için farklı davranır:
+   * - Yönetici → Güncel Şikayetler sayfasına filtrelenmiş olarak yönlendirilir
+   * - Öğrenci  → Konum bilgisi ve destek butonu içeren baloncuk açılır
+   *
+   * @param {Complaint} complaint - Tıklanan pine ait şikayet kaydı
+   * @param {any} marker - Leaflet marker nesnesi
    */
   onPinClick(complaint: Complaint, marker: any): void {
-    // AuthService üzerinden anlık giriş yapan kullanıcının rolünü alıyoruz
-    this.authService.getRole().subscribe(role => {
-      
-      console.log('Giriş yapan kullanıcının rolü:', role); // Konsoldan kontrol edebilirsin
 
-      if (role === 'yönetici') {
-        // YÖNETİCİ SENARYOSU: Şikayetler sayfasına yönlendir ve filtreleri gönder
-        this.router.navigate(['/complaints'], {
-          queryParams: { 
-            priority: complaint.priority, 
-            location: complaint.location 
-          }
-        });
-      } else {
-        // ÖĞRENCİ SENARYOSU (veya rol yoksa): Baloncuk (Popup) Aç ve Destek Butonu Ver
-        const popupHTML = `
-          <div style="text-align: center; padding: 5px; min-width: 150px; font-family: sans-serif;">
-            <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #1f2937;">📍 ${complaint.location}</h4>
-            <p style="margin: 0 0 12px 0; font-size: 13px; color: #4b5563;">
-              👥 Destekçi: <strong id="destek-sayisi" style="color: #3b82f6; font-size: 16px;">${complaint.supportCount}</strong>
-            </p>
-            <button id="destek-butonu" style="background-color: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;">
-              + Destekle
-            </button>
-          </div>
-        `;
+    // YÖNETİCİ SENARYOSU: Şikayetler sayfasına yönlendir ve filtreleri gönder
+    if (this.authService.isAdmin()) {
+      this.router.navigate(['/complaints'], {
+        queryParams: {
+          priority: complaint.priority,
+          location: complaint.location
+        }
+      });
+      return;
+    }
 
-        marker.bindPopup(popupHTML).openPopup();
+    // ÖĞRENCİ SENARYOSU: Baloncuk (Popup) aç ve destek butonu göster
+    const popupHTML = `
+      <div style="text-align: center; padding: 5px; min-width: 150px; font-family: sans-serif;">
+        <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #1f2937;">📍 ${complaint.location}</h4>
+        <p style="margin: 0 0 12px 0; font-size: 13px; color: #4b5563;">
+          👥 Destekçi: <strong id="destek-sayisi" style="color: #3b82f6; font-size: 16px;">${complaint.supportCount}</strong>
+        </p>
+        <button id="destek-butonu" style="background-color: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;">
+          + Destekle
+        </button>
+      </div>
+    `;
 
-        setTimeout(() => {
-          const destekButonu = document.getElementById('destek-butonu');
-          const destekSayisiMetni = document.getElementById('destek-sayisi');
+    marker.bindPopup(popupHTML).openPopup();
 
-          if (destekButonu && destekSayisiMetni) {
-            destekButonu.onclick = () => {
-              complaint.supportCount += 1;
-              destekSayisiMetni.innerText = complaint.supportCount.toString();
-              destekButonu.innerText = 'Desteklendi ✓';
-              destekButonu.style.backgroundColor = '#10b981';
-              destekButonu.setAttribute('disabled', 'true');
-              destekButonu.style.cursor = 'default';
-            };
-          }
-        }, 10);
+    setTimeout(() => {
+      const destekButonu = document.getElementById('destek-butonu');
+      const destekSayisiMetni = document.getElementById('destek-sayisi');
+
+      if (destekButonu && destekSayisiMetni) {
+        destekButonu.onclick = () => {
+          complaint.supportCount += 1;
+          destekSayisiMetni.innerText = complaint.supportCount.toString();
+          destekButonu.innerText = 'Desteklendi ✓';
+          destekButonu.style.backgroundColor = '#10b981';
+          destekButonu.setAttribute('disabled', 'true');
+          destekButonu.style.cursor = 'default';
+        };
       }
-      
-    });
+    }, 10);
   }
 
 
@@ -279,8 +281,5 @@ ngOnDestroy(): void {
     this.map = undefined;
   }
 }
-  
-
-
   
 }

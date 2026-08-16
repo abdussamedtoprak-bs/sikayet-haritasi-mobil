@@ -1,80 +1,56 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, effect } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 /**
  * @description Kullanıcı giriş sayfası bileşenidir.
- * Outlook ile giriş ve yönetici girişi olmak üzere iki farklı giriş modu sunar.
- * Firebase entegrasyonuna kadar mock data ile çalışmaktadır.
+ *
+ * Google hesabı ile tek butonlu giriş sunar. Ayrı bir kayıt adımı yoktur;
+ * kullanıcının ilk girişi otomatik olarak kayıt yerine geçer.
+ *
+ * Yönetici için ayrı bir giriş kapısı bulunmaz. Yönetici de aynı butondan
+ * giriş yapar, rolü Firestore'dan okunarak belirlenir.
  */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgTemplateOutlet],
+  imports: [],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
 
-  /** @description Yönetici giriş formunun görünürlük durumu */
-  yoneticiModu = false;
-
-  /** @description Giriş formundaki e-posta değeri */
-  email = '';
-
-  /** @description Giriş formundaki şifre değeri */
-  sifre = '';
-
-  /** @description Hatalı giriş durumunda gösterilecek mesaj */
-  hataMesaji = '';
-
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  private readonly router = inject(Router);
 
   /**
-   * @description Outlook ile giriş butonuna tıklandığında çalışır.
-   * Firebase entegrasyonuna kadar direkt ana sayfaya yönlendirir.
+   * @description Şablonda doğrudan kullanılabilmesi için public tanımlanmıştır.
+   * Yükleniyor durumu ve hata mesajı bu servisten okunur.
    */
-  outlookGiris(): void {
-    this.router.navigate(['/anasayfa']);
-  }
+  readonly authService = inject(AuthService);
 
   /**
-   * @description Yönetici girişi butonuna tıklandığında giriş formunu açar.
+   * @description Giriş yapabilecek e-posta domaini.
+   * null ise kısıt yoktur ve bilgi metni gösterilmez.
    */
-  yoneticiGirisAc(): void {
-    this.yoneticiModu = true;
-  }
+  readonly allowedDomain = environment.allowedEmailDomain;
 
-  /**
-   * @description Yönetici giriş formunu gönderir.
-   * AuthService üzerinden Observable ile doğrulama yapar.
-   */
-  yoneticiGirisYap(): void {
-    this.authService.login(this.email, this.sifre).subscribe({
-      next: (basarili) => {
-        if (basarili) {
-          this.router.navigate(['/anasayfa']);
-        } else {
-          this.hataMesaji = 'E-posta veya şifre hatalı.';
-        }
-      },
-      error: (err) => {
-        console.error('Giriş hatası:', err);
-        this.hataMesaji = 'Bir hata oluştu, lütfen tekrar deneyin.';
+  constructor() {
+    // Oturum açıldığı anda kullanıcıyı ana sayfaya yönlendirir.
+    // Hem yeni girişte hem de zaten oturumu açık olan birinin
+    // login sayfasına gelmesi durumunda çalışır.
+    effect(() => {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/anasayfa']);
       }
     });
   }
 
   /**
-   * @description Yönetici giriş formunu kapatır ve hata mesajını temizler.
+   * @description Google ile giriş penceresini açar.
+   * Hata yönetimi ve kullanıcı kaydı AuthService tarafında yapılır.
    */
-  geri(): void {
-    this.yoneticiModu = false;
-    this.hataMesaji = '';
+  async signIn(): Promise<void> {
+    await this.authService.signInWithGoogle();
   }
 }

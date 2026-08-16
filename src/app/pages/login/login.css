@@ -124,7 +124,7 @@
   margin: 0;
 }
 
-.outlook-btn {
+.google-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,33 +140,20 @@
   color: #1a1a2e;
   width: 100%;
 }
-.outlook-btn:hover { background: #f5f5f5; }
-.outlook-ikon { font-size: 20px; }
+.google-btn:hover:not(:disabled) { background: #f5f5f5; }
 
-.ayirac {
-  height: 1px;
-  background: #f0f0f0;
-  margin: 4px 0;
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.yonetici-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: white;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  width: 100%;
-  color: #1a1a2e;
-  transition: background 0.2s;
+.google-ikon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
-.yonetici-btn:hover { background: #f5f5f5; }
-.yonetici-ikon { font-size: 20px; }
-.ok { margin-left: auto; font-size: 18px; color: #aaa; }
+
+
 
 .alt-metin {
   font-size: 11px;
@@ -175,30 +162,13 @@
   margin: 0;
   line-height: 1.6;
 }
+
 .alt-metin a { color: #3b7dd8; }
 
-.form-input {
-  border: 1.5px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 14px;
-  outline: none;
-  transition: border 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-}
-.form-input:focus { border-color: #3b7dd8; }
 
 .hata-mesaj {
   color: #e74c3c;
   font-size: 12px;
   text-align: center;
   margin: 0;
-}
-
-.test-bilgi {
-  background: #fff8e1;
-  border-radius: 8px;
-  padding: 8px;
-  color: #888 !important;
 }
