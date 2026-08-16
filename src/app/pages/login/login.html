@@ -2,86 +2,50 @@
 
   <div class="harita-bg"></div>
 
-  <!-- Tekrar eden header kısmı template olarak tanımlandı -->
-  <ng-template #authHeader let-baslik="baslik" let-aciklama="aciklama">
-    <div class="logo-alan">
-      <div class="logo-cerceve">
-        <img src="/logo.png" alt="Logo" class="logo" />
-      </div>
-      <h1 class="uygulama-adi">{{ baslik }}</h1>
-      <p class="uygulama-aciklama">{{ aciklama }}</p>
+  <div class="logo-alan">
+    <div class="logo-cerceve">
+      <img src="/logo.png" alt="Logo" class="logo" />
     </div>
-  </ng-template>
+    <h1 class="uygulama-adi">Şikayet Haritası</h1>
+    <p class="uygulama-aciklama">
+      Yaşadığın sorunları bildir, çözüm sürecini birlikte takip edelim.
+    </p>
+  </div>
 
-  @if (!yoneticiModu) {
-    <button class="geri-btn" disabled>←</button>
+  <div class="giris-kart">
 
-    <ng-container *ngTemplateOutlet="authHeader; context: {
-      baslik: 'Şikayet Haritası',
-      aciklama: 'Yaşadığın sorunları bildir, çözüm sürecini birlikte takip edelim.'
-    }"></ng-container>
+    <h2 class="kart-baslik">Hesabınıza giriş yapın</h2>
+    <p class="kart-aciklama">Devam etmek için Google hesabınızı kullanın</p>
 
-    <div class="giris-kart">
-      <h2 class="kart-baslik">Hesabınıza giriş yapın</h2>
-      <p class="kart-aciklama">Devam etmek için Outlook hesabınızı kullanın</p>
+    <button
+      class="google-btn"
+      (click)="signIn()"
+      [disabled]="authService.loading()">
 
-      <button class="outlook-btn" (click)="outlookGiris()">
-        <span class="outlook-ikon">✉</span>
-        Outlook ile giriş yapın
-      </button>
+      <svg class="google-ikon" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
 
-      <div class="ayirac"><span></span></div>
+      {{ authService.loading() ? 'Giriş yapılıyor...' : 'Google ile giriş yap' }}
+    </button>
 
-      <button class="yonetici-btn" (click)="yoneticiGirisAc()">
-        <span class="yonetici-ikon">🪪</span>
-        Yönetici Girişi
-        <span class="ok">›</span>
-      </button>
+    @if (authService.authError()) {
+      <p class="hata-mesaj">{{ authService.authError() }}</p>
+    }
 
+    @if (allowedDomain) {
       <p class="alt-metin">
-        Hesabınız yok mu?
-        <a routerLink="/register">Hemen Kayıt Olun</a>
+        Yalnızca &#64;{{ allowedDomain }} uzantılı hesaplar giriş yapabilir.
       </p>
-    </div>
+    }
 
-  } @else {
+    <p class="alt-metin">
+      İlk girişinizde hesabınız otomatik olarak oluşturulur.
+    </p>
 
-    <button class="geri-btn" (click)="geri()">←</button>
-
-    <ng-container *ngTemplateOutlet="authHeader; context: {
-      baslik: 'Yönetici Girişi',
-      aciklama: 'Yetkili hesabınızla giriş yapın'
-    }"></ng-container>
-
-    <div class="giris-kart">
-      <h2 class="kart-baslik">Giriş bilgilerinizi girin</h2>
-
-      <input
-        class="form-input"
-        type="email"
-        placeholder="E-posta"
-        [(ngModel)]="email"
-      />
-
-      <input
-        class="form-input"
-        type="password"
-        placeholder="Şifre"
-        [(ngModel)]="sifre"
-      />
-
-      @if (hataMesaji) {
-        <p class="hata-mesaj">{{ hataMesaji }}</p>
-      }
-
-      <button class="outlook-btn" (click)="yoneticiGirisYap()">
-        Giriş Yap
-      </button>
-
-      <p class="alt-metin test-bilgi">
-        Test: personel@test.com / 123456
-      </p>
-    </div>
-  }
+  </div>
 
 </div>
