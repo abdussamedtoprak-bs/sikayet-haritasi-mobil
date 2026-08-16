@@ -1,0 +1,233 @@
+/* ANA SAYFA AYARLARI */
+.profil-duzenle-sayfasi {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 24px 20px 40px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ÜST BAŞLIK */
+.baslik-alani {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  margin-bottom: 24px;
+}
+
+.baslik-alani h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+.geri-buton {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #222;
+  font-size: 20px;
+  padding: 0;
+}
+
+.kaydet-ust-buton {
+  border: none;
+  background: transparent;
+  color: #2e88ed;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* AVATAR ALANI */
+.avatar-kapsayici {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.avatar-alani {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #65a7ed;
+  color: white;
+  font-size: 42px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kamera-buton {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e3e3e3;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.kamera-buton i {
+  font-size: 14px;
+  color: #555;
+}
+
+.fotograf-degistir-link {
+  color: #2e88ed;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* FORM ALANI */
+.form-alani {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.form-elemani {
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.form-elemani label {
+  font-size: 11px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.form-elemani input,
+.form-elemani select {
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: #222;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  font-family: inherit;
+}
+
+.form-elemani select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ikonlu-input {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-icerik {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sag-ikon {
+  font-size: 18px;
+  color: #555;
+  margin-left: 10px;
+}
+
+/* ŞİFRE ALANI */
+.sifre-alani {
+  margin-bottom: 30px;
+}
+
+.sifre-baslik {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.sifre-input-grubu {
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 14px 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+}
+
+.sifre-input-grubu .sol-ikon {
+  font-size: 14px;
+  color: #888;
+  width: 24px;
+}
+
+.sifre-input-grubu input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #222;
+  font-weight: 500;
+}
+
+.sifre-input-grubu input::placeholder {
+  color: #999;
+}
+
+.sifre-input-grubu .sag-ikon {
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+}
+
+/* ALT KAYDET BUTONU */
+.kaydet-alt-buton {
+  width: 100%;
+  background-color: #2563b0;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.kaydet-alt-buton:hover {
+  background-color: #1d4e8c;
+}

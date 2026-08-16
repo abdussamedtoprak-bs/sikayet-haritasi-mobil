@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { AnaSayfa } from './pages/ana-sayfa/ana-sayfa';
 import { Profil } from './pages/profil/profil';
+import { ProfilDuzenleme } from './pages/profil-duzenleme/profil-duzenleme';
 import { AyarlarComponent } from './pages/ayarlar/ayarlar';
 import { Complaints } from './pages/complaints/complaints';
 import { BildirimlerComponent } from './pages/bildirimler/bildirimler';
@@ -44,6 +45,11 @@ export const routes: Routes = [
   {
     path: 'profil',
     component: Profil,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profil-duzenleme',
+    component: ProfilDuzenleme,
     canActivate: [authGuard]
   },
   {
