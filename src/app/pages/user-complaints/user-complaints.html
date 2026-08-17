@@ -1,1 +1,94 @@
-<p>user-complaints works!</p>
+<div class="sikayetler-sayfasi">
+
+  <div class="profil-baslik">
+    <button class="geri-buton" (click)="geriDon()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <h2>Şikayetler</h2>
+  </div>
+
+  @if (sikayetler.length === 0) {
+    <div class="bos-durum">
+      <div class="bos-ikon-kutusu">
+        <i class="fa-solid fa-clipboard-list"></i>
+      </div>
+      <h3>Henüz şikayetiniz bulunmuyor</h3>
+      <p>Şikayet bildirmek için harita üzerinde konum seçebilir veya + butonuna tıklayabilirsiniz.</p>
+      
+      <button class="sikayet-bildir-buton" (click)="sikayetBildir()">
+        + Şikayet Bildir
+      </button>
+    </div>
+  }
+
+  @else {
+    
+    <div class="filtre-sekmeleri">
+      <button class="aktif">Tümü</button>
+      <button>Beklemede</button>
+      <button>İnceleniyor</button>
+      <button>Çözüldü</button>
+    </div>
+
+    <div class="istatistikler">
+      <div class="istatistik-karti">
+        <i class="fa-regular fa-clock"></i>
+        <strong>{{ sikayetler.length }}</strong>
+        <span>Tümü</span>
+      </div>
+      <div class="istatistik-karti bekleyen">
+        <i class="fa-regular fa-clock"></i>
+        <strong>5</strong>
+        <span>Beklemede</span>
+      </div>
+      <div class="istatistik-karti inceleniyor">
+        <i class="fa-regular fa-clock"></i>
+        <strong>3</strong>
+        <span>İnceleniyor</span>
+      </div>
+      <div class="istatistik-karti cozuldu">
+        <i class="fa-regular fa-clock"></i>
+        <strong>4</strong>
+        <span>Çözüldü</span>
+      </div>
+    </div>
+
+    <div class="liste-alani">
+      @for (sikayet of sikayetler; track sikayet.id) {
+        <div class="sikayet-karti" (click)="detayAc(sikayet)">
+          <img [src]="sikayet.resim" alt="Şikayet Görseli" class="kart-resim">
+          <div class="kart-bilgi">
+            <div class="kart-ust-satir">
+              <h4>{{ sikayet.baslik }}</h4>
+              <span class="durum-badge bekliyor">{{ sikayet.durum }}</span>
+            </div>
+            <p>{{ sikayet.aciklama }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+  }
+
+  @if (secilenSikayet) {
+    <div class="modal-arkaplan" (click)="detayKapat()">
+      <div class="detay-modal" (click)="$event.stopPropagation()">
+        
+        <div class="detay-baslik">
+          <h3>{{ secilenSikayet.baslik }}</h3>
+          <button class="kapat-buton" (click)="detayKapat()">&times;</button>
+        </div>
+
+        <img [src]="secilenSikayet.resim" alt="Detay Görsel" class="detay-resim">
+        <p class="detay-aciklama">{{ secilenSikayet.aciklama }}</p>
+
+        <div class="detay-alt-bilgi">
+          <span><i class="fa-solid fa-hard-hat"></i> {{ secilenSikayet.kategori }}</span>
+          <span><i class="fa-regular fa-calendar"></i> {{ secilenSikayet.tarih }}</span>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
