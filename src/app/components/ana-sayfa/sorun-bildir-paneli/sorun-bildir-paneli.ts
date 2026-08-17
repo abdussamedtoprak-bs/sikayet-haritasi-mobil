@@ -108,6 +108,7 @@ export class SorunBildirmePaneli implements OnInit{
     const baslangicDestek=1;
     // 2. Servisin beklediği Complaint (Şikayet) yapısını oluşturuyoruz
     const yeniSikayet: Complaint = {
+      userId: 'gecici-kullanici-id',
       title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(), 
       supportCount: baslangicDestek, // İlk destekleyeni kullanıcının kendisi sayıyoruz
       description: this.reportData.aciklama,
