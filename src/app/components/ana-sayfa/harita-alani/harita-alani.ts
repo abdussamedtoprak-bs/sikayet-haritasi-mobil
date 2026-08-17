@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, PLATFORM_ID,OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Inject, PLATFORM_ID,OnDestroy,OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -12,9 +12,11 @@ import { Complaint } from '../../../models/complaint';
   templateUrl: './harita-alani.html',
   styleUrl: './harita-alani.css'
 })
-export class HaritaAlani implements AfterViewInit,OnDestroy {
+export class HaritaAlani implements OnInit, AfterViewInit,OnDestroy{
 
   private map: any;
+
+  currentUserRole: any = null;
 
   //modalın görünürlüğü ve alınan koordinatları tutacağımız değişkenler
   isSorunBildirModalOpen=false;
@@ -32,8 +34,13 @@ onKonumGeldi(koordinat: { lat: number, lng: number } | null) {
     @Inject(PLATFORM_ID) private platformId: Object,
     private authService:AuthService,
     private router:Router,
-    private complaintService:ComplaintService) {}
+    private complaintService:ComplaintService,
+    ) {}
 
+    ngOnInit():void{
+      //uygulama açılır açılmaz servisten rolü dinleyip değişkene atıyoruz
+      this.currentUserRole = this.authService.role();
+    }
 async ngAfterViewInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
       const L = await import('leaflet');
