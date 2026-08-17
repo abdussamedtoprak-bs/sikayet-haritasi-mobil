@@ -12,6 +12,7 @@ import { DestekComponent } from './pages/destek/destek';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { UserComplaintsComponent } from './pages/user-complaints/user-complaints';
 
 /**
  * @description Uygulamanın route tanımlarıdır.
@@ -76,6 +77,7 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard('admin')]
   },
 
+  { path: 'user-complaints', component: UserComplaintsComponent },
   // Tanımsız adresler ana sayfaya yönlendirilir
   { path: '**', redirectTo: 'anasayfa' }
 ];
