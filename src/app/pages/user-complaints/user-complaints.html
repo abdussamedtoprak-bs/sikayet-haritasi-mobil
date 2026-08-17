@@ -60,7 +60,14 @@
           <div class="kart-bilgi">
             <div class="kart-ust-satir">
               <h4>{{ sikayet.title }}</h4>
-              <span class="durum-badge">{{ sikayet.status }}</span>
+              
+              <span class="durum-badge" 
+                    [class.beklemede]="sikayet.status === 'Beklemede'"
+                    [class.inceleniyor]="sikayet.status === 'İnceleniyor'"
+                    [class.cozuldu]="sikayet.status === 'Çözüldü'">
+                {{ sikayet.status }}
+              </span>
+
             </div>
             <p>{{ sikayet.description }}</p>
           </div>
@@ -90,5 +97,5 @@
       </div>
     </div>
   }
-
+ 
 </div>
