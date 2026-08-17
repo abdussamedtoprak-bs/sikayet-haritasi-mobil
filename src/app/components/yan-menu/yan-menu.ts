@@ -4,7 +4,14 @@ import { AuthService } from '../../services/auth.service';
 
 /**
  * @description Uygulamanın yan navigasyon menüsüdür.
- * Sayfalar arası geçiş bağlantılarını ve oturum kapatma işlemini barındırır.
+ *
+ * Menü öğeleri kullanıcının rolüne göre şekillenir:
+ * - Yönetici → "Güncel Şikayetler" (tüm şikayetlerin yönetimi)
+ * - Öğrenci  → "Şikayetlerim" (yalnızca kendi şikayetleri)
+ *
+ * NOT: Menüde bir öğenin gizlenmesi güvenlik sağlamaz, yalnızca kullanıcı
+ * deneyimi içindir. Sayfa erişimi roleGuard ile, veri erişimi ise
+ * Firestore Security Rules ile korunmaktadır.
  */
 @Component({
   selector: 'app-yan-menu',
@@ -18,23 +25,13 @@ export class YanMenu {
   /** @description Menünün açık/kapalı durumu. Üst bileşen tarafından yönetilir. */
   @Input() menuAcik: boolean = false;
 
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-
   /**
-   * @description Kullanıcının rolüne göre doğru şikayetler sayfasına yönlendirir.
+   * @description Şablonda rol kontrolü yapılabilmesi için public tanımlanmıştır.
+   * Signal olarak okunduğu için rol değiştiğinde menü kendiliğinden güncellenir.
    */
-  sikayetlereGit() {
-    // NOT: authService'inizde kullanıcının rolünü veya admin olup olmadığını
-    // dönen fonksiyonun adını (örneğin isAdmin, getUserRole vb.) kendi yapınıza göre güncelleyin.
-    const isAdmin = this.authService.isAdmin(); // <-- Bu metodu kendi AuthService'inize göre uyarlayın
+  readonly authService = inject(AuthService);
 
-    if (isAdmin) {
-      this.router.navigate(['/complaints']); // Yönetici sayfası
-    } else {
-      this.router.navigate(['/user-complaints']); // Normal kullanıcı sayfası
-    }
-  }
+  private readonly router = inject(Router);
 
   /**
    * @description Kullanıcı oturumunu sonlandırır ve giriş sayfasına yönlendirir.

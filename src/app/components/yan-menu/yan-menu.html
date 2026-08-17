@@ -10,10 +10,27 @@
     <span>Bildirimler</span>
   </div>
 
-  <div class="menu-item" (click)="sikayetlereGit()">
-    <i class="fa-solid fa-hourglass-end"></i>
-    <span>Güncel Şikayetler</span>
-  </div>
+  <!-- Yalnızca yönetici: tüm şikayetlerin yönetildiği sayfa -->
+  @if (authService.isAdmin()) {
+    <div class="menu-item" routerLink="/complaints">
+      <i class="fa-solid fa-hourglass-end"></i>
+      <span>Güncel Şikayetler</span>
+    </div>
+  }
+
+  
+     <!--
+    Yalnızca öğrenci: kendi şikayetlerini görebileceği sayfa.
+    Fatma'nın "Şikayetlerim" sayfası hazır olduğunda bu blok açılacak.-->
+
+    @if (authService.isStudent()) {
+      <div class="menu-item" routerLink="/user-complaints">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Şikayetlerim</span>
+      </div>
+    }
+  
+  
 
   <div class="menu-item" routerLink="/destek">
     <i class="fa-solid fa-circle-info"></i>
@@ -25,7 +42,7 @@
     <span>Ayarlar</span>
   </div>
 
-   <div class="cikis" (click)="logout()" style="cursor: pointer;">
+  <div class="cikis" (click)="logout()" style="cursor: pointer;">
     <span>
       <i class="fa-solid fa-door-open"></i>
     </span>
