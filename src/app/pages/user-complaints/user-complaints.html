@@ -4,17 +4,16 @@
     <button class="geri-buton" (click)="geriDon()">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
-    <h2>Şikayetler</h2>
+    <h2>Güncel Şikayetler</h2>
   </div>
 
-  @if (sikayetler.length === 0) {
+  @if (gosterilenSikayetler.length === 0) {
     <div class="bos-durum">
       <div class="bos-ikon-kutusu">
         <i class="fa-solid fa-clipboard-list"></i>
       </div>
-      <h3>Henüz şikayetiniz bulunmuyor</h3>
-      <p>Şikayet bildirmek için harita üzerinde konum seçebilir veya + butonuna tıklayabilirsiniz.</p>
-      
+      <h3>Henüz şikayet bulunmuyor</h3>
+      <p>Bu kategoriye ait bir şikayet kaydı yok.</p>
       <button class="sikayet-bildir-buton" (click)="sikayetBildir()">
         + Şikayet Bildir
       </button>
@@ -24,45 +23,46 @@
   @else {
     
     <div class="filtre-sekmeleri">
-      <button class="aktif">Tümü</button>
-      <button>Beklemede</button>
-      <button>İnceleniyor</button>
-      <button>Çözüldü</button>
+      <button [class.aktif]="aktifSekme === 'Tümü'" (click)="filtrele('Tümü')">Tümü</button>
+      <button [class.aktif]="aktifSekme === 'Beklemede'" (click)="filtrele('Beklemede')">Beklemede</button>
+      <button [class.aktif]="aktifSekme === 'İnceleniyor'" (click)="filtrele('İnceleniyor')">İnceleniyor</button>
+      <button [class.aktif]="aktifSekme === 'Çözüldü'" (click)="filtrele('Çözüldü')">Çözüldü</button>
     </div>
 
     <div class="istatistikler">
       <div class="istatistik-karti">
         <i class="fa-regular fa-clock"></i>
-        <strong>{{ sikayetler.length }}</strong>
+        <strong>{{ tumSikayetler.length }}</strong>
         <span>Tümü</span>
       </div>
       <div class="istatistik-karti bekleyen">
         <i class="fa-regular fa-clock"></i>
-        <strong>5</strong>
+        <strong>{{ bekleyenSayisi }}</strong>
         <span>Beklemede</span>
       </div>
       <div class="istatistik-karti inceleniyor">
         <i class="fa-regular fa-clock"></i>
-        <strong>3</strong>
+        <strong>{{ incelenenSayisi }}</strong>
         <span>İnceleniyor</span>
       </div>
       <div class="istatistik-karti cozuldu">
         <i class="fa-regular fa-clock"></i>
-        <strong>4</strong>
+        <strong>{{ cozulenSayisi }}</strong>
         <span>Çözüldü</span>
       </div>
     </div>
 
     <div class="liste-alani">
-      @for (sikayet of sikayetler; track sikayet.id) {
+      @for (sikayet of gosterilenSikayetler; track sikayet.title) {
         <div class="sikayet-karti" (click)="detayAc(sikayet)">
-          <img [src]="sikayet.resim" alt="Şikayet Görseli" class="kart-resim">
+          <img src="assets/cam-kirigi.jpg" alt="Şikayet Görseli" class="kart-resim">
+          
           <div class="kart-bilgi">
             <div class="kart-ust-satir">
-              <h4>{{ sikayet.baslik }}</h4>
-              <span class="durum-badge bekliyor">{{ sikayet.durum }}</span>
+              <h4>{{ sikayet.title }}</h4>
+              <span class="durum-badge">{{ sikayet.status }}</span>
             </div>
-            <p>{{ sikayet.aciklama }}</p>
+            <p>{{ sikayet.description }}</p>
           </div>
         </div>
       }
@@ -75,16 +75,16 @@
       <div class="detay-modal" (click)="$event.stopPropagation()">
         
         <div class="detay-baslik">
-          <h3>{{ secilenSikayet.baslik }}</h3>
+          <h3>{{ secilenSikayet.title }}</h3>
           <button class="kapat-buton" (click)="detayKapat()">&times;</button>
         </div>
 
-        <img [src]="secilenSikayet.resim" alt="Detay Görsel" class="detay-resim">
-        <p class="detay-aciklama">{{ secilenSikayet.aciklama }}</p>
+        <img src="assets/cam-kirigi.jpg" alt="Detay Görsel" class="detay-resim">
+        <p class="detay-aciklama">{{ secilenSikayet.description }}</p>
 
         <div class="detay-alt-bilgi">
-          <span><i class="fa-solid fa-hard-hat"></i> {{ secilenSikayet.kategori }}</span>
-          <span><i class="fa-regular fa-calendar"></i> {{ secilenSikayet.tarih }}</span>
+          <span><i class="fa-solid fa-hard-hat"></i> {{ secilenSikayet.metaInfo }}</span>
+          <span><i class="fa-solid fa-map-pin"></i> {{ secilenSikayet.location }}</span>
         </div>
 
       </div>
