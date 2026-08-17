@@ -8,7 +8,7 @@ export interface Bildirim {
   id: number;
 
   /** @description Bildirimin türü — güncelleme, çözüldü, yakın şikayet veya acil */
-  tip: 'guncelleme' | 'cozuldu' | 'yakin' | 'acil';
+  tip: 'guncelleme' | 'cozuldu' | 'yakin' | 'acil'| 'yeni' | 'destek' | 'uyari';
 
   /** @description Bildirim başlığı */
   baslik: string;
@@ -24,4 +24,5 @@ export interface Bildirim {
 
   /** @description Bildirime tıklandığında yönlendirilecek sayfa yolu */
   yonlendirme: string;
+  
 }

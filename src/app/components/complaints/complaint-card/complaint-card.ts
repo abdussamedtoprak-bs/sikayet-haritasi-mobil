@@ -1,6 +1,5 @@
 import { Component ,Input,OnInit} from '@angular/core';
 import { Complaint } from '../../../models/complaint';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-complaint-card',
@@ -23,23 +22,40 @@ export class ComplaintCard implements OnInit {
    */
   @Input() complaint!: Complaint;
 
-  // 1. Rolü tutacağımız değişkeni ekliyoruz
-  currentUserRole: any = null;
+  currentUserRole: any = 'admin'; // null yerine doğrudan 'admin' yazıyoruz
 
-  // 2. AuthService'i constructor ile içeri alıyoruz
-  constructor(private authService: AuthService) {}
+  //  Modal görünürlüğü ve seçilen yeni durumu tutmak için
+  showConfirmModal: boolean = false;
+  pendingStatus: string = '';
 
-  // 3. Kart ekrana çizilirken rolü servisten okuyoruz
-  ngOnInit(): void {
-    this.currentUserRole = this.authService.role();
-  }
-  
-  // Yönetici butonlara tıkladığında çalışacak fonksiyon
-  durumGuncelle(yeniDurum: string) {
-    // Şimdilik sadece ekrandaki (arayüzdeki) durumu anlık değiştirelim.
-    // Bir sonraki adımda bunu Firebase veritabanına kalıcı olarak yazacağız!
-    this.complaint.status = yeniDurum;
-    console.log(`Şikayet durumu güncellendi: ${yeniDurum}`);
+  ngOnInit(): void{
+    // this.currentUserRole = this.authService.role();
   }
 
+  durumGuncelle(yeniDurum: string, event: Event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    
+    this.pendingStatus = yeniDurum; // Hangi duruma geçilmek istendiğini hafızaya al
+    this.showConfirmModal = true;   // Uyarı kutusunu (modal) ekranda göster
+  }
+
+  // 2. Modaldaki "Kaydet" butonuna basılırsa çalışacak fonksiyon
+  onaylaGuncelleme(event: Event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    this.complaint.status = this.pendingStatus; // Hafızadaki durumu kalıcı olarak uygula
+    console.log(`Şikayet durumu güncellendi: ${this.pendingStatus}`);
+    
+    this.showConfirmModal = false; // Modalı kapat
+  }
+
+  // 3. Modaldaki "İptal" butonuna basılırsa çalışacak fonksiyon
+  iptalGuncelleme(event: Event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    this.showConfirmModal = false; // İşlem yapmadan sadece modalı kapat
+  }
 }

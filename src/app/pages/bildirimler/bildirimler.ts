@@ -1,15 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotificationItemComponent } from '../../components/notifications/notification-item/notification-item';
 import { Bildirim } from '../../models/bildirim';
 import { Baslik } from '../../components/baslik/baslik';
+import { AuthService } from '../../services/auth.service';
+import { BildirimlerService } from '../../services/bildirimler';
 
-/**
- * @description Kullanıcıya ait bildirimlerin listelendiği ve yönetildiği sayfa bileşenidir.
- * Okunmuş/okunmamış durumu Signal ile yönetilir.
- * Firebase entegrasyonuna kadar mock data kullanılmaktadır.
- */
 @Component({
   selector: 'app-bildirimler',
   standalone: true,
@@ -17,98 +14,62 @@ import { Baslik } from '../../components/baslik/baslik';
   templateUrl: './bildirimler.html',
   styleUrl: './bildirimler.css'
 })
-export class BildirimlerComponent {
+export class BildirimlerComponent implements OnInit {
 
-  /**
-   * @description Firebase entegrasyonuna kadar kullanılan geçici bildirim listesi.
-   * Firebase gelince bu liste Firestore'dan asenkron olarak çekilecektir.
-   */
-  bildirimler = signal<Bildirim[]>([
-    {
-      id: 1,
-      tip: 'guncelleme',
-      baslik: 'Şikayetiniz Güncellendi',
-      mesaj: 'Çukurlu yol şikayetiniz "İnceleniyor" durumuna geçti.',
-      zaman: '2 saat önce',
-      okundu: false,
-      yonlendirme: '/sikayet-detay/1'
-    },
-    {
-      id: 2,
-      tip: 'cozuldu',
-      baslik: 'Şikayetiniz Güncellendi',
-      mesaj: 'Kırık kaldırım şikayetiniz belediye tarafından çözülmüştür.',
-      zaman: '1 gün önce',
-      okundu: false,
-      yonlendirme: '/sikayet-detay/2'
-    },
-    {
-      id: 3,
-      tip: 'yakin',
-      baslik: 'Yeni şikayet yakınınızda',
-      mesaj: 'Bölgenizde 3 yeni şikayet bildirildi.',
-      zaman: '2 gün önce',
-      okundu: true,
-      yonlendirme: '/guncel-sikayetler'
-    },
-    {
-      id: 4,
-      tip: 'acil',
-      baslik: 'Şikayetiniz Acil Olarak İşaretlendi.',
-      mesaj: 'Su Kaçağı şikayetiniz acil öncelik seviyesine alındı.',
-      zaman: '2 gün önce',
-      okundu: true,
-      yonlendirme: '/sikayet-detay/4'
+  // Sinyali doğrudan servisten okuyacak şekilde bağlıyoruz
+  get bildirimler() {
+    return this.bildirimService.bildirimler;
+  }
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private bildirimService: BildirimlerService
+  ) {}
+
+  ngOnInit(): void {
+    if (this.bildirimService.bildirimler().length === 0) {
+      if (this.authService.isAdmin()) {
+        this.bildirimService.bildirimler.set([
+          { id: 1, tip: 'yeni', baslik: 'Sisteme Yeni Şikayet Eklendi', mesaj: 'Kütüphane önünde yeni şikayet bildirildi.', zaman: '10 dakika önce', okundu: false, yonlendirme: '/guncel-sikayetler' },
+          { id: 2, tip: 'destek', baslik: 'Destek Eşiği Aşıldı', mesaj: 'Kırık cam şikayeti 20 destek aldı, önceliği yükseldi.', zaman: '1 saat önce', okundu: false, yonlendirme: '/sikayet-detay/1' },
+          { id: 3, tip: 'uyari', baslik: 'Bekleyen Şikayet Uyarısı', mesaj: '3 şikayet 7 günden uzun süre beklemede.', zaman: '3 saat önce', okundu: true, yonlendirme: '/guncel-sikayetler' }
+        ]);
+      } else {
+        this.bildirimService.bildirimler.set([
+          { id: 1, tip: 'guncelleme', baslik: 'Şikayetiniz Güncellendi', mesaj: 'Çukurlu yol şikayetiniz "İnceleniyor" durumuna geçti.', zaman: '2 saat önce', okundu: false, yonlendirme: '/sikayet-detay/1' },
+          { id: 2, tip: 'cozuldu', baslik: 'Şikayetiniz Güncellendi', mesaj: 'Kırık kaldırım şikayetiniz belediye tarafından çözülmüştür.', zaman: '1 gün önce', okundu: false, yonlendirme: '/sikayet-detay/2' },
+          { id: 3, tip: 'yakin', baslik: 'Yeni şikayet yakınınızda', mesaj: 'Bölgenizde 3 yeni şikayet bildirildi.', zaman: '2 gün önce', okundu: true, yonlendirme: '/guncel-sikayetler' }
+        ]);
+      }
     }
-  ]);
+  }
 
-  constructor(private router: Router) {}
-
-  /**
-   * @description Belirtilen id'ye sahip bildirimi okundu olarak işaretler.
-   * @param {number} id - Okundu işaretlenecek bildirimin id'si
-   */
   okunduIsaretle(id: number): void {
-    this.bildirimler.update(liste =>
+    this.bildirimService.bildirimler.update(liste =>
       liste.map(b => b.id === id ? { ...b, okundu: true } : b)
     );
   }
 
-  /**
-   * @description Listedeki tüm bildirimleri okundu olarak işaretler.
-   */
   tumunuOku(): void {
-    this.bildirimler.update(liste =>
+    this.bildirimService.bildirimler.update(liste =>
       liste.map(b => ({ ...b, okundu: true }))
     );
   }
 
-  /**
-   * @description Okunmamış bildirim sayısını döndürür.
-   * @returns {number} Okunmamış bildirim sayısı
-   */
   okunmamisSayisi(): number {
-    return this.bildirimler().filter(b => !b.okundu).length;
+    return this.bildirimService.bildirimler().filter(b => !b.okundu).length;
   }
 
-  /**
-   * @description Ana sayfaya geri yönlendirir.
-   */
   geriDon(): void {
     this.router.navigate(['/anasayfa']);
   }
 
-  /**
-   * @description Bildirime tıklandığında okundu işaretler ve ilgili sayfaya yönlendirir.
-   * Henüz hazır olmayan sayfalar için bilgilendirme mesajı gösterir.
-   * @param {Bildirim} bildirim - Tıklanan bildirim nesnesi
-   */
   bildirimeTikla(bildirim: Bildirim): void {
     this.okunduIsaretle(bildirim.id);
-
-    const hazirSayfalar = ['/ayarlar', '/bildirimler'];
-
-    if (hazirSayfalar.includes(bildirim.yonlendirme)) {
+    const hazirSayfalar = ['/ayarlar', '/bildirimler', '/guncel-sikayetler'];
+    
+    if (hazirSayfalar.includes(bildirim.yonlendirme) || bildirim.yonlendirme.startsWith('/sikayet-detay')) {
       this.router.navigate([bildirim.yonlendirme]);
     } else {
       alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);

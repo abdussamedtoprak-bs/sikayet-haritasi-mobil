@@ -154,6 +154,7 @@ export class Complaints implements OnInit {
    */
   onFilterChange(selectedTab:string){
     this.currentFilter=selectedTab;
+    this.mapLocation = '';
   }
   
   
@@ -179,7 +180,11 @@ export class Complaints implements OnInit {
       if (this.currentFilters.category && this.currentFilters.category !== 'Tümü') {
         let aranacakDeger = this.currentFilters.category.trim(); // Boşlukları temizle
         
-        
+        // YENİ EKLENEN KOD: Filtre menüsünden gelen "Kritik" kelimesini, 
+        // veritabanındaki gerçek karşılığı olan "Acil" ile eşitliyoruz.
+        if (aranacakDeger === 'Kritik') {
+            aranacakDeger = 'Acil';
+        }
         
         result = result.filter(c => c.priority.trim() === aranacakDeger);
       }
@@ -267,6 +272,9 @@ export class Complaints implements OnInit {
    */
   updateFilters(newFilters: any) {
     this.currentFilters = newFilters;
+    // YENİ EKLENEN KOD: Kullanıcı detaylı filtre panelinden yeni bir arama yaptığında,
+    // haritadan (URL'den) gelen eski konum hafızasını sıfırlıyoruz.
+    this.mapLocation = '';
   }
 
   /**

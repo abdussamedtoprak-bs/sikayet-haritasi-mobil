@@ -11,4 +11,13 @@ export interface Complaint {
     lat: number;
     lng: number;
     userId: string; // Şikayeti açan kişinin Firebase UID'si
+
+    id?: string;             // Firestore doküman kimliği
+    isArchived?: boolean;    // "Silinen" şikayetler için (varsayılan: false)
+    createdAt?: any;         // Sıralama ve tarih filtresi için (Firestore Timestamp)
+    category?: string;       // (Opsiyonel) Kategori filtresinin daha sağlıklı çalışması için
+
+    
+    
+
 }
