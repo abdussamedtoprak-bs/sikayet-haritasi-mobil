@@ -22,7 +22,8 @@ export class ComplaintService {
         priority: 'Acil',
         location: 'kütüphane önü',
         lat: 38.89860734018667, 
-        lng: 40.48585394300411
+        lng: 40.48585394300411,
+        userId: 'test-kullanici-1'
 
         },
         {
@@ -34,7 +35,8 @@ export class ComplaintService {
         priority: 'Acil',
         location: 'kütüphane önü',
         lat: 38.89745422243869, 
-        lng: 40.49077315851337
+        lng: 40.49077315851337,
+        userId: 'test-kullanici-2'
         },
         {
         title: 'Yabani Ot Temizliği',
@@ -45,7 +47,8 @@ export class ComplaintService {
         priority: 'Düşük',
         location: 'Yürüyüş Yolu',
         lat: 38.89801482869674, 
-        lng: 40.4879569074668
+        lng: 40.4879569074668,
+        userId: 'test-kullanici-3'
         },
         {
         title: 'Hasarlı Bank',
@@ -56,7 +59,8 @@ export class ComplaintService {
         priority: 'Düşük',
         location: 'Merkez Kampüs Bahçe',
         lat: 38.898996440173754, 
-        lng: 40.48619827302908
+        lng: 40.48619827302908,
+        userId: 'test-kullanici-4'
         }
     ];
 
