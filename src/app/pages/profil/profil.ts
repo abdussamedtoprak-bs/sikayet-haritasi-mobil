@@ -20,16 +20,6 @@ export class Profil {
     this.router.navigate(['/profil-duzenleme']);
   }
 
-  sifreDegistir() {
-    console.log('Şifre değiştir');
-  }
 
-  bildirimTercihleri() {
-    console.log('Bildirim tercihleri');
-  }
-
-  yardimDestek() {
-    console.log('Yardım ve destek');
-  }
 
 }
