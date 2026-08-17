@@ -76,6 +76,11 @@ export const routes: Routes = [
     component: Complaints,
     canActivate: [authGuard, roleGuard('admin')]
   },
+    {
+    path: 'user-complaints',
+    component: Complaints,
+    canActivate: [authGuard, roleGuard('student')]
+  },
 
   { path: 'user-complaints', component: UserComplaintsComponent },
   // Tanımsız adresler ana sayfaya yönlendirilir
