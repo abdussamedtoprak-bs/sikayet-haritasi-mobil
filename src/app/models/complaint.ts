@@ -10,5 +10,5 @@ export interface Complaint {
     // YENİ EKLENENLER: Harita entegrasyonu için koordinatlar
     lat: number;
     lng: number;
-
+    userId: string; // Şikayeti açan kişinin Firebase UID'si
 }

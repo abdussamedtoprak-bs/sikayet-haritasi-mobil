@@ -1,9 +1,9 @@
-import { Component,ChangeDetectorRef } from '@angular/core';
+import { Component,ChangeDetectorRef,OnInit } from '@angular/core';
 import { Baslik } from '../../components/baslik/baslik';
 import { KonumButonu } from '../../components/ana-sayfa/konum-butonu/konum-butonu';
 import { SorunBildirmePaneli} from '../../components/ana-sayfa/sorun-bildir-paneli/sorun-bildir-paneli';
 import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alani';
-
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-ana-sayfa',
@@ -17,11 +17,20 @@ import { HaritaAlani } from '../../components/ana-sayfa/harita-alani/harita-alan
   templateUrl: './ana-sayfa.html',
   styleUrl: './ana-sayfa.css',
 })
-export class AnaSayfa {
+export class AnaSayfa implements OnInit {
 panelAcik = false;
   secilenKonum: any = null;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  // 1. Sınıfın içine değişkenimizi ekliyoruz:
+  currentUserRole: any = null;
+
+  constructor(private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+  this.currentUserRole = this.authService.role();
+}
 
   paneliAc() {
     setTimeout(() => {

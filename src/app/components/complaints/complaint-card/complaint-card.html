@@ -29,4 +29,21 @@
         </div>
     </div>
 
+
+    <!-- Yalnızca Yöneticiye Gösterilecek Durum Güncelleme Alanı -->
+    @if (currentUserRole === 'admin') {
+        <div class="admin-actions" style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+            <button 
+            (click)="durumGuncelle('İnceleniyor')" 
+            style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #fbbf24; color: white; cursor: pointer; font-weight: bold;">
+            İnceleniyor
+            </button>
+            <button 
+            (click)="durumGuncelle('Çözüldü')" 
+            style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #10b981; color: white; cursor: pointer; font-weight: bold;">
+            Çözüldü
+            </button>
+        </div>
+    }
+
 </div>
