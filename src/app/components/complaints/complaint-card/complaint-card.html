@@ -29,21 +29,53 @@
         </div>
     </div>
 
-
-    <!-- Yalnızca Yöneticiye Gösterilecek Durum Güncelleme Alanı -->
-    @if (currentUserRole === 'admin') {
+@if (currentUserRole === 'admin') {
         <div class="admin-actions" style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
             <button 
-            (click)="durumGuncelle('İnceleniyor')" 
-            style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #fbbf24; color: white; cursor: pointer; font-weight: bold;">
-            İnceleniyor
+                (click)="durumGuncelle('Beklemede', $event)" 
+                style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #64748b; color: white; cursor: pointer; font-weight: bold;">
+                Beklemede
             </button>
             <button 
-            (click)="durumGuncelle('Çözüldü')" 
-            style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #10b981; color: white; cursor: pointer; font-weight: bold;">
-            Çözüldü
+                (click)="durumGuncelle('İnceleniyor', $event)" 
+                style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #fbbf24; color: white; cursor: pointer; font-weight: bold;">
+                İnceleniyor
+            </button>
+            <button 
+                (click)="durumGuncelle('Çözüldü', $event)" 
+                style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #10b981; color: white; cursor: pointer; font-weight: bold;">
+                Çözüldü
             </button>
         </div>
     }
 
+    <!-- YENİ EKLENEN ONAY KUTUSU (MODAL) -->
+@if (showConfirmModal) {
+    <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 999999;">
+        
+        <!-- Beyaz Kutu -->
+        <div style="background: white; padding: 24px; border-radius: 12px; width: 320px; text-align: center; box-shadow: 0 10px 15px rgba(0,0,0,0.2);">
+        
+        <p style="font-size: 16px; margin-bottom: 24px; color: #374151;">
+            Durum <strong>{{ pendingStatus }}</strong> olarak güncelleniyor. Onaylıyor musunuz?
+        </p>
+        
+        <!-- Modal Butonları -->
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button 
+            (click)="iptalGuncelleme($event)" 
+            style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; background-color: #f3f4f6; color: #4b5563; cursor: pointer; font-weight: bold;">
+            İptal
+            </button>
+            
+            <button 
+            (click)="onaylaGuncelleme($event)" 
+            style="flex: 1; padding: 10px; border-radius: 8px; border: none; background-color: #3b82f6; color: white; cursor: pointer; font-weight: bold;">
+            Kaydet
+            </button>
+        </div>
+
+        </div>
+    </div>
+}
 </div>

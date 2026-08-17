@@ -1,46 +1,49 @@
 <div class="destek-wrapper">
-
-  <app-baslik title="Destek" [showBackBtn]="true"></app-baslik>
+  
+  <!-- Başlık dinamik oldu -->
+  <app-baslik [title]="isAdmin ? 'Yönetici Kılavuzu' : 'Destek'" [showBackBtn]="true"></app-baslik>
 
   <div class="hero-alan">
     <div class="hero-ikon">🎧</div>
-    <h2 class="hero-baslik">Size Nasıl Yardımcı Olabiliriz?</h2>
-    <p class="hero-aciklama">Sorularınız için 7/24 destek ekibimiz yanınızda</p>
+    <!-- Ana Başlık ve Açıklama dinamik oldu -->
+    <h2 class="hero-baslik">{{ isAdmin ? 'Sistem Yönetim Kılavuzu' : 'Size Nasıl Yardımcı Olabiliriz?' }}</h2>
+    <p class="hero-aciklama">{{ isAdmin ? 'Şikayet yönetimi ve süreçler hakkında bilgilendirmeler' : 'Sorularınız için 7/24 destek ekibimiz yanınızda' }}</p>
   </div>
 
-  <div class="bolum-baslik">İLETİŞİM</div>
-
-  <div class="iletisim-listesi">
-    <a href="tel:+908000000000" class="iletisim-kart">
+  <!-- İLETİŞİM KISMI (SADECE ÖĞRENCİYE GÖRÜNECEK) -->
+  @if (!isAdmin) {
+    <div class="bolum-baslik">İLETİŞİM</div>
     
-    <div class="iletisim-ikon">
-      <i class="fa-solid fa-phone"></i>
+    <div class="iletisim-listesi">
+      <a href="tel:+908000000000" class="iletisim-kart">
+        <div class="iletisim-ikon">
+          <i class="fa-solid fa-phone"></i>
+        </div>
+        <div class="iletisim-icerik">
+          <div class="iletisim-label">Telefon</div>
+          <div class="iletisim-deger">0800 000 000</div>
+        </div>
+      </a>
+
+      <a href="mailto:destek@gov.tr" class="iletisim-kart">
+        <div class="iletisim-ikon">
+          <i class="fa-solid fa-envelopes-bulk"></i>
+        </div>
+        <div class="iletisim-icerik">
+          <div class="iletisim-label">E-posta</div>
+          <div class="iletisim-deger">destek&#64;gov.tr</div>
+        </div>
+      </a>
     </div>
+  }
 
-    <div class="iletisim-icerik">
-      <div class="iletisim-label">Telefon</div>
-      <div class="iletisim-deger">0800 000 000</div>
-    </div>
-
-  </a>
-
-  <a href="mailto:destek@gov.tr" class="iletisim-kart">
-  <div class="iletisim-ikon">
-    <i class="fa-solid fa-envelopes-bulk"></i>
-  </div>
-
-  <div class="iletisim-icerik">
-    <div class="iletisim-label">E-posta</div>
-    <div class="iletisim-deger">destek&#64;gov.tr</div>
-  </div>
-</a>
-  </div>
-
-  <div class="bolum-baslik">SIKÇA SORULAN SORULAR ?</div>
-
+  <!-- SSS Başlığı dinamik oldu -->
+  <div class="bolum-baslik">{{ isAdmin ? 'SIKÇA SORULAN SORULAR' : 'SIKÇA SORULAN SORULAR ?' }}</div>
+  
+  <!-- Liste (Sinyalden gelen veriyi aynen basar) -->
   <div class="sss-listesi">
     @for (item of sssList(); track item.id) {
-      <app-faq-item
+      <app-faq-item 
         [item]="item"
         (toggleTiklandi)="toggleSSS($event)">
       </app-faq-item>
