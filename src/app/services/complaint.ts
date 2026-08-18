@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
-
+import { isPlatformBrowser } from '@angular/common';
+import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, orderBy } from 'firebase/firestore';
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -11,78 +12,14 @@ import { Complaint } from '../models/complaint';
     })
 export class ComplaintService {
 
-    // Firestore'a bağlayana kadar kullanacağımız geçici (mock) veri setimiz
-    private mockComplaints: Complaint[] = [
-        {
-        title: 'Kırık Cam Tehlikesi',
-        supportCount: 55,
-        description: 'Kütüphane önünde yaklaşık 2 metre kare...',
-        metaInfo: 'Güvenlik . 31.07.2026',
-        status: 'İnceleniyor',
-        priority: 'Acil',
-        location: 'kütüphane önü',
-        lat: 38.89860734018667, 
-        lng: 40.48585394300411,
-        userId: 'test-kullanici-1'
+    //1.SSR koruması için platform kontrolü
+    private readonly platformId=inject(PLATFORM_ID);
+    private readonly isBrowser=isPlatformBrowser(this.platformId);
 
-        },
-        {
-        title: 'Kırık Yönlendirme Levhası',
-        supportCount: 45,
-        description: 'Kampüs haritasını gösteren levha...',
-        metaInfo: 'Güvenlik . 28.07.2026',
-        status: 'İnceleniyor',
-        priority: 'Acil',
-        location: 'kütüphane önü',
-        lat: 38.89745422243869, 
-        lng: 40.49077315851337,
-        userId: 'test-kullanici-2'
-        },
-        {
-        title: 'Yabani Ot Temizliği',
-        supportCount: 25,
-        description: 'Yürüyüş yollarının kenarındaki ot...',
-        metaInfo: 'Çevre . 31.07.2026 - 04.08.2026',
-        status: 'Çözüldü',
-        priority: 'Düşük',
-        location: 'Yürüyüş Yolu',
-        lat: 38.89801482869674, 
-        lng: 40.4879569074668,
-        userId: 'test-kullanici-3'
-        },
-        {
-        title: 'Hasarlı Bank',
-        supportCount: 20,
-        description: 'Kampüs bahçesindeki bankın oturma...',
-        metaInfo: 'Çevre . 26.08.2026',
-        status: 'Beklemede',
-        priority: 'Düşük',
-        location: 'Merkez Kampüs Bahçe',
-        lat: 38.898996440173754, 
-        lng: 40.48619827302908,
-        userId: 'test-kullanici-4'
-        }
-    ];
+    //2.firestore veritabanı referansı 
+    private readonly db=getFirestore();
 
     constructor() { }
-
-    /**
-     * @description Tüm şikayet listesini asenkron (Observable) olarak döndürür.
-     * Tahtadaki "async" mimarisine uygun olarak tasarlandı.
-     * @returns {Observable<Complaint[]>} Şikayet nesnelerinden oluşan akış (stream).
-     */
-    getComplaints(): Observable<Complaint[]> {
-        // of() metodu, statik verimizi Firestore'dan geliyormuş gibi asenkron bir akışa çevirir
-        return of(this.mockComplaints); 
-    }
-
-    /**
-     * @description 
-     */
-    addComplaint(yeniSikayet: Complaint): void{
-        //yeni şikayeti dizinin en başına ekliyoruz ki listelendiğinde en üstte görünsün
-        this.mockComplaints.unshift(yeniSikayet);
-    }
 
     /**
      * @description destekçi sayısına göre şikayetin önceliğini dinamik olarak hesaplar
@@ -95,5 +32,113 @@ export class ComplaintService {
         }else{
             return 'Düşük';
         }
+    }
+
+    /**
+     * @description Tüm aktif şikayetleri (arşivlenmemiş) gerçek zamanlı olarak getirir.
+     * Harita pinleri ve yönetici sayfası için kullanılır.
+     * @returns {Observable<Complaint[]>} Şikayet nesnelerinden oluşan akış
+    */
+    getComplaints(): Observable<Complaint[]>{
+        return new Observable<Complaint[]>(observer=>{
+            //SSR koruması: sadece tarayıcıdaysak canlı dinleyiciyi başlat
+            if(!this.isBrowser){
+                observer.next([]);
+                observer.complete();
+                return;
+            }
+            const complaintsRef=collection(this.db,'complaints');
+            //sadece arşivlenmemişleri getir ve en yeniye göre sırala
+            const q=query(
+                complaintsRef,
+                where('isArchived','==',false),
+                orderBy('createdAt','desc')
+            );
+ 
+            //onSnapShot ile gerçek zamanlı dinleme
+            const unsubscribe=onSnapshot(q,(snapshot)=>{
+                const complaints=snapshot.docs.map(doc=>({
+                    id:doc.id,//firestore belgesinin benzersiz id sinii ekliyoruz
+                    ...doc.data()
+                }as Complaint));
+                observer.next(complaints);
+                },(error)=>{
+                    console.error('şikayetleri çekerken hata:',error);
+                    observer.error(error);
+                });
+                //observable iptal edildiğinde dinleyiciyi durdur
+                return ()=> unsubscribe();
+        })
+    }
+
+
+    /**
+     * @description Belirli bir kullanıcının aktif şikayetlerini gerçek zamanlı getirir.
+     * Fatma'nın "Şikayetlerim" sayfası için kullanılır.
+    */
+    getMyComplaints(userId: string): Observable<Complaint[]> {
+    return new Observable<Complaint[]>(observer => {
+        if (!this.isBrowser) {
+            observer.next([]);
+            observer.complete();
+            return;
+        }
+
+        const complaintsRef = collection(this.db, 'complaints');
+        const q = query(
+            complaintsRef,
+            where('userId', '==', userId),
+            where('isArchived', '==', false),
+            orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const complaints = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+            } as Complaint));
+            observer.next(complaints);
+        }, (error) => {
+            console.error('Kullanıcı şikayetlerini çekerken hata:', error);
+            observer.error(error);
+        });
+
+        return () => unsubscribe();
+        });
+    }
+
+    /**
+   * @description Yeni şikayet oluşturur ve Firestore'a kaydeder.
+   * Abdussamed'in notu: Yeni kayıtta status, isArchived, supportCount ve createdAt otomatik eklenir.
+   */
+    async addComplaint(complaint: Complaint): Promise<void> {
+        const complaintsRef = collection(this.db, 'complaints');
+        await addDoc(complaintsRef, {
+        ...complaint,
+        status: 'Beklemede', // Varsayılan durum
+        isArchived: false,   // Yeni şikayet arşivli olamaz
+        supportCount: 1,     // İlk destek ekleyenin kendisinden
+        createdAt: serverTimestamp() // Firestore sunucu saati
+        });
+    }
+
+    /**
+     * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.
+     */
+    async updateStatus(complaintId: string, newStatus: string): Promise<void> {
+        const complaintDocRef = doc(this.db, 'complaints', complaintId);
+        await updateDoc(complaintDocRef, {
+        status: newStatus
+        });
+    }
+
+    /**
+     * @description Şikayeti veritabanından silmek yerine arşivler.
+     */
+    async archiveComplaint(complaintId: string): Promise<void> {
+        const complaintDocRef = doc(this.db, 'complaints', complaintId);
+        await updateDoc(complaintDocRef, {
+        isArchived: true
+        });
     }
 }
