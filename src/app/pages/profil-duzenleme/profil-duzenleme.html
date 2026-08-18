@@ -1,80 +1,57 @@
 <div class="profil-duzenle-sayfasi">
 
   <div class="baslik-alani">
-    <button class="geri-buton" (click)="geriDon()">
+    <button class="geri-buton" (click)="goBack()">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <h2>Profil Düzenle</h2>
-    <button class="kaydet-ust-buton">Kaydet</button>
+    <button class="kaydet-ust-buton" (click)="save()" [disabled]="saving()">
+      {{ saving() ? '...' : 'Kaydet' }}
+    </button>
   </div>
 
-<div class="avatar-kapsayici">
-    
-    <input 
-      type="file" 
-      #fileInput
-      (change)="fotografSec($event)" 
-      accept="image/*" 
-      style="display: none;">
-
-    <div class="avatar-alani" (click)="fileInput.click()" style="cursor: pointer;">
-      
-      <ng-container *ngIf="secilenFotograf; else varsayilanAvatar">
-        <img [src]="secilenFotograf" class="avatar-resim" alt="Profil Fotoğrafı">
-      </ng-container>
-      
-      <ng-template #varsayilanAvatar>
-        <div class="avatar">M</div>
-      </ng-template>
-
-      <div class="kamera-buton" style="pointer-events: none;">
-        <i class="fa-solid fa-camera"></i>
-      </div>
-
+  <div class="avatar-kapsayici">
+    <div class="avatar-alani">
+      @if (authService.currentUser()?.photoUrl) {
+        <img
+          [src]="authService.currentUser()!.photoUrl"
+          class="avatar-resim"
+          alt="Profil Fotoğrafı"
+          referrerpolicy="no-referrer" />
+      } @else {
+        <div class="avatar">
+          {{ fullName() ? fullName().charAt(0).toUpperCase() : '?' }}
+        </div>
+      }
     </div>
-
-    <a href="javascript:void(0)" class="fotograf-degistir-link" (click)="fileInput.click()">Fotoğrafı Değiştir</a>
-    
   </div>
 
   <div class="form-alani">
-    
-    <div class="form-elemani">
-      <label>Ad</label>
-      <input type="text" value="Mehmet">
-    </div>
 
     <div class="form-elemani">
-      <label>Soyad</label>
-      <input type="text" value="Yılmaz">
+      <label>Ad Soyad</label>
+      <input type="text" [(ngModel)]="fullName" name="fullName" />
     </div>
 
     <div class="form-elemani">
       <label>E-posta</label>
-      <input type="email" value="246051000@bingol.edu.tr">
-    </div>
-
-    <div class="form-elemani ikonlu-input">
-      <div class="input-icerik">
-        <label>Doğum Tarihi</label>
-        <input type="text" value="01.01.2000">
-      </div>
-      <i class="fa-regular fa-calendar sag-ikon"></i>
-    </div>
-
-    <div class="form-elemani ikonlu-input">
-      <div class="input-icerik">
-        <label>Cinsiyet</label>
-        <select>
-          <option>Erkek</option>
-          <option>Kadın</option>
-        </select>
-      </div>
-      <i class="fa-solid fa-chevron-down sag-ikon"></i>
+      <input
+        type="email"
+        [value]="authService.currentUser()?.email"
+        readonly
+        style="color: #888;" />
     </div>
 
   </div>
 
- 
+  @if (errorMessage()) {
+    <p style="color:#e74c3c; font-size:13px; text-align:center; margin:8px 16px;">
+      {{ errorMessage() }}
+    </p>
+  }
+
+  <button class="kaydet-alt-buton" (click)="save()" [disabled]="saving()">
+    {{ saving() ? 'Kaydediliyor...' : 'Kaydet' }}
+  </button>
 
 </div>
