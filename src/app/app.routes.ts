@@ -82,5 +82,8 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard('student')]
   },
   // Tanımsız adresler ana sayfaya yönlendirilir
-  { path: '**', redirectTo: 'anasayfa' }
+  { path: '**', redirectTo: 'anasayfa' },
+
+
+
 ];

@@ -30,7 +30,11 @@
 
     <div class="form-elemani">
       <label>Ad Soyad</label>
-      <input type="text" [(ngModel)]="fullName" name="fullName" />
+      <input 
+        type="text" 
+        [ngModel]="fullName()" 
+        (ngModelChange)="fullName.set($event)" 
+        name="fullName" />
     </div>
 
     <div class="form-elemani">

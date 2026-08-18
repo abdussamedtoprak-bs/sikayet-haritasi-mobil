@@ -1,25 +1,26 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router'; // Router eklendi!
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './profil.html',
   styleUrl: './profil.css',
 })
 export class Profil {
-
-  constructor(private router: Router) {}
+  
+  private readonly router = inject(Router);
+  readonly authService = inject(AuthService);
 
   geriDon() {
     this.router.navigate(['/anasayfa']);
   }
 
   kisiselBilgiler() {
-    console.log('Kişisel bilgiler');
+    console.log('Kişisel bilgiler sayfasına gidiliyor...');
     this.router.navigate(['/profil-duzenleme']);
-  }
-
-
-
+  } 
 }
