@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PriorityLegend } from '../../components/complaints/priority-legend/priority-legend';
 import{ActiveFilterBadges} from '../../components/complaints/active-filter-badges/active-filter-badges';
@@ -70,7 +70,8 @@ export class Complaints implements OnInit {
    */
   constructor(
     private complaintService: ComplaintService,
-    private route:ActivatedRoute) {}//URL parametrelerini okumak için eklendi.
+    private route:ActivatedRoute,
+    private cdr: ChangeDetectorRef) {}
 
   /**
    * @description Bileşen ekrana basıldığı anda otomatik olarak tetiklenir ve verileri yükler.
@@ -99,11 +100,13 @@ export class Complaints implements OnInit {
   loadComplaints(): void {
     this.complaintService.getComplaints().subscribe({
       next: (data) => {
+        console.log("Firebase'den gelen veri dizisi:", data);
         // Servisten gelen tertemiz veriyi sayfamızdaki listeye aktardık
         this.complaintList = data; 
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Şikayetler yüklenirken bir hata oluştu:', err);
+        console.error('Hata:', err);
       }
     });
   }
