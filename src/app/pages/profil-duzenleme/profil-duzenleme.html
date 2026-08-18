@@ -5,10 +5,10 @@
       <i class="fa-solid fa-arrow-left"></i>
     </button>
     <h2>Profil Düzenle</h2>
-    <button class="kaydet-ust-buton">Kaydet</button>
+    <button class="kaydet-ust-buton" (click)="kaydet()">Kaydet</button>
   </div>
 
-<div class="avatar-kapsayici">
+  <div class="avatar-kapsayici">
     
     <input 
       type="file" 
@@ -19,12 +19,14 @@
 
     <div class="avatar-alani" (click)="fileInput.click()" style="cursor: pointer;">
       
-      <ng-container *ngIf="secilenFotograf; else varsayilanAvatar">
-        <img [src]="secilenFotograf" class="avatar-resim" alt="Profil Fotoğrafı">
+      <ng-container *ngIf="secilenFotograf || kullanici.fotoUrl; else varsayilanAvatar">
+        <img [src]="secilenFotograf || kullanici.fotoUrl" class="avatar-resim" alt="Profil Fotoğrafı">
       </ng-container>
       
       <ng-template #varsayilanAvatar>
-        <div class="avatar">M</div>
+        <div class="avatar">
+          {{ kullanici.ad ? kullanici.ad.charAt(0).toUpperCase() : 'M' }}
+        </div>
       </ng-template>
 
       <div class="kamera-buton" style="pointer-events: none;">
@@ -41,40 +43,40 @@
     
     <div class="form-elemani">
       <label>Ad</label>
-      <input type="text" value="Mehmet">
+      <input type="text" [(ngModel)]="kullanici.ad" name="ad">
     </div>
 
     <div class="form-elemani">
       <label>Soyad</label>
-      <input type="text" value="Yılmaz">
+      <input type="text" [(ngModel)]="kullanici.soyad" name="soyad">
     </div>
 
     <div class="form-elemani">
       <label>E-posta</label>
-      <input type="email" value="246051000@bingol.edu.tr">
+      <input type="email" [(ngModel)]="kullanici.eposta" name="eposta" readonly style="color: #888;">
     </div>
 
     <div class="form-elemani ikonlu-input">
       <div class="input-icerik">
         <label>Doğum Tarihi</label>
-        <input type="text" value="01.01.2000">
+        <input type="date" #tarihInput [(ngModel)]="kullanici.dogumTarihi" name="dogumTarihi">
       </div>
-      <i class="fa-regular fa-calendar sag-ikon"></i>
+      <i class="fa-regular fa-calendar sag-ikon" style="cursor: pointer;" (click)="tarihInput.showPicker()"></i>
     </div>
 
     <div class="form-elemani ikonlu-input">
-      <div class="input-icerik">
+      <div class="input-icerik" style="width: 100%;">
         <label>Cinsiyet</label>
-        <select>
-          <option>Erkek</option>
-          <option>Kadın</option>
+        <select [(ngModel)]="kullanici.cinsiyet" name="cinsiyet">
+          <option value="Erkek">Erkek</option>
+          <option value="Kadın">Kadın</option>
         </select>
       </div>
-      <i class="fa-solid fa-chevron-down sag-ikon"></i>
+      <i class="fa-solid fa-chevron-down sag-ikon" style="position: absolute; right: 12px; bottom: 10px; pointer-events: none;"></i>
     </div>
 
   </div>
 
- 
+  <button class="kaydet-alt-buton" (click)="kaydet()">Kaydet</button>
 
 </div>
