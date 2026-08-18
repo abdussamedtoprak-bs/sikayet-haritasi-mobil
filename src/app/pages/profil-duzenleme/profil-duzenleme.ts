@@ -1,95 +1,76 @@
-import { Component, ChangeDetectorRef, OnInit, inject } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { Component, inject, signal, effect } from '@angular/core';
+import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
-// Servisimizi ve modelimizi içeri aktarıyoruz
-import { UserService, KullaniciProfili } from '../../services/user-service';
-
+/**
+ * @description Kullanıcının kendi profil bilgilerini düzenlediği sayfadır.
+ *
+ * Düzenlenebilir tek alan ad-soyad bilgisidir. E-posta ve profil fotoğrafı
+ * Google hesabından geldiği için salt okunur gösterilir.
+ */
 @Component({
   selector: 'app-profil-duzenleme',
-  standalone: true, 
-  imports: [CommonModule, FormsModule], 
-  templateUrl: './profil-duzenleme.html', 
-  styleUrls: ['./profil-duzenleme.css'] 
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './profil-duzenleme.html',
+  styleUrls: ['./profil-duzenleme.css']
 })
-export class ProfilDuzenleme implements OnInit {
-  
-  // Servisi bileşenimize enjekte (dahil) ediyoruz
-  private userService: UserService = inject(UserService);
+export class ProfilDuzenleme {
 
-  mevcutKullaniciId: string | null = null;
-  secilenFotograf: string | ArrayBuffer | null = null;
-  yuklenecekDosya: File | null = null; 
+  private readonly location = inject(Location);
 
-  kullanici: KullaniciProfili = {
-    ad: '',
-    soyad: '',
-    eposta: '', 
-    dogumTarihi: '',
-    cinsiyet: 'Erkek',
-    fotoUrl: ''
-  };
+  /** @description Şablonda kullanıcı bilgilerine erişmek için public tanımlıdır. */
+  readonly authService = inject(AuthService);
 
-  constructor(
-    private location: Location,
-    private cdr: ChangeDetectorRef
-  ) {}
+  /** @description Form alanındaki ad-soyad değeri. */
+  readonly fullName = signal<string>('');
 
-  ngOnInit() {
-    // Servisteki getKullaniciDurumu() fonksiyonunu kullanarak veriyi çekiyoruz
-    this.userService.getKullaniciDurumu().subscribe(async (user: any) => {
-      if (user) {
-        this.mevcutKullaniciId = user.uid;
-        this.kullanici.eposta = user.email || ''; 
-        this.kullanici.fotoUrl = user.photoURL || ''; 
-        
-        // Servisteki profilGetir() fonksiyonu ile Firestore verisini çekiyoruz
-        const veri = await this.userService.profilGetir(user.uid);
-        if (veri) {
-          this.kullanici = { ...this.kullanici, ...veri }; 
-          this.cdr.detectChanges(); 
-        }
+  /** @description Kaydetme işlemi sürüyor mu? */
+  readonly saving = signal<boolean>(false);
+
+  /** @description Kaydetme sırasında oluşan hata mesajı. */
+  readonly errorMessage = signal<string | null>(null);
+
+  /**
+   * @description Formun bir kez doldurulmasını sağlar. Oturum bilgisi
+   * asenkron geldiği için ilk geldiği anda form doldurulur, sonrasında
+   * kullanıcının yazdıkları üzerine yazılmaz.
+   */
+  private formInitialized = false;
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+
+      if (user && !this.formInitialized) {
+        this.fullName.set(user.fullName);
+        this.formInitialized = true;
       }
     });
   }
 
-  fotografSec(event: any) {
-    const dosya = event.target.files[0]; 
-    if (dosya) {
-      this.yuklenecekDosya = dosya; 
-      const okuyucu = new FileReader(); 
-      okuyucu.onload = (e) => {
-        this.secilenFotograf = e.target?.result as string; 
-        this.cdr.detectChanges(); 
-      };
-      okuyucu.readAsDataURL(dosya); 
-    }
-  }
-
-  async kaydet() {
-    if (!this.mevcutKullaniciId) {
-      alert('Lütfen önce Google ile giriş yapın.');
-      return;
-    }
+  /**
+   * @description Profil bilgilerini kaydeder ve önceki sayfaya döner.
+   */
+  async save(): Promise<void> {
+    this.errorMessage.set(null);
+    this.saving.set(true);
 
     try {
-      if (this.yuklenecekDosya) {
-        // Servisteki fotografYukle() fonksiyonuna dosyayı gönderiyoruz
-        const link = await this.userService.fotografYukle(this.mevcutKullaniciId, this.yuklenecekDosya);
-        this.kullanici.fotoUrl = link; 
-      }
-
-      // Servisteki profilKaydet() fonksiyonu ile verileri yolluyoruz
-      await this.userService.profilKaydet(this.mevcutKullaniciId, this.kullanici);
-
-      alert('Profil bilgileriniz başarıyla kaydedildi!');
-    } catch (error) {
-      console.error('Kaydetme hatası:', error);
-      alert('Kaydedilirken bir hata oluştu.');
+      await this.authService.updateProfile({ fullName: this.fullName() });
+      this.location.back();
+    } catch (error: any) {
+      this.errorMessage.set(error?.message ?? 'Kaydedilirken bir hata oluştu.');
+    } finally {
+      this.saving.set(false);
     }
   }
 
-  geriDon() {
+  /**
+   * @description Değişiklikleri kaydetmeden önceki sayfaya döner.
+   */
+  goBack(): void {
     this.location.back();
   }
 }

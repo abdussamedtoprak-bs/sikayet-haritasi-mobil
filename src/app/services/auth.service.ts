@@ -348,6 +348,50 @@ export class AuthService {
     }
   }
 
+
+
+
+    /**
+   * @description Giriş yapmış kullanıcının profil bilgilerini günceller.
+   *
+   * Yalnızca kullanıcının değiştirmesine izin verilen alanlar güncellenebilir.
+   * E-posta, rol ve hesap durumu gibi alanlar bu metotla değiştirilemez;
+   * bunlar Firestore Security Rules tarafından da korunmaktadır.
+   *
+   * Güncelleme sonrası yerel oturum bilgisi de tazelenir, böylece arayüz
+   * yeniden yükleme gerekmeden güncel değeri gösterir.
+   *
+   * @param {object} changes - Güncellenecek alanlar
+   * @returns {Promise<void>}
+   */
+  async updateProfile(changes: { fullName?: string }): Promise<void> {
+    const user = this.currentUserSignal();
+
+    if (!user || !this.db) {
+      throw new Error('Oturum açık değil.');
+    }
+
+    const updates: Record<string, unknown> = {};
+
+    if (changes.fullName !== undefined) {
+      const trimmed = changes.fullName.trim();
+
+      if (!trimmed) {
+        throw new Error('Ad soyad boş bırakılamaz.');
+      }
+
+      updates['fullName'] = trimmed;
+    }
+
+    // Değişiklik yoksa gereksiz yazma yapma
+    if (Object.keys(updates).length === 0) return;
+
+    const userRef = doc(this.db, 'users', user.uid);
+    await updateDoc(userRef, updates);
+
+    this.currentUserSignal.set({ ...user, ...updates } as User);
+  }
+
     /**
    * @description Firebase'in oturum durumunu bildirmesini bekler.
    *
