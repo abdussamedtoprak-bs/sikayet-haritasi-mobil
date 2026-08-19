@@ -12,9 +12,10 @@
 
 /* ÜST BAŞLIK */
 .baslik-alani {
+  position: relative; /* Geri butonunu sola sabitlemek için eklendi */
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center; /* Başlığı tam ortaya alır */
   height: 44px;
   margin-bottom: 24px;
 }
@@ -24,9 +25,12 @@
   font-size: 18px;
   font-weight: 600;
   color: #222;
+  text-align: center;
 }
 
 .geri-buton {
+  position: absolute; /* Butonu sola sabitler, başlığın ortasını bozmaz */
+  left: 0;
   width: 40px;
   height: 40px;
   border: none;
@@ -37,16 +41,6 @@
   justify-content: flex-start;
   color: #222;
   font-size: 20px;
-  padding: 0;
-}
-
-.kaydet-ust-buton {
-  border: none;
-  background: transparent;
-  color: #2e88ed;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
   padding: 0;
 }
 
