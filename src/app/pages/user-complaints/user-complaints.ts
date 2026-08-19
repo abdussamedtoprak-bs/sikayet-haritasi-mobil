@@ -54,11 +54,11 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   geriDon() {
-    this.router.navigate(['/profil']);
+    this.router.navigate(['/anasayfa']);
   }
 
   sikayetBildir() {
-    this.router.navigate(['/sikayet-olustur']);
+    this.router.navigate(['/anasayfa']);
   }
 
   detayAc(sikayet: Complaint) {

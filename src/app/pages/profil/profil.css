@@ -4,7 +4,7 @@
   max-width: 420px;
   min-height: 100vh;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: var(--bg-app);
   padding: 24px 20px 40px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -24,7 +24,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #111;
+  color: var(--text-strong);
 }
 
 .geri-buton {
@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  color: #111;
+  color: var(--text-strong);
 }
 
 .geri-buton i {
@@ -48,7 +48,8 @@
 /* PROFİL KARTI */
 .profil-karti {
   width: 100%;
-  border: 1px solid #e3e3e3;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -81,6 +82,15 @@
   justify-content: center;
 }
 
+/* Google profil fotoğrafının yuvarlak avatar alanına oturması için */
+.avatar-foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
 .kamera-buton {
   position: absolute;
   right: 0;
@@ -88,18 +98,18 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 1px solid #e3e3e3;
-  background-color: white;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px var(--shadow);
 }
 
 .kamera-buton i {
   font-size: 12px;
-  color: #555;
+  color: var(--text-muted);
 }
 
 /* PROFİL BİLGİLERİ */
@@ -115,13 +125,13 @@
   margin: 0 0 4px;
   font-size: 18px;
   font-weight: 600;
-  color: #222;
+  color: var(--text-strong);
 }
 
 .profil-bilgileri p {
   margin: 0 0 10px;
   font-size: 13px;
-  color: #555;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -132,8 +142,8 @@
 .dogrulama-buton {
   border: none;
   border-radius: 6px;
-  background-color: #eaf4ff;
-  color: #4387c9;
+  background-color: var(--bg-soft);
+  color: var(--accent-text);
   padding: 6px 10px;
   font-size: 12px;
   font-weight: 500;
@@ -157,7 +167,8 @@
 
 .istatistik-karti {
   height: 90px;
-  border: 1px solid #e5e5e5;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -174,13 +185,13 @@
 
 .istatistik-karti strong {
   font-size: 18px;
-  color: #222;
+  color: var(--text-strong);
   margin-bottom: 2px;
 }
 
 .istatistik-karti span {
   font-size: 13px;
-  color: #777;
+  color: var(--text-muted);
 }
 
 /* İSTATİSTİK RENKLERİ */
@@ -199,9 +210,9 @@
 .menu-karti {
   width: 100%;
   min-height: 72px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background-color: white;
+  background-color: var(--bg-card);
   display: flex;
   align-items: center;
   padding: 12px 16px;
@@ -212,7 +223,7 @@
 }
 
 .menu-karti:hover {
-  background-color: #f8fbff;
+  background-color: var(--bg-hover);
 }
 
 /* MENÜ İKONU */
@@ -241,19 +252,19 @@
 .menu-yazi strong {
   font-size: 16px;
   font-weight: 600;
-  color: #222;
+  color: var(--text-strong);
   margin-bottom: 4px;
 }
 
 .menu-yazi span {
   font-size: 13px;
-  color: #777;
+  color: var(--text-muted);
 }
 
 /* OK */
 .menu-ok {
   font-size: 14px;
-  color: #999;
+  color: var(--text-muted);
   margin-left: 8px;
 }
 
