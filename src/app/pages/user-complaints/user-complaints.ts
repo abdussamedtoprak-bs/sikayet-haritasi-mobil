@@ -2,10 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-// 1. DÜZELTME: Dosya adı complaint.service değilse, sadece complaint olarak değiştirin.
-// (Eğer dosyanız models klasöründeyse yolu '../../models/complaint' olarak güncelleyin)
 import { ComplaintService } from '../../services/complaint'; 
 import { Complaint } from '../../models/complaint';
+import { AuthService } from '../../services/auth.service'; // AuthService Eklendi
 
 @Component({
   selector: 'app-user-complaints',
@@ -27,14 +26,22 @@ export class UserComplaintsComponent implements OnInit {
 
   private router = inject(Router);
   private complaintService = inject(ComplaintService);
+  private authService = inject(AuthService); // AuthService Inject Edildi
 
   ngOnInit() {
-    // 2. DÜZELTME: Gelen data'nın tipini "Complaint[]" olarak açıkça belirttik
-    this.complaintService.getComplaints().subscribe((data: Complaint[]) => {
-      this.tumSikayetler = data;
-      this.gosterilenSikayetler = data; 
-      this.istatistikleriHesapla();
-    });
+    // 1. Giriş yapan kullanıcının kimliğini alıyoruz
+    const currentUser = this.authService.currentUser();
+
+    if (currentUser && currentUser.uid) {
+      // 2. SADECE BU KULLANICIYA AİT şikayetleri çeken servisi çağırıyoruz
+      this.complaintService.getMyComplaints(currentUser.uid).subscribe((data: Complaint[]) => {
+        this.tumSikayetler = data;
+        this.gosterilenSikayetler = data; 
+        this.istatistikleriHesapla();
+      });
+    } else {
+      console.warn("Kullanıcı oturumu bulunamadı, şikayetler çekilemiyor.");
+    }
   }
 
   istatistikleriHesapla() {
@@ -54,7 +61,7 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   geriDon() {
-    this.router.navigate(['/profil']);
+    this.router.navigate(['/anasayfa']);
   }
 
   sikayetBildir() {

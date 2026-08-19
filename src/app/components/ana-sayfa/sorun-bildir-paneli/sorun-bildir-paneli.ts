@@ -1,13 +1,13 @@
-import { Component, Output, EventEmitter, signal,Input,OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, signal, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Complaint } from '../../../models/complaint';
 import { ComplaintService } from '../../../services/complaint';
+import { AuthService } from '../../../services/auth.service';
 
 /**
  * @description Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
  * Konum, kategori, açıklama ve fotoğraf alanlarından oluşan bir form sunar.
- * Firebase entegrasyonuna kadar veriler konsola yazdırılmaktadır.
  */
 @Component({
   selector: 'app-sorun-bildirme-paneli',
@@ -18,22 +18,19 @@ import { ComplaintService } from '../../../services/complaint';
 })
 export class SorunBildirmePaneli implements OnInit{
 
-  /**
-   * @description haritadan gelen anlık koordinat bilgisini karşılar
-   * 
-   */
+  /** @description haritadan gelen anlık koordinat bilgisini karşılar */
   @Input() gelenKonum:{lat:number,lng:number}|null=null;
   
+  // AuthService Inject Edildiz
+  private readonly authService = inject(AuthService); 
 
   constructor(private complaintService:ComplaintService){}
 
   ngOnInit(): void {
     if (this.gelenKonum) {
-      // DİKKAT: Sağ ve soldaki işaretler normal tırnak değil, ters tırnaktır (backtick)
       this.reportData.konum = `${this.gelenKonum.lat.toFixed(4)}, ${this.gelenKonum.lng.toFixed(4)}`;
     }
   } 
-
 
   /** @description Paneli kapatmak için üst bileşene event fırlatır */
   @Output() panelKapat = new EventEmitter<void>();
@@ -53,26 +50,13 @@ export class SorunBildirmePaneli implements OnInit{
     { id: 'diger', name: 'Diğer', icon: '⋯' }
   ];
 
-  /**
-   * @description Yüklenen fotoğrafların base64 listesi.
-   * Signal olarak tutulur; FileReader gibi Angular'ın izlemediği
-   * async callback'ler içinde bile arayüzün anında güncellenmesini sağlar.
-   */
+  /** @description Yüklenen fotoğrafların base64 listesi. */
   fotograflar = signal<string[]>([]);
 
-  /**
-   * @description Seçilen kategoriyi aktif hale getirir.
-   * @param {string} id - Seçilen kategorinin id'si
-   */
   kategoriSec(id: string): void {
     this.reportData.kategori = id;
   }
 
-  /**
-   * @description Dosya seçici üzerinden fotoğraf yükler.
-   * Maksimum 3 fotoğraf yüklenebilir.
-   * @param {any} event - Dosya input change eventi
-   */
   fotografSec(event: any): void {
     const files = event.target.files;
     if (files) {
@@ -87,45 +71,64 @@ export class SorunBildirmePaneli implements OnInit{
     }
   }
 
-  /**
-   * @description Yüklenen fotoğrafı listeden kaldırır.
-   * @param {number} index - Silinecek fotoğrafın indeksi
-   */
   fotografSil(index: number): void {
     this.fotograflar.update(list => list.filter((_, i) => i !== index));
   }
 
   /**
    * @description Formu gönderir ve paneli kapatır.
-   * Firebase entegrasyonunda Firestore'a kaydedilecektir.
    */
-  gonder() {
-    // 1. Konum string'ini ("38.9052, 40.4824") parçalayıp enlem ve boylam (number) olarak ayırıyoruz
-    const konumParcalari = this.reportData.konum.split(',');
-    const enlem = parseFloat(konumParcalari[0].trim());
-    const boylam = parseFloat(konumParcalari[1].trim());
+  async gonder() {
+    console.log("ADIM 1: Gönder butonuna tıklandı! Fonksiyon çalıştı.");
 
-    const baslangicDestek=1;
-    // 2. Servisin beklediği Complaint (Şikayet) yapısını oluşturuyoruz
-    const yeniSikayet: Complaint = {
-      userId: 'gecici-kullanici-id',
-      title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(), 
-      supportCount: baslangicDestek, // İlk destekleyeni kullanıcının kendisi sayıyoruz
-      description: this.reportData.aciklama,
-      metaInfo: 'Genel - ' + new Date().toLocaleDateString('tr-TR'),
-      status: 'İnceleniyor', 
-      // ÖNCELİK ARTIK SERVİSTEKİ KURALA GÖRE OTOMATİK BELİRLENİYOR
-      priority: this.complaintService.hesaplaOncelik(baslangicDestek),
-      location: 'Haritadan Bildirildi',
-      lat: enlem,
-      lng: boylam
-    };
+    try {
+      const currentUser = this.authService.currentUser();
+      console.log("ADIM 2: Kullanıcı kimliği alındı:", currentUser ? currentUser.uid : "Oturum Yok!");
 
-    // 3. Veriyi servisteki havuza gönderiyoruz
-    this.complaintService.addComplaint(yeniSikayet);
+      if (!currentUser) {
+        alert('Şikayet bildirmek için oturum açmalısınız!');
+        return;
+      }
 
-    // 4. Kullanıcıya bilgi verip paneli kapatıyoruz
-    alert('Sorunuz başarıyla bildirildi ve sisteme kaydedildi!');
-    this.panelKapat.emit(); // Modalı kapatma sinyali
+      if (!this.reportData.aciklama.trim()) {
+        alert('Lütfen şikayetiniz için bir açıklama yazın.');
+        return;
+      }
+
+      console.log("ADIM 3: Veriler Firebase için hazırlanıyor...");
+      
+      const konumParcalari = this.reportData.konum.split(',');
+      const enlem = konumParcalari.length > 1 ? parseFloat(konumParcalari[0].trim()) : 0;
+      const boylam = konumParcalari.length > 1 ? parseFloat(konumParcalari[1].trim()) : 0;
+
+      const baslangicDestek = 1;
+
+      const yeniSikayet: Complaint = {
+        userId: currentUser.uid,
+        title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(), 
+        supportCount: baslangicDestek,
+        description: this.reportData.aciklama,
+        metaInfo: 'Genel - ' + new Date().toLocaleDateString('tr-TR'),
+        status: 'Beklemede', 
+        priority: this.complaintService.hesaplaOncelik(baslangicDestek),
+        location: this.reportData.konum, // Konum metnini direkt kaydediyoruz
+        lat: enlem,
+        lng: boylam,
+        category: this.reportData.kategori
+      };
+
+      console.log("ADIM 4: Hazırlanan Şikayet Paketi:", yeniSikayet);
+      console.log("ADIM 5: Firebase'e gönderiliyor... (Lütfen Bekleyin)");
+
+      await this.complaintService.addComplaint(yeniSikayet);
+
+      console.log("ADIM 6: BİNGO! 🚀 Firebase veriyi başarıyla kaydetti!");
+      alert('Şikayetiniz başarıyla kaydedildi!');
+      this.panelKapat.emit(); 
+
+    } catch (error) {
+      console.error('💥 ADIM X: HATA OLUŞTU!', error);
+      alert('Kaydedilirken hata oluştu. Konsola bakın.');
+    }
   }
 }
