@@ -1,36 +1,32 @@
 <div class="sheet-container" *ngIf="complaint">
-
-
     <!-- Üst Bar: navigasyon ve rozetler -->
-    <div class="sheet-header">
-        
+    <div class="sheet-header"> 
         <!-- 1. Sol: Geri Butonu -->
         <div class="header-left">
             <button class="nav-btn" (click)="onPrev()">&lt;</button>
         </div>
-
         <!-- 2. Orta: Rozetler -->
         <div class="header-center badges">
             <!-- Dinamik öncelik verisi (Örn: Acil, Orta) -->
-            <span class="badge priority-badge">{{ complaint?.priority }}</span>
-            
+            <span class="badge priority-badge"
+            [ngClass]="{
+                'bg-acil': complaint?.priority === 'Acil',
+                'bg-orta': complaint?.priority === 'Orta',
+                'bg-dusuk': complaint?.priority === 'Düşük'
+            }">{{ complaint?.priority }}</span>         
             <!-- Dinamik destek sayısı verisi -->
             <span class="badge upvote-badge">
             <i class="icon-user"></i> {{ complaint?.supportCount }}
             </span>
         </div>
-
         <!-- 3. Sağ: İleri ve Kapat Butonları -->
         <div class="header-right">
             <button class="nav-btn" (click)="onNext()">&gt;</button>
             <button class="close-btn" (click)="closeSheet()">X</button>
         </div>
-
     </div>
-
     <!-- İçerik alanı -->
-    <div class="sheet-body"> 
-        
+    <div class="sheet-body">        
         <!-- Sol Kısım: Baret + Metinler -->
         <div class="info-section">
         <!-- Baret İkonu Alanı -->
@@ -40,13 +36,12 @@
                 <path d="M12 2a9 9 0 0 0-9 9v2h18v-2a9 9 0 0 0-9-9zm0 2c3.87 0 7 3.13 7 7H5c0-3.87 3.13-7 7-7z"/>
                 <path d="M2 15h20v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3z"/>
             </svg>
-        </div>
-        
+        </div>   
         <!-- Başlık, Açıklama ve Kategori (Dikey dizilim) -->
         <div class="text-content">
-            <h3 class="title">{{complaint.title || 'Kırık Cam Tehlikesi'}}</h3>
+            <h3 class="title">{{complaint?.title}}</h3>
             <p class="description">
-            {{complaint.description || 'Kütüphane önü: Girişe yaklaşık 2 m2 alana yayılmış cam kırıkları yayalar için tehlike oluşturuyor.'}}
+            {{complaint?.description}}
             </p>
             <!-- Kategori Kısmı -->
             <div class="category">
@@ -54,15 +49,13 @@
                     <path d="M12 2a9 9 0 0 0-9 9v2h18v-2a9 9 0 0 0-9-9zm0 2c3.87 0 7 3.13 7 7H5c0-3.87 3.13-7 7-7z"/>
                     <path d="M2 15h20v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3z"/>
                 </svg>
-                <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split(' . ')[0] : 'Güvenlik' }}</span>
+                <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split('-')[0] : '' }}</span>
             </div>
-
         </div>
         </div>
-
         <!-- Sağ Kısım: Resim + Tarih -->
         <div class="media-section">
-        <img src="şikayet-fotoğrafı.png" alt="Şikayet Fotoğrafı" class="complaint-image">
+        <img [src]="complaint?.imageUrl ||'şikayet-fotografi.png'" alt="Şikayet Fotoğrafı" class="complaint-image">
         <!-- Tarih Kısmı -->
         <div class="date">
             <svg class="small-calendar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,11 +64,8 @@
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
-            <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split(' . ')[1] : '31.07.2026' }}</span>
+            <span>{{ complaint?.metaInfo ? complaint!.metaInfo.split('-')[1] : '' }}</span>
             </div>
-        </div>
-        
+        </div> 
     </div>
-
-
 </div>

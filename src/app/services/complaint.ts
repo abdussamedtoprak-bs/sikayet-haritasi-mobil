@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { isPlatformBrowser } from '@angular/common';
-import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, orderBy } from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, orderBy ,arrayUnion,increment} from 'firebase/firestore';
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -11,16 +11,12 @@ import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, 
     providedIn: 'root'
     })
 export class ComplaintService {
-
     //1.SSR koruması için platform kontrolü
     private readonly platformId=inject(PLATFORM_ID);
     private readonly isBrowser=isPlatformBrowser(this.platformId);
-
     //2.firestore veritabanı referansı 
     private readonly db=getFirestore();
-
     constructor() { }
-
     /**
      * @description destekçi sayısına göre şikayetin önceliğini dinamik olarak hesaplar
      */
@@ -33,7 +29,6 @@ export class ComplaintService {
             return 'Düşük';
         }
     }
-
     /**
      * @description Tüm aktif şikayetleri (arşivlenmemiş) gerçek zamanlı olarak getirir.
      * Harita pinleri ve yönetici sayfası için kullanılır.
@@ -54,14 +49,13 @@ export class ComplaintService {
                 where('isArchived','==',false),
                 orderBy('createdAt','desc')
             );
- 
             //onSnapShot ile gerçek zamanlı dinleme
             const unsubscribe=onSnapshot(q,(snapshot)=>{
-                const complaints=snapshot.docs.map(doc=>({
+                const complaints=snapshot.docs. map(doc=>({
                     id:doc.id,//firestore belgesinin benzersiz id sinii ekliyoruz
                     ...doc.data()
                 }as Complaint));
-                observer.next(complaints);
+                observer.next(complaints); 
                 },(error)=>{
                     console.error('şikayetleri çekerken hata:',error);
                     observer.error(error);
@@ -70,8 +64,6 @@ export class ComplaintService {
                 return ()=> unsubscribe();
         })
     }
-
-
     /**
      * @description Belirli bir kullanıcının aktif şikayetlerini gerçek zamanlı getirir.
      * Fatma'nın "Şikayetlerim" sayfası için kullanılır.
@@ -83,7 +75,6 @@ export class ComplaintService {
             observer.complete();
             return;
         }
-
         const complaintsRef = collection(this.db, 'complaints');
         const q = query(
             complaintsRef,
@@ -91,7 +82,6 @@ export class ComplaintService {
             where('isArchived', '==', false),
             orderBy('createdAt', 'desc')
         );
-
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const complaints = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -102,11 +92,9 @@ export class ComplaintService {
             console.error('Kullanıcı şikayetlerini çekerken hata:', error);
             observer.error(error);
         });
-
         return () => unsubscribe();
         });
     }
-
     /**
    * @description Yeni şikayet oluşturur ve Firestore'a kaydeder.
    * Abdussamed'in notu: Yeni kayıtta status, isArchived, supportCount ve createdAt otomatik eklenir.
@@ -121,7 +109,6 @@ export class ComplaintService {
         createdAt: serverTimestamp() // Firestore sunucu saati
         });
     }
-
     /**
      * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.
      */
@@ -131,7 +118,6 @@ export class ComplaintService {
         status: newStatus
         });
     }
-
     /**
      * @description Şikayeti veritabanından silmek yerine arşivler.
      */
@@ -140,5 +126,15 @@ export class ComplaintService {
         await updateDoc(complaintDocRef, {
         isArchived: true
         });
+    }
+    /**
+     * @description şikayeti destekler. kullanıcı ID'sini listeye ekler ve sayacı 1 arttırır.
+     */
+    async supportComplaint(complaintId:string,userId:string):Promise<void>{
+        const complaintDocRef=doc(this.db,'complaints',complaintId);
+        await updateDoc(complaintDocRef,{
+            supporters: arrayUnion(userId),//kullanıcı Id sini diziye ekle. aynı Id 2 kez eklenmez
+            supportCount:increment(1)//sayacı 1 arttırır
+        })
     }
 }
