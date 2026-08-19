@@ -1,40 +1,32 @@
 <div class="complaints-page-container">
     <app-baslik title="Güncel Şikayetler" [showBackBtn]="true"></app-baslik>
-    
-    
     <!-- HARİTA BURAYA EKLENDİ -->
     <div class="harita-wrapper">
         <app-harita-alani></app-harita-alani>
     </div>
-
     <app-priority-legend></app-priority-legend>
-
     <!-- ARAMA ÇUBUĞU BİLEŞENİ -->
-<app-search-bar (searchChanged)="onSearch($event)"></app-search-bar>
-
+    <app-search-bar (searchChanged)="onSearch($event)"></app-search-bar>
     <!-- Seçilen filtreleri içeriye yolluyoruz: [filters]="currentFilters" -->
     <app-active-filter-badges 
         [filters]="currentFilters" 
         (openFilter)="isFilterModalOpen = true">
     </app-active-filter-badges>
-
     <!-- applyFilters olayını yakalıyoruz -->
     <app-filter-panel 
         [isOpen]="isFilterModalOpen" 
         (closePanel)="isFilterModalOpen = false"
         (applyFilters)="updateFilters($event)"
         (clearFilters)="clearAllFilters()">
-    </app-filter-panel>
-    
+    </app-filter-panel>  
     <!-- Sekmeli Filtreleme Butonları (Tümü, Acil, Orta, Düşük) -->
     <app-tab-filter
         [counts]="tabCounts"
         (onFilterChange)="onFilterChange($event)">
     </app-tab-filter>
-
     <!-- Şikayet Kartları Listesi -->
     <div style="padding: 16px;">
-    @for (item of filteredComplaints; track item.title) {
+    @for (item of filteredComplaints; track item.id) {
         <app-complaint-card [complaint]="item"
             (click)="openDetail(item)"
             style="cursor:pointer;">
@@ -47,9 +39,7 @@
         [complaint]="selectedComplaint!"
         (close)="closeDetail()"
         (next)="goToNextComplaint()"
-        (prev)="goToPrevComplaint()">
-            
+        (prev)="goToPrevComplaint()">          
         </app-complaint-detail-sheet>
     }
-
 </div>

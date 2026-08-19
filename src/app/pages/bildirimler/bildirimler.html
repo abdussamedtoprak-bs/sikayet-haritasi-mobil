@@ -1,14 +1,11 @@
 <div class="bildirimler-wrapper">
-
   <app-baslik title="Bildirimler" [showBackBtn]="true"></app-baslik>
-
   @if (okunmamisSayisi() > 0) {
     <div class="tumunu-oku-bar">
       <span>{{ okunmamisSayisi() }} okunmamış bildirim</span>
       <button class="tumunu-oku-btn" (click)="tumunuOku()">Tümünü Oku</button>
     </div>
   }
-
   <div class="bildirim-listesi">
     @for (bildirim of bildirimler(); track bildirim.id) {
       <app-notification-item
@@ -17,5 +14,4 @@
       </app-notification-item>
     }
   </div>
-
 </div>

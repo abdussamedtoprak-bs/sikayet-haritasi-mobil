@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Complaint } from '../../../models/complaint';
 import { ComplaintService } from '../../../services/complaint';
+import { AuthService } from '../../../services/auth.service';
 
 /**
  * @description Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
@@ -25,7 +26,9 @@ export class SorunBildirmePaneli implements OnInit{
   @Input() gelenKonum:{lat:number,lng:number}|null=null;
   
 
-  constructor(private complaintService:ComplaintService){}
+  constructor(private complaintService:ComplaintService,
+    private authService: AuthService
+  ){}
 
   ngOnInit(): void {
     if (this.gelenKonum) {
@@ -108,7 +111,7 @@ export class SorunBildirmePaneli implements OnInit{
     const baslangicDestek=1;
     // 2. Servisin beklediği Complaint (Şikayet) yapısını oluşturuyoruz
     const yeniSikayet: Complaint = {
-      userId: 'gecici-kullanici-id',
+      userId: this.authService.currentUser()?.uid || '',
       title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(), 
       supportCount: baslangicDestek, // İlk destekleyeni kullanıcının kendisi sayıyoruz
       description: this.reportData.aciklama,
