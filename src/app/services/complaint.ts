@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { isPlatformBrowser } from '@angular/common';
-import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, orderBy ,arrayUnion,increment} from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc, serverTimestamp, orderBy ,arrayUnion,increment} from 'firebase/firestore';
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -97,10 +97,12 @@ export class ComplaintService {
     }
     /**
    * @description Yeni şikayet oluşturur ve Firestore'a kaydeder.
-   * Abdussamed'in notu: Yeni kayıtta status, isArchived, supportCount ve createdAt otomatik eklenir.
+   * Yeni kayıtta status, isArchived, supportCount ve createdAt otomatik eklenir.
+   * Yöneticilere de yeni şikayet bildirimi gönderir.
    */
     async addComplaint(complaint: Complaint): Promise<void> {
         const complaintsRef = collection(this.db, 'complaints');
+        //şikayeti veri tabanına kaydet
         await addDoc(complaintsRef, {
         ...complaint,
         status: 'Beklemede', // Varsayılan durum
@@ -108,33 +110,81 @@ export class ComplaintService {
         supportCount: 1,     // İlk destek ekleyenin kendisinden
         createdAt: serverTimestamp() // Firestore sunucu saati
         });
+        //yöneticilere bildirim gönder
+        const bildirimlerRef=collection(this.db,'bildirimler');
+        await addDoc(bildirimlerRef,{
+            tip:'yeni',
+            baslik:'Sisteme yeni şikayet eklendi',
+            mesaj:`Yeni bir şikayet bildirildi. Lütfen kontrol ediniz.`,
+            okundu:false,
+            yonlendirme:'/guncel-sikayetler',
+            targetRole:'admin',//sadece yöneticilere gider
+            createdAt:serverTimestamp()
+        });
     }
     /**
      * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.
+     * Şikayeti oluşturan kullanıcıya durum güncellemesi bildirimi gönderir.
      */
-    async updateStatus(complaintId: string, newStatus: string): Promise<void> {
-        const complaintDocRef = doc(this.db, 'complaints', complaintId);
-        await updateDoc(complaintDocRef, {
-        status: newStatus
-        });
-    }
     /**
-     * @description Şikayeti veritabanından silmek yerine arşivler.
-     */
-    async archiveComplaint(complaintId: string): Promise<void> {
-        const complaintDocRef = doc(this.db, 'complaints', complaintId);
-        await updateDoc(complaintDocRef, {
-        isArchived: true
-        });
+   * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.
+   * Şikayeti oluşturan kullanıcıya durumun içeriğine özel bildirim gönderir.
+   */
+async updateStatus(complaintId: string, newStatus: string): Promise<void> {
+    const complaintDocRef = doc(this.db, 'complaints', complaintId);     
+    // 1. Şikayeti okuyup kime ait olduğunu (userId) buluyoruz
+    const snap = await getDoc(complaintDocRef);
+    if (!snap.exists()) return;
+    const complaintData = snap.data() as Complaint;
+    // 2. Şikayetin durumunu güncelle
+    await updateDoc(complaintDocRef, {
+    status: newStatus
+    });
+    // 3. Şikayeti açan kullanıcıya duruma ÖZEL bildirim ateşle!
+    if (complaintData.userId) {
+    let bildirimTipi = 'guncelleme';
+    let bildirimBaslik = 'Şikayet Durumu Güncellendi';
+    let bildirimMesaji = `Şikayetinizin durumu "${newStatus}" olarak değiştirildi.`;
+    // Duruma göre metinleri özelleştiriyoruz
+    if (newStatus === 'İnceleniyor') {
+        bildirimTipi = 'guncelleme';
+        bildirimBaslik = 'Şikayetiniz İnceleniyor 🔍';
+        bildirimMesaji = 'Bildirmiş olduğunuz şikayet yetkili birimler tarafından incelemeye alınmıştır.';
+    } else if (newStatus === 'Çözüldü') {
+        bildirimTipi = 'cozuldu';
+        bildirimBaslik = 'Şikayetiniz Çözüldü ✅';
+        bildirimMesaji = 'Şikayetiniz başarıyla çözüme kavuşturulmuştur. Geri bildiriminiz için teşekkür ederiz.';
     }
-    /**
-     * @description şikayeti destekler. kullanıcı ID'sini listeye ekler ve sayacı 1 arttırır.
-     */
-    async supportComplaint(complaintId:string,userId:string):Promise<void>{
-        const complaintDocRef=doc(this.db,'complaints',complaintId);
-        await updateDoc(complaintDocRef,{
-            supporters: arrayUnion(userId),//kullanıcı Id sini diziye ekle. aynı Id 2 kez eklenmez
-            supportCount:increment(1)//sayacı 1 arttırır
-        })
+
+    const bildirimlerRef = collection(this.db, 'bildirimler');
+    await addDoc(bildirimlerRef, {
+        tip: bildirimTipi,
+        baslik: bildirimBaslik,
+        mesaj: bildirimMesaji,
+        okundu: false,
+        yonlendirme: '/guncel-sikayetler',
+        userId: complaintData.userId, // SADECE ŞİKAYETİ AÇAN ÖĞRENCİYE GİDER
+        createdAt: serverTimestamp()
+    });
     }
+}
+/**
+ * @description Şikayeti veritabanından silmek yerine arşivler.
+ */
+async archiveComplaint(complaintId: string): Promise<void> {
+    const complaintDocRef = doc(this.db, 'complaints', complaintId);
+    await updateDoc(complaintDocRef, {
+    isArchived: true
+    });
+}
+/**
+* @description şikayeti destekler. kullanıcı ID'sini listeye ekler ve sayacı 1 arttırır.
+ */
+async supportComplaint(complaintId:string,userId:string):Promise<void>{
+    const complaintDocRef=doc(this.db,'complaints',complaintId);
+    await updateDoc(complaintDocRef,{
+        supporters: arrayUnion(userId),//kullanıcı Id sini diziye ekle. aynı Id 2 kez eklenmez
+        supportCount:increment(1)//sayacı 1 arttırır
+    })
+}
 }
