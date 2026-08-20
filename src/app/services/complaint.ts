@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { isPlatformBrowser } from '@angular/common';
-import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc, serverTimestamp, orderBy ,arrayUnion,increment} from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc, serverTimestamp, orderBy ,arrayUnion,increment,setDoc} from 'firebase/firestore';
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -136,8 +136,8 @@ async updateStatus(complaintId: string, newStatus: string): Promise<void> {
     const snap = await getDoc(complaintDocRef);
     if (!snap.exists()) return;
     const complaintData = snap.data() as Complaint;
-    // 2. Şikayetin durumunu güncelle
-    await updateDoc(complaintDocRef, {
+    // 2. Şikayetin durumunu güncelle 
+    await updateDoc(complaintDocRef, { 
     status: newStatus
     });
     // 3. Şikayeti açan kullanıcıya duruma ÖZEL bildirim ateşle!
@@ -181,10 +181,40 @@ async archiveComplaint(complaintId: string): Promise<void> {
 * @description şikayeti destekler. kullanıcı ID'sini listeye ekler ve sayacı 1 arttırır.
  */
 async supportComplaint(complaintId:string,userId:string):Promise<void>{
+    //Benzersiz Id oluştur(şikayetID-KullanıcıID)
+    const supporrtDocId=`${complaintId}_${userId}`;
+    //destekler koleksiyonunu referans al
+    const supportRef=doc(this.db,'supports',supporrtDocId);
+    //kullanıcı daha önce  bu şikayeti desteklemiş mi?
+    const snap=await getDoc(supportRef);
+    if(snap.exists()){
+        console.warn('Bu kullanıcı bu şikayeti zaten desteklemiş.');
+        return;//işlemi iptal et ve fonksiyondan çık
+    }
+    //yeni desteği ayrı koleksiyona kaydet
+    await setDoc(supportRef,{
+        complaintId:complaintId,
+        userId:userId,
+        createdAt:serverTimestamp()
+    });
+    //ana şikayet belgesindeki sadece destek sayacını 1 arttır
     const complaintDocRef=doc(this.db,'complaints',complaintId);
     await updateDoc(complaintDocRef,{
-        supporters: arrayUnion(userId),//kullanıcı Id sini diziye ekle. aynı Id 2 kez eklenmez
-        supportCount:increment(1)//sayacı 1 arttırır
-    })
+        supportCount:increment(1)
+    });
+}
+/**
+ * @description kullanıcının bu şikayeti daha önce destekleyip desteklemediğinikontrol eder
+ * UI tarafında butonun rengini ve metnini değiştirmek için kullanılır
+ */
+async checkUserSupport(complaintId:string,userId:string): Promise<boolean>{
+    if(!userId || !complaintId)return false;//güvenlik kontrolü
+    //benzersiz ıd yi oluştur
+    const supportDocId=`${complaintId}_${userId}`;
+    const supportRef=doc(this.db,'supports',supportDocId);
+    //belge var mı 
+    const snap=await getDoc(supportRef);
+    //belge varsa true,yoksa false dönsün
+    return snap.exists();
 }
 }
