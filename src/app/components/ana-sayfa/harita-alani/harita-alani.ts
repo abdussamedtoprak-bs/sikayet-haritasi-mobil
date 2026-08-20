@@ -233,33 +233,45 @@ async onPinClick(complaint:Complaint,marker:any):Promise<void>{
         </button>
       </div>
     `;
-    marker.bindPopup(popupHTML).openPopup();
-    //kullanıcı daha önce desteklemediyse tıklama olayını aktif et
-    if(!isSupported){
-      setTimeout(()=>{
-        const destekButonu=document.getElementById('destek-butonu');
-        const destekSayisiMetni=document.getElementById('destek-sayisi');
-        if(destekButonu&&destekSayisiMetni){
-          destekButonu.onclick=async()=>{
-            //arayüzü hemen güncelle kullanıcı beklediğini hissetmesin
-            complaint.supportCount=(complaint.supportCount||0)+1;
-            destekSayisiMetni.innerText=complaint.supportCount.toString();
-            destekButonu.innerText='Desteklendi ✔';
-            destekButonu.style.backgroundColor='#10b981';
-            destekButonu.setAttribute('disabled','true');
-            destekButonu.style.cursor='default';
-            //veriyi firebase e gönder
-            try{
-              if(userId&&complaint.id){
-                await this.complaintService.supportComplaint(complaint.id,userId);
+    // 1. Sadece popup'ı bağla (henüz açma)
+    marker.bindPopup(popupHTML);
+
+    // 2. Popup EKRANA ÇİZİLDİĞİ ANDA (popupopen) butonları yakala
+    marker.on('popupopen', () => {
+      if (!isSupported) {
+        const destekButonu = document.getElementById('destek-butonu');
+        const destekSayisiMetni = document.getElementById('destek-sayisi');
+        
+        if (destekButonu && destekSayisiMetni) {
+          // Önceki tıklama olaylarını temizle (Çift tıklama bug'ını önler)
+          destekButonu.onclick = null; 
+          
+          destekButonu.onclick = async () => {
+            // Arayüzü hemen güncelle
+            complaint.supportCount = (complaint.supportCount || 0) + 1;
+            destekSayisiMetni.innerText = complaint.supportCount.toString();
+            destekButonu.innerText = 'Desteklendi ✔';
+            destekButonu.style.backgroundColor = '#10b981';
+            destekButonu.setAttribute('disabled', 'true');
+            destekButonu.style.cursor = 'default';
+            
+            // Veriyi Firebase'e gönder
+            try {
+              if (userId && complaint.id) {
+                await this.complaintService.supportComplaint(complaint.id, userId);
+              } else {
+                console.warn('Kullanıcı ID veya Şikayet ID bulunamadı!');
               }
-            }catch(error){
-              console.error('Destek kaydedilirken hata oluştu:',error);
+            } catch (error) {
+              console.error('Destek kaydedilirken hata oluştu: ', error);
             }
           };
         }
-      },10);
-    }
+      }
+    });
+
+    // 3. Olay dinleyiciyi ekledikten sonra popup'ı aç
+    marker.openPopup();
 }
 // 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı tamamen yok et
 ngOnDestroy(): void {
