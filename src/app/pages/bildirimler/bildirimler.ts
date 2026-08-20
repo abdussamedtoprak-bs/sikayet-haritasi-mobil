@@ -6,6 +6,7 @@ import { Bildirim } from '../../models/bildirim';
 import { Baslik } from '../../components/baslik/baslik';
 import { AuthService } from '../../services/auth.service';
 import { BildirimlerService } from '../../services/bildirimler';
+import { ComplaintService } from '../../services/complaint';
 import { filter } from 'rxjs';
 
 @Component({
@@ -23,11 +24,16 @@ export class BildirimlerComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private bildirimService: BildirimlerService
+    private bildirimService: BildirimlerService,
+    private complaintService: ComplaintService
   ) {}
   ngOnInit(): void {
     /**@description sayfa açıldığında firebase'den canlı dinlemeyi başlatıyoruz*/
     this.bildirimService.dinlemeyiBaslat();
+    // Sadece yönetici giriş yaptıysa bekleyen şikayet kontrolünü tetikle
+    if (this.authService.isAdmin()) {
+      this.complaintService.checkPendingComplaints();
+    }
   }
   ngOnDestroy():void{
     /**@description Sayfadan çıkıldığında gereksiz bellek tüketimini önlemek için dinlemeyi durdur */
@@ -51,7 +57,7 @@ export class BildirimlerComponent implements OnInit {
       this.okunduIsaretle(bildirim.id);
     }
 
-    const hazirSayfalar = ['/ayarlar', '/bildirimler', '/guncel-sikayetler'];
+    const hazirSayfalar = ['/ayarlar', '/bildirimler', '/guncel-sikayetler','/complaints'];
     if (hazirSayfalar.includes(bildirim.yonlendirme) || bildirim.yonlendirme.startsWith('/sikayet-detay')) {
       this.router.navigate([bildirim.yonlendirme]);
     } else {

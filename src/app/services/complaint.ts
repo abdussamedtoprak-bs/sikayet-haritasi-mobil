@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { isPlatformBrowser } from '@angular/common';
-import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc, serverTimestamp, orderBy ,arrayUnion,increment,setDoc} from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc,getDocs, serverTimestamp, orderBy ,arrayUnion,increment,setDoc} from 'firebase/firestore';
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -115,9 +115,9 @@ export class ComplaintService {
         await addDoc(bildirimlerRef,{
             tip:'yeni',
             baslik:'Sisteme yeni şikayet eklendi',
-            mesaj:`Yeni bir şikayet bildirildi. Lütfen kontrol ediniz.`,
+            mesaj:`"${complaint.title}" konulu yeni bir şikayet bildirildi. Lütfen kontrol ediniz.`,
             okundu:false,
-            yonlendirme:'/guncel-sikayetler',
+            yonlendirme:'/complaints',
             targetRole:'admin',//sadece yöneticilere gider
             createdAt:serverTimestamp()
         });
@@ -178,31 +178,64 @@ async archiveComplaint(complaintId: string): Promise<void> {
     });
 }
 /**
-* @description şikayeti destekler. kullanıcı ID'sini listeye ekler ve sayacı 1 arttırır.
- */
-async supportComplaint(complaintId:string,userId:string):Promise<void>{
-    //Benzersiz Id oluştur(şikayetID-KullanıcıID)
-    const supporrtDocId=`${complaintId}_${userId}`;
-    //destekler koleksiyonunu referans al
-    const supportRef=doc(this.db,'supports',supporrtDocId);
-    //kullanıcı daha önce  bu şikayeti desteklemiş mi?
-    const snap=await getDoc(supportRef);
-    if(snap.exists()){
+   * @description Şikayeti destekler. Aynı kullanıcının iki kez desteklemesini engeller.
+   * Eşik değerlerine (10, 20) ulaşıldığında önceliği günceller ve yöneticiye bildirim atar.
+   */
+/**
+   * @description Şikayeti destekler. Aynı kullanıcının iki kez desteklemesini engeller.
+   * Eşik değerlerine (10, 20) ulaşıldığında önceliği günceller ve yöneticiye bildirim atar.
+   */
+    async supportComplaint(complaintId: string, userId: string): Promise<void> {
+        // 1. Benzersiz ID oluştur (ŞikayetID_KullanıcıID)
+        const supportDocId = `${complaintId}_${userId}`;
+        const supportRef = doc(this.db, 'supports', supportDocId);
+
+        // 2. Kullanıcı daha önce bu şikayeti desteklemiş mi diye kontrol et
+        const snap = await getDoc(supportRef);
+        if (snap.exists()) {
         console.warn('Bu kullanıcı bu şikayeti zaten desteklemiş.');
-        return;//işlemi iptal et ve fonksiyondan çık
+        return; // İşlemi iptal et
+        }
+
+        // 3. Ana şikayet belgesini oku (Başlığı ve güncel destek sayısını öğrenmek için)
+        const complaintDocRef = doc(this.db, 'complaints', complaintId);
+        const complaintSnap = await getDoc(complaintDocRef);
+        
+        if (!complaintSnap.exists()) return;
+        
+        const complaintData = complaintSnap.data();
+        const guncelDestekSayisi = (complaintData['supportCount'] || 0) + 1;
+        
+        // 4. Senin fonksiyonunla yeni önceliği hesapla
+        const yeniOncelik = this.hesaplaOncelik(guncelDestekSayisi);
+
+        // 5. Yeni desteği ayrı koleksiyona kaydet
+        await setDoc(supportRef, {
+        complaintId: complaintId,
+        userId: userId,
+        createdAt: serverTimestamp()
+        });
+
+        // 6. Şikayetin sayacını ve YENİ ÖNCELİĞİNİ güncelle
+        await updateDoc(complaintDocRef, {
+        supportCount: guncelDestekSayisi,
+        priority: yeniOncelik
+        });
+
+        // 7. EŞİK KONTROLÜ VE YÖNETİCİ BİLDİRİMİ (Sadece 10 ve 20'de çalışır)
+        if (guncelDestekSayisi === 10 || guncelDestekSayisi === 20) {
+        const bildirimlerRef = collection(this.db, 'bildirimler');
+        await addDoc(bildirimlerRef, {
+            tip: 'destek', // UI tarafında zil veya ünlem ikonu için kullanabilirsin
+            baslik: 'Destek Eşiği Aşıldı',
+            mesaj: `"${complaintData['title']}" şikayeti ${guncelDestekSayisi} destek aldı, önceliği "${yeniOncelik}" olarak yükseldi.`,
+            okundu: false,
+            yonlendirme: '/complaints',
+            targetRole: 'admin',
+            createdAt: serverTimestamp()
+        });
+        }
     }
-    //yeni desteği ayrı koleksiyona kaydet
-    await setDoc(supportRef,{
-        complaintId:complaintId,
-        userId:userId,
-        createdAt:serverTimestamp()
-    });
-    //ana şikayet belgesindeki sadece destek sayacını 1 arttır
-    const complaintDocRef=doc(this.db,'complaints',complaintId);
-    await updateDoc(complaintDocRef,{
-        supportCount:increment(1)
-    });
-}
 /**
  * @description kullanıcının bu şikayeti daha önce destekleyip desteklemediğinikontrol eder
  * UI tarafında butonun rengini ve metnini değiştirmek için kullanılır
@@ -217,4 +250,56 @@ async checkUserSupport(complaintId:string,userId:string): Promise<boolean>{
     //belge varsa true,yoksa false dönsün
     return snap.exists();
 }
+/**
+   * @description Beklemede olan ve üzerinden 7 gün geçen şikayetleri tespit edip yöneticiyi toplu olarak uyarır.
+   */
+    async checkPendingComplaints(): Promise<void> {
+        // 1. Sadece 'Beklemede' olan ve arşivlenmemiş şikayetleri getir
+        const complaintsRef = collection(this.db, 'complaints');
+        const q = query(
+        complaintsRef,
+        where('status', '==', 'Beklemede'),
+        where('isArchived', '==', false)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) return; // Hiç bekleyen şikayet yoksa çık
+        const simdi = new Date().getTime();  
+        // 7 Gün = 7 * 24 * 60 * 60 * 1000 milisaniye
+        // TEST İÇİN BUNU 1 DAKİKA YAPABİLİRSİN: const yediGunMilisaniye = 1 * 60 * 1000;
+        const yediGunMilisaniye = 7 * 24 * 60 * 60 * 1000; 
+        let uyarilacakSikayetSayisi = 0;
+        // 2. Şikayetleri tek tek dolaş ve sürelerini ölç
+        for (const docSnap of snap.docs) {
+        const data = docSnap.data();
+        // Bu şikayet için daha önce uyarı gönderilmiş mi? (Spam engeli)
+        if (data['warningSent']) continue;
+        // Şikayetin oluşturulma tarihi var mı?
+        if (data['createdAt'] && data['createdAt'].toDate) {
+            const olusturulmaTarihi = data['createdAt'].toDate().getTime();
+            const gecenSure = simdi - olusturulmaTarihi;
+            // 3. Eğer geçen süre 7 günü (veya belirlediğin süreyi) aştıysa:
+            if (gecenSure > yediGunMilisaniye) {
+            uyarilacakSikayetSayisi++;
+            // Şikayeti bir daha bildirim göndermemek üzere işaretle
+            const complaintDocRef = doc(this.db, 'complaints', docSnap.id);
+            await updateDoc(complaintDocRef, {
+                warningSent: true
+            });
+            }
+        }
+        }
+          // 4. Eğer süresi dolan şikayet(ler) varsa TEK BİR toplu bildirim gönder
+        if (uyarilacakSikayetSayisi > 0) {
+        const bildirimlerRef = collection(this.db, 'bildirimler');
+        await addDoc(bildirimlerRef, {
+            tip: 'uyari',
+            baslik: 'Bekleyen Şikayet Uyarısı',
+            mesaj: `${uyarilacakSikayetSayisi} şikayet 7 günden uzun süre beklemede.`,
+            okundu: false,
+            yonlendirme: '/complaints',
+            targetRole: 'admin',
+            createdAt: serverTimestamp()
+        });
+        }
+    }
 }
