@@ -202,7 +202,7 @@ export class Complaints implements OnInit {
         result = result.filter(c => c.metaInfo.includes(this.currentFilters.date.trim()));
       }
 
-      // YENİ EKLENEN: Arama Çubuğu Filtresi
+      // Arama Çubuğu Filtresi
       if (this.searchText) {
         result = result.filter(c => 
           c.title.toLowerCase().includes(this.searchText) || 
@@ -210,7 +210,7 @@ export class Complaints implements OnInit {
         );
       }
     }
-    //Yeni eklenen: harita (konum) filtresi
+    // harita (konum) filtresi
     if(this.mapLocation){
       result=result.filter(c=>c.location===this.mapLocation);
     }
@@ -228,7 +228,7 @@ export class Complaints implements OnInit {
       status: 'Tümü',
       date: 'Tümü'
     };
-    //Yeni eklenen: harita sekmesini ve filtreyi sıfırlıyoruz
+    //harita sekmesini ve filtreyi sıfırlıyoruz
     this.mapLocation='';
     this.currentFilter='Tümü';
   }
@@ -275,7 +275,7 @@ export class Complaints implements OnInit {
    */
   updateFilters(newFilters: any) {
     this.currentFilters = newFilters;
-    // YENİ EKLENEN KOD: Kullanıcı detaylı filtre panelinden yeni bir arama yaptığında,
+    //  Kullanıcı detaylı filtre panelinden yeni bir arama yaptığında,
     // haritadan (URL'den) gelen eski konum hafızasını sıfırlıyoruz.
     this.mapLocation = '';
   }

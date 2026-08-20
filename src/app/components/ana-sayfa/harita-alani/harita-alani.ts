@@ -189,19 +189,33 @@ async ngAfterViewInit(): Promise<void> {
    * @param {Complaint} complaint - Tıklanan pine ait şikayet kaydı
    * @param {any} marker - Leaflet marker nesnesi
    */
-  onPinClick(complaint: Complaint, marker: any): void {
-    // YÖNETİCİ SENARYOSU: Şikayetler sayfasına yönlendir ve filtreleri gönder
-    if (this.authService.isAdmin()) {
-      this.router.navigate(['/complaints'], {
-        queryParams: {
-          priority: complaint.priority,
-          location: complaint.location
-        }
-      });
-      return;
-    }
-    // ÖĞRENCİ SENARYOSU: Baloncuk (Popup) aç ve destek butonu göster
-    const popupHTML = `
+async onPinClick(complaint:Complaint,marker:any):Promise<void>{
+  //Yönetici senaryosu:şikayetler sayfasına yönlendir
+  if(this.authService.isAdmin()){
+    this.router.navigate(['/complaints'],{
+      queryParams:{
+        priority:complaint.priority,
+        location:complaint.location
+      }
+    });
+    return;
+  }
+  //öğrenci senaryosu: baloncuk popup aç ve destek durumunu kontrol et
+  //aktif kullanıcının id sini al
+  const user=this.authService.currentUser();
+  const userId=user?user.uid:null;
+  //kullanıcı bu şikayeti daha önce destekledi mi diye veritabanına sor
+  let isSupported=false;
+  if(userId&&complaint.id){
+    isSupported=await this.complaintService.checkUserSupport(complaint.id,userId)
+  }
+  //gelen cevaba göre butonun rengini metnini ve tıklanabilirliğini hazırla
+  const butonMetni=isSupported? 'Desteklendi ✔' : '+ Destekle';
+  const butonRengi = isSupported ? '#10b981' : '#3b82f6';
+  const butonKursoru = isSupported ? 'default' : 'pointer';
+  const disabledOzelligi = isSupported ? 'disabled="true"' : '';
+  //HTML içine dinamik veri göm
+  const popupHTML = `
       <div style="text-align: center; padding: 5px; min-width: 150px; font-family: sans-serif;">
         <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #1f2937;">📍 ${complaint.location}</h4>
         
@@ -209,44 +223,44 @@ async ngAfterViewInit(): Promise<void> {
         <p style="margin: 0 0 8px 0; font-size: 13px; color: #4b5563; text-align: left; font-style: italic;">
           "${complaint.description}"
         </p>
-
+        
         <p style="margin: 0 0 12px 0; font-size: 13px; color: #4b5563;">
           👥 Destekçi: <strong id="destek-sayisi" style="color: #3b82f6; font-size: 16px;">${complaint.supportCount}</strong>
         </p>
-        <button id="destek-butonu" style="background-color: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;">
-          + Destekle
+        
+        <button id="destek-butonu" ${disabledOzelligi} style="background-color: ${butonRengi}; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: ${butonKursoru}; font-weight: bold; width: 100%; transition: 0.2s;">
+          ${butonMetni}
         </button>
       </div>
     `;
     marker.bindPopup(popupHTML).openPopup();
-    setTimeout(() => {
-      const destekButonu = document.getElementById('destek-butonu');
-      const destekSayisiMetni = document.getElementById('destek-sayisi');
-      if (destekButonu && destekSayisiMetni) {
-        //async eklendi butona tıklandığında firebase servisi çağırılacak
-        destekButonu.onclick = async () => {
-          //arayüzü hemen güncelle (kullanıcı hızlı bir tepki görsün diye)
-          complaint.supportCount += 1;
-          destekSayisiMetni.innerText = complaint.supportCount.toString();
-          destekButonu.innerText = 'Desteklendi ✓';
-          destekButonu.style.backgroundColor = '#10b981';
-          destekButonu.setAttribute('disabled', 'true');
-          destekButonu.style.cursor = 'default';
-          //veriyi firebase e gönder
-          try{
-            //aktif kullanıcının bilgisini AuthService deki sinyalden okuyoruz
-            const user=this.authService.currentUser();
-            const userId=user?user.uid:null;
-            if(userId&&complaint.id){
-              await this.complaintService.supportComplaint(complaint.id,userId);
+    //kullanıcı daha önce desteklemediyse tıklama olayını aktif et
+    if(!isSupported){
+      setTimeout(()=>{
+        const destekButonu=document.getElementById('destek-butonu');
+        const destekSayisiMetni=document.getElementById('destek-sayisi');
+        if(destekButonu&&destekSayisiMetni){
+          destekButonu.onclick=async()=>{
+            //arayüzü hemen güncelle kullanıcı beklediğini hissetmesin
+            complaint.supportCount=(complaint.supportCount||0)+1;
+            destekSayisiMetni.innerText=complaint.supportCount.toString();
+            destekButonu.innerText='Desteklendi ✔';
+            destekButonu.style.backgroundColor='#10b981';
+            destekButonu.setAttribute('disabled','true');
+            destekButonu.style.cursor='default';
+            //veriyi firebase e gönder
+            try{
+              if(userId&&complaint.id){
+                await this.complaintService.supportComplaint(complaint.id,userId);
+              }
+            }catch(error){
+              console.error('Destek kaydedilirken hata oluştu:',error);
             }
-          }catch(error){
-            console.error('Destek Kaydedilirken hata oluştu: ',error);
-          }
-        };
-      }
-    }, 10);
-  }
+          };
+        }
+      },10);
+    }
+}
 // 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı tamamen yok et
 ngOnDestroy(): void {
   if (this.map) {
