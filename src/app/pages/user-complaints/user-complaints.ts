@@ -16,6 +16,7 @@ export class UserComplaintsComponent implements OnInit {
   tumSikayetler: Complaint[] = [];
   gosterilenSikayetler: Complaint[] = [];
   secilenSikayet: Complaint | null = null;
+
   aktifSekme: string = 'Tümü';
 
   bekleyenSayisi: number = 0;
@@ -53,9 +54,14 @@ export class UserComplaintsComponent implements OnInit {
   ngOnInit() {}
 
   istatistikleriHesapla() {
-    this.bekleyenSayisi = this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
-    this.incelenenSayisi = this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
-    this.cozulenSayisi = this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
+    this.bekleyenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
+
+    this.incelenenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
+
+    this.cozulenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
   }
 
   filtrele(durum: string) {
@@ -63,7 +69,8 @@ export class UserComplaintsComponent implements OnInit {
     if (durum === 'Tümü') {
       this.gosterilenSikayetler = this.tumSikayetler;
     } else {
-      this.gosterilenSikayetler = this.tumSikayetler.filter(s => s.status === durum);
+      this.gosterilenSikayetler =
+        this.tumSikayetler.filter(s => s.status === durum);
     }
   }
 

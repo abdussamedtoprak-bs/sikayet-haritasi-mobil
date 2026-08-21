@@ -53,7 +53,7 @@
     </div>
 
     <div class="liste-alani">
-      @for (sikayet of gosterilenSikayetler; track sikayet.title) {
+      @for (sikayet of gosterilenSikayetler; track sikayet.id) {
         <div class="sikayet-karti" (click)="detayAc(sikayet)">
           <img src="assets/cam-kirigi.jpg" alt="Şikayet Görseli" class="kart-resim">
           
