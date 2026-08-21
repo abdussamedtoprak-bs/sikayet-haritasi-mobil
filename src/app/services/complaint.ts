@@ -167,7 +167,8 @@ async updateStatus(complaintId: string, newStatus: string): Promise<void> {
             baslik: bildirimBaslik,
             mesaj: bildirimMesaji,
             okundu: false,
-            yonlendirme: '/guncel-sikayetler',
+            yonlendirme: '/user-complaints', // Kullanıcı kendi şikayetlerini görebileceği sayfaya yönlensin
+            targetRole: 'user', // Sadece ilgili kullanıcıya gider
             userId: complaintData.userId, 
             createdAt: serverTimestamp()
         });
