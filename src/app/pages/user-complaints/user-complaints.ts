@@ -2,8 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { ComplaintService } from '../../services/complaint';
+import { ComplaintService } from '../../services/complaint'; 
 import { Complaint } from '../../models/complaint';
+import { AuthService } from '../../services/auth.service'; // AuthService Eklendi
 
 @Component({
   selector: 'app-user-complaints',
@@ -26,35 +27,22 @@ export class UserComplaintsComponent implements OnInit {
 
   private router = inject(Router);
   private complaintService = inject(ComplaintService);
+  private authService = inject(AuthService); // AuthService Inject Edildi
 
   ngOnInit() {
-  console.log('🟢 UserComplaints açıldı');
+    // 1. Giriş yapan kullanıcının kimliğini alıyoruz
+    const currentUser = this.authService.currentUser();
 
-  this.complaintService.getComplaints().subscribe({
-    next: (data: Complaint[]) => {
-
-      console.log('📥 FIREBASE:', data.length);
-      console.log('⏰', new Date().toLocaleTimeString());
-
-      this.tumSikayetler = [...data];
-      this.gosterilenSikayetler = [...data];
-
-      console.log(
-        '📋 GÖSTERİLEN:',
-        this.gosterilenSikayetler.length
-      );
-
-      this.istatistikleriHesapla();
-    },
-
-    error: (error) => {
-      console.error('🔴 FIREBASE HATASI:', error);
+    if (currentUser && currentUser.uid) {
+      // 2. SADECE BU KULLANICIYA AİT şikayetleri çeken servisi çağırıyoruz
+      this.complaintService.getMyComplaints(currentUser.uid).subscribe((data: Complaint[]) => {
+        this.tumSikayetler = data;
+        this.gosterilenSikayetler = data; 
+        this.istatistikleriHesapla();
+      });
+    } else {
+      console.warn("Kullanıcı oturumu bulunamadı, şikayetler çekilemiyor.");
     }
-  });
-}
-
-  ngOnDestroy() {
-    console.log('🔴 USER-COMPLAINTS COMPONENT YOK EDİLDİ!');
   }
 
   istatistikleriHesapla() {
