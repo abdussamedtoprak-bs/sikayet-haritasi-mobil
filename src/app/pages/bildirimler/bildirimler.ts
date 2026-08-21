@@ -57,7 +57,7 @@ export class BildirimlerComponent implements OnInit {
       this.okunduIsaretle(bildirim.id);
     }
 
-    const hazirSayfalar = ['/ayarlar', '/bildirimler', '/guncel-sikayetler','/complaints'];
+    const hazirSayfalar = ['/ayarlar', '/bildirimler', '/complaints' , '/user-complaints'];
     if (hazirSayfalar.includes(bildirim.yonlendirme) || bildirim.yonlendirme.startsWith('/sikayet-detay')) {
       this.router.navigate([bildirim.yonlendirme]);
     } else {
