@@ -275,7 +275,7 @@ export class Complaints implements OnInit {
    */
   updateFilters(newFilters: any) {
     this.currentFilters = newFilters;
-    //  Kullanıcı detaylı filtre panelinden yeni bir arama yaptığında,
+    // Kullanıcı detaylı filtre panelinden yeni bir arama yaptığında,
     // haritadan (URL'den) gelen eski konum hafızasını sıfırlıyoruz.
     this.mapLocation = '';
   }
@@ -323,4 +323,5 @@ export class Complaints implements OnInit {
 }
 
 }
+
 

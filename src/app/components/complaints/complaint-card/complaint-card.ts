@@ -40,22 +40,22 @@ export class ComplaintCard implements OnInit {
   // 2. Modaldaki "Kaydet" butonuna basılırsa çalışacak fonksiyon
 // Fonksiyonu async yapıyoruz çünkü veritabanı işleminin bitmesini bekleyeceğiz
 async onaylaGuncelleme(event: Event) {
-  event.stopPropagation();
-  event.stopImmediatePropagation();
-  if (this.complaint.id && this.pendingStatus) {
-    try {
-      // 1. Firebase'deki asıl veriyi güncelliyoruz (BİLDİRİM BURADA TETİKLENECEK!)
-      await this.complaintService.updateStatus(this.complaint.id, this.pendingStatus); 
-      // 2. Ekranda anında değişmesi için lokal veriyi de güncelliyoruz
-      this.complaint.status = this.pendingStatus; 
-      console.log(`Şikayet durumu Firebase'de güncellendi: ${this.pendingStatus}`); 
-      // 3. Modalı kapat
-      this.showConfirmModal = false; 
-    } catch (error) {
-      console.error("Durum güncellenirken Firebase hatası:", error);
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    if (this.complaint.id && this.pendingStatus) {
+      try {
+        // 1. Modalı ANINDA kapatıyoruz ki kullanıcı bir daha basamasın!
+        this.showConfirmModal = false; 
+        // 2. Firebase'deki asıl veriyi güncelliyoruz (Arka planda çalışmaya devam eder)
+        await this.complaintService.updateStatus(this.complaint.id, this.pendingStatus);     
+        // 3. Ekranda anında değişmesi için lokal veriyi de güncelliyoruz
+        this.complaint.status = this.pendingStatus;
+        console.log(`Şikayet durumu Firebase'de güncellendi: ${this.pendingStatus}`);    
+      } catch (error) {
+        console.error("Durum güncellenirken Firebase hatası:", error);
+      }
     }
   }
-}
   // 3. Modaldaki "İptal" butonuna basılırsa çalışacak fonksiyon
   iptalGuncelleme(event: Event) {
     event.stopPropagation();
