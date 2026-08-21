@@ -2,23 +2,22 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-// 1. DÜZELTME: Dosya adı complaint.service değilse, sadece complaint olarak değiştirin.
-// (Eğer dosyanız models klasöründeyse yolu '../../models/complaint' olarak güncelleyin)
-import { ComplaintService } from '../../services/complaint'; 
+import { ComplaintService } from '../../services/complaint';
 import { Complaint } from '../../models/complaint';
 
 @Component({
   selector: 'app-user-complaints',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './user-complaints.html', 
+  templateUrl: './user-complaints.html',
   styleUrls: ['./user-complaints.css']
 })
 export class UserComplaintsComponent implements OnInit {
-  
+
   tumSikayetler: Complaint[] = [];
   gosterilenSikayetler: Complaint[] = [];
   secilenSikayet: Complaint | null = null;
+
   aktifSekme: string = 'Tümü';
 
   bekleyenSayisi: number = 0;
@@ -29,27 +28,54 @@ export class UserComplaintsComponent implements OnInit {
   private complaintService = inject(ComplaintService);
 
   ngOnInit() {
-    // 2. DÜZELTME: Gelen data'nın tipini "Complaint[]" olarak açıkça belirttik
-    this.complaintService.getComplaints().subscribe((data: Complaint[]) => {
-      this.tumSikayetler = data;
-      this.gosterilenSikayetler = data; 
+  console.log('🟢 UserComplaints açıldı');
+
+  this.complaintService.getComplaints().subscribe({
+    next: (data: Complaint[]) => {
+
+      console.log('📥 FIREBASE:', data.length);
+      console.log('⏰', new Date().toLocaleTimeString());
+
+      this.tumSikayetler = [...data];
+      this.gosterilenSikayetler = [...data];
+
+      console.log(
+        '📋 GÖSTERİLEN:',
+        this.gosterilenSikayetler.length
+      );
+
       this.istatistikleriHesapla();
-    });
+    },
+
+    error: (error) => {
+      console.error('🔴 FIREBASE HATASI:', error);
+    }
+  });
+}
+
+  ngOnDestroy() {
+    console.log('🔴 USER-COMPLAINTS COMPONENT YOK EDİLDİ!');
   }
 
   istatistikleriHesapla() {
-    this.bekleyenSayisi = this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
-    this.incelenenSayisi = this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
-    this.cozulenSayisi = this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
+    this.bekleyenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
+
+    this.incelenenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
+
+    this.cozulenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
   }
 
   filtrele(durum: string) {
     this.aktifSekme = durum;
-    
+
     if (durum === 'Tümü') {
       this.gosterilenSikayetler = this.tumSikayetler;
     } else {
-      this.gosterilenSikayetler = this.tumSikayetler.filter(s => s.status === durum);
+      this.gosterilenSikayetler =
+        this.tumSikayetler.filter(s => s.status === durum);
     }
   }
 
