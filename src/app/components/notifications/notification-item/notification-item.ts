@@ -44,4 +44,32 @@ ikonGetir(tip: string): string {
 
   return ikonlar[tip] || 'fa-solid fa-bell';
 }
+// ZAMAN HESAPLAMA FONKSİYONU
+  zamanHesapla(zaman: any): string {
+    // Firebase sunucu saati o an hesaplanıyorsa (milisaniyelik gecikme)
+    if (!zaman) return 'Az önce'; 
+
+    // Firebase Timestamp ise JS Date nesnesine çeviriyoruz
+    const tarih = zaman.toDate ? zaman.toDate() : new Date(zaman);
+    const simdi = new Date();
+    
+    // Geçen zamanı saniye cinsinden buluyoruz
+    const farkSaniye = Math.floor((simdi.getTime() - tarih.getTime()) / 1000);
+
+    if (farkSaniye < 60) return 'Az önce';
+    
+    const farkDakika = Math.floor(farkSaniye / 60);
+    if (farkDakika < 60) return `${farkDakika} dakika önce`;
+
+    const farkSaat = Math.floor(farkDakika / 60);
+    if (farkSaat < 24) return `${farkSaat} saat önce`;
+
+    const farkGun = Math.floor(farkSaat / 24);
+    if (farkGun < 30) return `${farkGun} gün önce`;
+
+    const farkAy = Math.floor(farkGun / 30);
+    if (farkAy < 12) return `${farkAy} ay önce`;
+
+    return `${Math.floor(farkAy / 12)} yıl önce`;
+  }
 }

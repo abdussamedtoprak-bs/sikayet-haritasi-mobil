@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject, ChangeDetectorRef } from '@angular/core'; // ChangeDetectorRef eklendi
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-import { ComplaintService } from '../../services/complaint'; 
+import { ComplaintService } from '../../services/complaint';
 import { Complaint } from '../../models/complaint';
-import { AuthService } from '../../services/auth.service'; // AuthService Eklendi
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-user-complaints',
@@ -14,7 +13,6 @@ import { AuthService } from '../../services/auth.service'; // AuthService Eklend
   styleUrls: ['./user-complaints.css']
 })
 export class UserComplaintsComponent implements OnInit {
-
   tumSikayetler: Complaint[] = [];
   gosterilenSikayetler: Complaint[] = [];
   secilenSikayet: Complaint | null = null;
@@ -27,23 +25,33 @@ export class UserComplaintsComponent implements OnInit {
 
   private router = inject(Router);
   private complaintService = inject(ComplaintService);
-  private authService = inject(AuthService); // AuthService Inject Edildi
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef); // Angular'ı uyandırmak için servisi çağırdık!
 
-  ngOnInit() {
-    // 1. Giriş yapan kullanıcının kimliğini alıyoruz
-    const currentUser = this.authService.currentUser();
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      const userId = user ? user.uid : null;
 
-    if (currentUser && currentUser.uid) {
-      // 2. SADECE BU KULLANICIYA AİT şikayetleri çeken servisi çağırıyoruz
-      this.complaintService.getMyComplaints(currentUser.uid).subscribe((data: Complaint[]) => {
-        this.tumSikayetler = data;
-        this.gosterilenSikayetler = data; 
-        this.istatistikleriHesapla();
-      });
-    } else {
-      console.warn("Kullanıcı oturumu bulunamadı, şikayetler çekilemiyor.");
-    }
+      if (userId) {
+        this.complaintService.getMyComplaints(userId).subscribe({
+          next: (data: Complaint[]) => {
+            this.tumSikayetler = data;
+            this.istatistikleriHesapla();
+            this.filtrele(this.aktifSekme);
+            
+            // ANGULAR'I DÜRTÜYORUZ: "Veriler geldi, ekranı yenile!"
+            this.cdr.detectChanges(); 
+          },
+          error: (err) => {
+            console.error("Şikayetler çekilirken hata oluştu:", err);
+          }
+        });
+      }
+    });
   }
+
+  ngOnInit() {}
 
   istatistikleriHesapla() {
     this.bekleyenSayisi =
@@ -58,7 +66,6 @@ export class UserComplaintsComponent implements OnInit {
 
   filtrele(durum: string) {
     this.aktifSekme = durum;
-
     if (durum === 'Tümü') {
       this.gosterilenSikayetler = this.tumSikayetler;
     } else {
@@ -72,7 +79,7 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   sikayetBildir() {
-    this.router.navigate(['/anasayfa']);
+    this.router.navigate(['/anasayfa']); 
   }
 
   detayAc(sikayet: Complaint) {

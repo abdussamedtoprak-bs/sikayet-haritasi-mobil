@@ -1,8 +1,8 @@
-<div
-  class="bildirim-kart"
-  [class.okunmamis]="!bildirim.okundu"
+<div 
+  class="bildirim-kart" 
+  [class.okunmamis]="!bildirim.okundu" 
   (click)="tiklandi()">
-
+  
   <div class="bildirim-ikon-alan">
     <div class="bildirim-ikon" [class]="'ikon-' + bildirim.tip">
       <i [class]="ikonGetir(bildirim.tip)"></i>
@@ -12,11 +12,11 @@
   <div class="bildirim-icerik">
     <div class="bildirim-baslik">{{ bildirim.baslik }}</div>
     <div class="bildirim-mesaj">{{ bildirim.mesaj }}</div>
-    <div class="bildirim-zaman">{{ bildirim.zaman }}</div>
+    <!-- ZAMAN KISMI GÜNCELLENDİ -->
+    <div class="bildirim-zaman">{{ zamanHesapla(bildirim.createdAt) }}</div>
   </div>
 
   @if (!bildirim.okundu) {
     <div class="okunmamis-nokta"></div>
   }
-
 </div>

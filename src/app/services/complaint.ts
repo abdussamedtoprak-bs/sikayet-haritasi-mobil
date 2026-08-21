@@ -136,36 +136,41 @@ async updateStatus(complaintId: string, newStatus: string): Promise<void> {
     const snap = await getDoc(complaintDocRef);
     if (!snap.exists()) return;
     const complaintData = snap.data() as Complaint;
+    // ÇİFT BİLDİRİM KORUMASI: Durum zaten aynıysa işlemi tamamen durdur
+    if (complaintData.status === newStatus) {
+        console.warn("Durum zaten aynı, işlem iptal edildi.");
+        return; 
+    }
     // 2. Şikayetin durumunu güncelle 
     await updateDoc(complaintDocRef, { 
     status: newStatus
     });
-    // 3. Şikayeti açan kullanıcıya duruma ÖZEL bildirim ateşle!
+    // 3. Şikayeti açan kullanıcıya duruma ÖZEL ve detaylı bildirim ateşle!
     if (complaintData.userId) {
-    let bildirimTipi = 'guncelleme';
-    let bildirimBaslik = 'Şikayet Durumu Güncellendi';
-    let bildirimMesaji = `Şikayetinizin durumu "${newStatus}" olarak değiştirildi.`;
-    // Duruma göre metinleri özelleştiriyoruz
-    if (newStatus === 'İnceleniyor') {
-        bildirimTipi = 'guncelleme';
-        bildirimBaslik = 'Şikayetiniz İnceleniyor 🔍';
-        bildirimMesaji = 'Bildirmiş olduğunuz şikayet yetkili birimler tarafından incelemeye alınmıştır.';
-    } else if (newStatus === 'Çözüldü') {
-        bildirimTipi = 'cozuldu';
-        bildirimBaslik = 'Şikayetiniz Çözüldü ✅';
-        bildirimMesaji = 'Şikayetiniz başarıyla çözüme kavuşturulmuştur. Geri bildiriminiz için teşekkür ederiz.';
-    }
+        let bildirimTipi = 'guncelleme';
+        let bildirimBaslik = 'Şikayetiniz Güncellendi'; // Figma tasarımına uygun sabit başlık
+        
+        // Şikayet başlığını (title) mesajın içine dinamik olarak yerleştiriyoruz
+        let bildirimMesaji = `"${complaintData.title}" konulu şikayetinizin durumu "${newStatus}" olarak değiştirildi.`;
+        
+        if (newStatus === 'İnceleniyor') {
+            bildirimTipi = 'guncelleme';
+            bildirimMesaji = `"${complaintData.title}" konulu şikayetiniz yetkili birimler tarafından incelemeye alınmıştır.`;
+        } else if (newStatus === 'Çözüldü') {
+            bildirimTipi = 'cozuldu';
+            bildirimMesaji = `"${complaintData.title}" konulu şikayetiniz başarıyla çözüme kavuşturulmuştur.`;
+        }
 
-    const bildirimlerRef = collection(this.db, 'bildirimler');
-    await addDoc(bildirimlerRef, {
-        tip: bildirimTipi,
-        baslik: bildirimBaslik,
-        mesaj: bildirimMesaji,
-        okundu: false,
-        yonlendirme: '/guncel-sikayetler',
-        userId: complaintData.userId, // SADECE ŞİKAYETİ AÇAN ÖĞRENCİYE GİDER
-        createdAt: serverTimestamp()
-    });
+        const bildirimlerRef = collection(this.db, 'bildirimler');
+        await addDoc(bildirimlerRef, {
+            tip: bildirimTipi,
+            baslik: bildirimBaslik,
+            mesaj: bildirimMesaji,
+            okundu: false,
+            yonlendirme: '/guncel-sikayetler',
+            userId: complaintData.userId, 
+            createdAt: serverTimestamp()
+        });
     }
 }
 /**
