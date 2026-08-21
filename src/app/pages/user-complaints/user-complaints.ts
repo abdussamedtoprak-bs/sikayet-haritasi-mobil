@@ -10,14 +10,15 @@ import { AuthService } from '../../services/auth.service'; // AuthService Eklend
   selector: 'app-user-complaints',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './user-complaints.html', 
+  templateUrl: './user-complaints.html',
   styleUrls: ['./user-complaints.css']
 })
 export class UserComplaintsComponent implements OnInit {
-  
+
   tumSikayetler: Complaint[] = [];
   gosterilenSikayetler: Complaint[] = [];
   secilenSikayet: Complaint | null = null;
+
   aktifSekme: string = 'Tümü';
 
   bekleyenSayisi: number = 0;
@@ -45,18 +46,24 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   istatistikleriHesapla() {
-    this.bekleyenSayisi = this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
-    this.incelenenSayisi = this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
-    this.cozulenSayisi = this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
+    this.bekleyenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
+
+    this.incelenenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'İnceleniyor').length;
+
+    this.cozulenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
   }
 
   filtrele(durum: string) {
     this.aktifSekme = durum;
-    
+
     if (durum === 'Tümü') {
       this.gosterilenSikayetler = this.tumSikayetler;
     } else {
-      this.gosterilenSikayetler = this.tumSikayetler.filter(s => s.status === durum);
+      this.gosterilenSikayetler =
+        this.tumSikayetler.filter(s => s.status === durum);
     }
   }
 
@@ -65,7 +72,7 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   sikayetBildir() {
-    this.router.navigate(['/sikayet-olustur']);
+    this.router.navigate(['/anasayfa']);
   }
 
   detayAc(sikayet: Complaint) {

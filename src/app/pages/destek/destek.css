@@ -1,6 +1,6 @@
 .destek-wrapper {
   min-height: 100vh;
-  background-image: url('/arkaplan.png');
+  background-image: var(--bg-overlay), url('/arkaplan.png');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -13,7 +13,6 @@
   box-sizing: border-box;
 }
 
-
 /* app-baslik, wrapper'ın 16px'lik yan padding'inden etkilenmesin diye
    negatif margin ile dışarı taşırılıyor -> Ayarlar'daki gibi kenara tam oturuyor. */
 app-baslik {
@@ -22,7 +21,7 @@ app-baslik {
 }
 
 .hero-alan {
-  background: rgba(232, 240, 254, 0.9);
+  background: var(--bg-info);
   margin: 16px 0;
   border-radius: 16px;
   padding: 24px 20px;
@@ -43,13 +42,13 @@ app-baslik {
 .hero-baslik {
   font-size: 16px;
   font-weight: 600;
-  color: #1a73e8;
+  color: var(--accent-text);
   margin: 0;
 }
 
 .hero-aciklama {
   font-size: 13px;
-  color: #666;
+  color: var(--text-normal);
   margin: 0;
   line-height: 1.5;
 }
@@ -57,7 +56,7 @@ app-baslik {
 .bolum-baslik {
   font-size: 12px;
   font-weight: 700;
-  color: #888;
+  color: var(--text-muted);
   letter-spacing: 0.08em;
   padding: 20px 0 10px;
   margin: 0;
@@ -74,10 +73,10 @@ app-baslik {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-glass);
   border-radius: 14px;
   padding: 14px 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
@@ -89,7 +88,7 @@ app-baslik {
 }
 
 .iletisim-kart:hover {
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 14px var(--shadow-strong);
   transform: translateY(-1px);
 }
 
@@ -97,7 +96,7 @@ app-baslik {
   font-size: 16px;
   width: 36px;
   height: 36px;
-  background: #f0f4ff;
+  background: var(--bg-soft);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -114,7 +113,7 @@ app-baslik {
 
 .iletisim-label {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   margin-bottom: 2px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -123,7 +122,7 @@ app-baslik {
 .iletisim-deger {
   font-size: 14px;
   font-weight: 500;
-  color: #1a1a2e;
+  color: var(--text-strong);
   word-break: break-word;
 }
 
@@ -135,10 +134,10 @@ app-baslik {
 }
 
 .sss-kart {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-glass);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px var(--shadow);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
@@ -167,35 +166,35 @@ app-baslik {
 .soru-ikon {
   width: 30px;
   height: 30px;
-  background: #f0f4ff;
+  background: var(--bg-soft);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: 600;
-  color: #1a73e8;
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
 .soru-metin {
   font-size: 13px;
   font-weight: 500;
-  color: #1a1a2e;
+  color: var(--text-strong);
   line-height: 1.4;
   word-break: break-word;
 }
 
 .sss-ok {
   font-size: 12px;
-  color: #aaa;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .sss-cevap {
   padding: 6px 18px 16px 60px;
   font-size: 13px;
-  color: #666;
+  color: var(--text-normal);
   line-height: 1.6;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
 }

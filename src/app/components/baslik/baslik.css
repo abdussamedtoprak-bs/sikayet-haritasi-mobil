@@ -1,85 +1,89 @@
-.baslik{
-    height:70px;
-    width:100%;
-    position:fixed;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    z-index:15000;
-    padding:0 0px;
-    background:white;
-    border-bottom:1px solid #E5E7EB;
+.baslik {
+    height: 70px;
+    width: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 15000;
+    padding: 0 0px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
 }
 
-.logo-alani{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.logo-alani {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.logo-alani img{
-    width:42px;
-    height:42px;
+.logo-alani img {
+    width: 42px;
+    height: 42px;
 }
 
-.logo-alani span{
-    font-size:12px;
-    font-weight:600;
+.logo-alani span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-strong);
 }
 
-.sag-alan{
-    display:flex;
-    gap:12px;
+.sag-alan {
+    display: flex;
+    gap: 12px;
 }
 
-.ikon-butonu{
-    width:42px;
-    height:42px;
-    color:#5B7FD9;
-    border:none;
-    border-radius:50%;
-    background:white;
-    cursor:pointer;
-    font-size:22px;
-    transition:.2s;
-     transform: translateX(-15px);
+.ikon-butonu {
+    width: 42px;
+    height: 42px;
+    color: #5B7FD9;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    font-size: 22px;
+    transition: .2s;
+    transform: translateX(-15px);
 }
 
-.ikon-butonu:hover{
-    background:#EEF5FC;
+.ikon-butonu:hover {
+    background: var(--bg-hover);
 }
 
-/*alt sayfa: güncel şikayetler veya diğer sayfalar için özel tasarım*/
-.baslik.sub-header{
-    justify-content: center;/*yazıyı tam ortaya hizalar*/
-    position:relative;/*ok tuşunu serbestçe yerleştirmek için*/
+/* alt sayfa: güncel şikayetler veya diğer sayfalar için özel tasarım */
+.baslik.sub-header {
+    justify-content: center; /* yazıyı tam ortaya hizalar */
+    position: relative;      /* ok tuşunu serbestçe yerleştirmek için */
 }
-.back-btn{
-    position:absolute;
-    left:24px;/*sol tarafa sabitler*/
-    background:none;
-    border:none;
-    font-size:28px;/*okun büyüklüğü*/
+
+.back-btn {
+    position: absolute;
+    left: 24px; /* sol tarafa sabitler */
+    background: none;
+    border: none;
+    font-size: 28px; /* okun büyüklüğü */
     font-weight: 500;
-    cursor:pointer;
-    color:#000;
-    display:flex;
-    align-items:center;
+    cursor: pointer;
+    color: var(--text-strong);
+    display: flex;
+    align-items: center;
 }
-.menu-btn{
-    position:absolute;
-    right:24px;/*back-btn ile simetrik, sağ tarafa sabitler*/
-    background:none;
-    border:none;
-    font-size:22px;
-    cursor:pointer;
-    color:#000;
-    display:flex;
-    align-items:center;
+
+.menu-btn {
+    position: absolute;
+    right: 24px; /* back-btn ile simetrik, sağ tarafa sabitler */
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--text-strong);
+    display: flex;
+    align-items: center;
 }
-.page-title{
+
+.page-title {
     font-size: 22px;
     font-weight: 700;
-    margin:0;
-    color:#000;
+    margin: 0;
+    color: var(--text-strong);
 }

@@ -3,22 +3,22 @@
   align-items: flex-start;
   gap: 12px;
   padding: 14px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.15s;
   position: relative;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 4px var(--shadow);
 }
 
 .bildirim-kart:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 2px 8px var(--shadow-strong);
   transform: translateY(-1px);
 }
 
 .bildirim-kart.okunmamis {
-  background: #f0f4ff;
-  border-left: 3px solid #1a73e8;
+  background: var(--bg-soft);
+  border-left: 3px solid var(--accent-dark);
 }
 
 .bildirim-ikon-alan {
@@ -35,10 +35,10 @@
   font-size: 20px;
 }
 
-.ikon-guncelleme { background: #e8f0fe; }
-.ikon-cozuldu    { background: #e6f4ea; }
-.ikon-yakin      { background: #fce8e6; }
-.ikon-acil       { background: #fff3e0; }
+.ikon-guncelleme { background: var(--icon-info); }
+.ikon-cozuldu    { background: var(--icon-success); }
+.ikon-yakin      { background: var(--icon-danger); }
+.ikon-acil       { background: var(--icon-warning); }
 
 .bildirim-icerik {
   flex: 1;
@@ -48,27 +48,27 @@
 .bildirim-baslik {
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: var(--text-strong);
   margin-bottom: 4px;
 }
 
 .bildirim-mesaj {
   font-size: 13px;
-  color: #666;
+  color: var(--text-normal);
   line-height: 1.5;
   margin-bottom: 6px;
 }
 
 .bildirim-zaman {
   font-size: 11px;
-  color: #aaa;
+  color: var(--text-muted);
 }
 
 .okunmamis-nokta {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #1a73e8;
+  background: var(--accent-dark);
   flex-shrink: 0;
   margin-top: 4px;
 }

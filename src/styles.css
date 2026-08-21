@@ -1,46 +1,98 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   TEMA DEĞİŞKENLERİ
+
+   Renkler burada tek merkezden tanımlanır. Sayfa ve bileşen
+   CSS dosyaları sabit renk yerine bu değişkenleri kullanır.
+   Böylece karanlık mod için ayrıca kural yazmak gerekmez.
+   ============================================================ */
+
+:root {
+  /* Zeminler */
+  --bg-app: #f0f4f8;
+  --bg-card: #ffffff;
+  --bg-subtle: #f5f5f5;
+
+  /* Yarı saydam kart (arka plan görseli üzerinde kullanılır) */
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-hover: rgba(249, 249, 249, 0.9);
+
+  /* Mavi tonlu yumuşak zeminler (bilgi kutuları, okunmamış bildirim) */
+  --bg-info: rgba(232, 240, 254, 0.9);
+  --bg-soft: #f0f4ff;
+
+  /* Bildirim ikon zeminleri */
+  --icon-info: #e8f0fe;
+  --icon-success: #e6f4ea;
+  --icon-danger: #fce8e6;
+  --icon-warning: #fff3e0;
+
+  /* Metinler */
+  --text-strong: #1a1a2e;
+  --text-normal: #333333;
+  --text-muted: #888888;
+  --text-faint: #cccccc;
+
+  /* Çizgi ve gölge */
+  --border: #e5e7eb;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --shadow-strong: rgba(0, 0, 0, 0.12);
+
+  /* Toggle kapalı durumu */
+  --toggle-off: #dddddd;
+
+  /* Arka plan görselinin üzerine binen katman (aydınlıkta görünmez) */
+  --bg-overlay: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+
+  /* Vurgu renkleri */
+  --accent: #3b82f6;
+  --accent-dark: #1a73e8;
+  --accent-text: #1a73e8;   /* metin olarak kullanılan mavi */
+  --danger: #ff1a1a;
+  --warning: #eab308;
+  --success: #10b981;
+}
+
 body.karanlik {
-  background: #121212;
-  color: white;
+  --bg-app: #121212;
+  --bg-card: #1e1e1e;
+  --bg-subtle: #2a2a2a;
+
+  --bg-glass: rgba(30, 30, 30, 0.88);
+  --bg-hover: rgba(52, 52, 52, 0.9);
+
+  --bg-info: rgba(28, 45, 68, 0.9);
+  --bg-soft: #24304a;
+
+  --icon-info: #1e3a5f;
+  --icon-success: #1b3a2a;
+  --icon-danger: #4a2320;
+  --icon-warning: #4a3520;
+
+  --text-strong: #ffffff;
+  --text-normal: #e0e0e0;
+  --text-muted: #9e9e9e;
+  --text-faint: #6a6a6a;
+
+  --border: #3a3a3a;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.55);
+
+  --toggle-off: #4a4a4a;
+
+  /* Karanlık modda arka plan görselini koyulaştırır */
+  --bg-overlay: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62));
+
+  /* Koyu zeminde okunabilir mavi */
+  --accent-text: #7ab4f5;
 }
 
-body.karanlik .ayarlar-wrapper {
-  background: #1e1e1e;
-}
+/* ============================================================
+   GENEL
+   ============================================================ */
 
-body.karanlik .ayar-listesi {
-  background: #2c2c2c;
-}
-
-body.karanlik .ayar-ad {
-  color: #ffffff;
-}
-
-body.karanlik .ayar-aciklama {
-  color: #aaaaaa;
-}
-
-body.karanlik .bolum-baslik {
-  color: #888888;
-}
-
-body.karanlik .nav-satir {
-  border-bottom-color: #3a3a3a;
-}
-
-body.karanlik .ayar-satir {
-  border-bottom-color: #3a3a3a;
-}
-
-body.karanlik .header {
-  background: #2c2c2c;
-  border-bottom-color: #3a3a3a;
-}
-
-body.karanlik .baslik {
-  color: #ffffff;
-}
-
-body.karanlik .geri-btn {
-  color: #ffffff;
+body {
+  margin: 0;
+  background: var(--bg-app);
+  color: var(--text-normal);
+  transition: background 0.2s ease, color 0.2s ease;
 }
