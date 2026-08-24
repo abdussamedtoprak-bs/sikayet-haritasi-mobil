@@ -3,9 +3,9 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     border-radius: 24px 24px 0 0;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -4px 15px var(--shadow-strong);
     padding: 20px;
     z-index: 1000;
     box-sizing: border-box;
@@ -16,26 +16,23 @@
     align-items: center;
     margin-bottom: 20px;
 }
-/* Sol kısım alanın 3'te 1'ini kaplayıp içeriği sola yaslar */
 .header-left {
     flex: 1;
     display: flex;
     justify-content: flex-start;
 }
-/* Orta kısım sadece içeriği kadar yer kaplar ve rozetleri yan yana dizer */
 .header-center {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
 }
-/* Sağ kısım alanın 3'te 1'ini kaplayıp içeriği sağa yaslar */
 .header-right {
     flex: 1;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-  gap: 15px; /* İleri oku ile X arasındaki boşluk */
+    gap: 15px;
 }
 /* Butonların Ortak Stili */
 .nav-btn, .close-btn {
@@ -44,8 +41,8 @@
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    color: #333;
-    padding: 5px; /* Tıklama alanını biraz genişletir */
+    color: var(--text-strong);
+    padding: 5px;
 }
 .badges {
     display: flex;
@@ -63,55 +60,54 @@
 }
 /* Destek rozeti sabit sarı kalabilir */
 .upvote-badge {
-    background-color: #eab308; 
+    background-color: #eab308;
 }
 
 /* Öncelik rozetleri için HTML'den gelecek dinamik renkler */
 .bg-acil {
-    background-color: #ef4444 !important; /* Kırmızı */
+    background-color: #ef4444 !important;
 }
 .bg-orta {
-    background-color: #3b82f6 !important; /* Mavi */
+    background-color: #3b82f6 !important;
 }
 .bg-dusuk {
-    background-color: #eab308 !important; /* Sarı */
+    background-color: #eab308 !important;
 }
 .sheet-body {
     display: flex;
     justify-content: space-between;
-    gap: 15px; 
-    align-items: stretch; /* En önemli kısım! İki sütunu aynı boya çeker */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Tırnaklı fontu düzeltir */
+    gap: 15px;
+    align-items: stretch;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 /* --- SOL SÜTUN --- */
 .info-section {
     display: flex;
-    gap: 12px; /* Baret ile yazılar arasındaki boşluk */
-    flex: 1; /* Ortadaki boşluğu doldur */
+    gap: 12px;
+    flex: 1;
 }
 .icon-wrapper {
     flex-shrink: 0;
-    padding-top: 2px; /* Baret ikonunu başlıkla hizalar */
+    padding-top: 2px;
 }
 .text-content {
     display: flex;
     flex-direction: column;
-    flex: 1; 
+    flex: 1;
 }
 .title {
     margin: 0 0 6px 0;
     font-size: 15px;
     font-weight: 700;
-    color: #222;
+    color: var(--text-strong);
 }
 .description {
     margin: 0 0 10px 0;
     font-size: 12px;
-    color: #666;
+    color: var(--text-normal);
     line-height: 1.4;
-    /* Uzun metni 3 satırla sınırlayıp sonuna ... koyar */
     display: -webkit-box;
-    -webkit-line-clamp: 3; 
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -119,51 +115,47 @@
 .media-section {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0; 
-    width: 140px; /* Resim genişliğini sabitler */
+    flex-shrink: 0;
+    width: 140px;
 }
 .complaint-image {
     width: 100%;
     height: 75px;
     object-fit: cover;
     border-radius: 6px;
-    margin-bottom: 8px; /* Resim ile tarih arasındaki boşluk */
+    margin-bottom: 8px;
 }
-/* --- EN ALT KISIM (Güvenlik ve Tarih Hizalaması) --- */
+/* --- EN ALT KISIM --- */
 .category, .date {
     display: flex;
     align-items: center;
     gap: 5px;
     font-size: 11px;
     font-weight: 600;
-    color: #444;
+    color: var(--text-normal);
     margin-top: auto;
-    white-space: nowrap; /* YENİ: Metnin kesinlikle tek satırda kalmasını sağlar */
+    white-space: nowrap;
 }
 /* --- SVG İKON STİLLERİ --- */
-/* Başlığın yanındaki büyük baret */
-    .large-helmet-icon {
+.large-helmet-icon {
     width: 28px;
     height: 28px;
-    fill: #111827; /* Figma'daki koyu siyah/gri tonu */
+    fill: var(--text-strong);
     display: block;
 }
-/* Kategori yanındaki küçük baret */
 .small-helmet-icon {
     width: 14px;
     height: 14px;
-    fill: #111827;
+    fill: var(--text-strong);
     flex-shrink: 0;
 }
-/* Tarih yanındaki küçük takvim */
 .small-calendar-icon {
     width: 14px;
     height: 14px;
-    stroke: #444444; /* Metin rengiyle uyumlu gri */
+    stroke: var(--text-normal);
     flex-shrink: 0;
 }
-/* .icon-wrapper için ufak düzeltme */
 .icon-wrapper {
     flex-shrink: 0;
-    padding-top: 4px; /* Başlıkla aynı hizada olması için hafifçe aşağı ittik */
+    padding-top: 4px;
 }

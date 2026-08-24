@@ -1,14 +1,14 @@
 .search-container{
     display: flex;
     align-items: center;
-    background-color: #ffffff;
-    border:1px solid #E5E7EB;
+    background-color: var(--bg-card);
+    border:1px solid var(--border);
     border-radius: 25px;
     padding: 10px 16px;
     margin-bottom: 16px;
-    width: 100%; /* Satırı tamamen kaplamasını sağlar */
-    box-sizing: border-box; /* Padding ve border değerlerini genişliğe dahil eder, taşmayı önler */
-    margin-left: 0; 
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: 0;
     margin-right: 0;
 }
 
@@ -22,19 +22,19 @@
     border: none;
     outline: none;
     font-size: 14px;
-    color: #374151;
+    color: var(--text-normal);
     background: transparent;
 }
 
 .search-input::placeholder {
-    color: #9CA3AF;
+    color: var(--text-muted);
 }
 
 .clear-btn {
     background: none;
     border: none;
     font-size: 20px;
-    color: #9CA3AF;
+    color: var(--text-muted);
     cursor: pointer;
     padding: 0 4px;
     display: flex;
@@ -43,5 +43,5 @@
 }
 
 .clear-btn:hover {
-    color: #374151;
+    color: var(--text-normal);
 }

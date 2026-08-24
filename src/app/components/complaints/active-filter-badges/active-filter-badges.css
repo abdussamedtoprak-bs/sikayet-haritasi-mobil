@@ -1,13 +1,13 @@
 .active-badges-container{
     display: flex;
     align-items: center;
-    background-color:#FFFFFF;
-    border:1px solid #E5E7EB;
+    background-color: var(--bg-card);
+    border:1px solid var(--border);
     border-radius: 12px;
     padding: 10px 16px;
     margin:12px 16px;
-    box-shadow:0 2px 4px rgba(0, 0, 0, 0.02);
-    width: 100%; 
+    box-shadow:0 2px 4px var(--shadow);
+    width: 100%;
     box-sizing: border-box;
     margin-left: 0;
     margin-right: 0;
@@ -22,14 +22,14 @@
 .filter-icon{
     width:18px;
     height:18px;
-    color:#111827;
+    color: var(--text-strong);
     margin-right:6px;
 }
 
-badges-title{
+.badges-title{
     font-weight:700;
     font-size: 14px;
-    color:#111827;
+    color: var(--text-strong);
 }
 
 .badges-list{
@@ -43,8 +43,8 @@ badges-title{
 }
 
 .badge{
-    background-color:#F3F4F6;
-    color:#4B5563;
+    background-color: var(--bg-subtle);
+    color: var(--text-normal);
     font-size:13px;
     font-weight:500;
     padding:6px 12px;

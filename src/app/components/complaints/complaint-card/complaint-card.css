@@ -1,16 +1,16 @@
 .card-container {
-    background-color: #f0f4f8; /* Görseldeki açık mavi/gri arka plan */
+    background-color: var(--bg-subtle);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    border-left: 6px solid #ccc; /* Varsayılan renk ve kalınlık */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 6px solid var(--border);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
-/* Dinamik sol şerit renkleri (Sadece rengi değiştiriyoruz ki 6px kalınlık bozulmasın) */
+/* Dinamik sol şerit renkleri */
 .border-red { border-left-color: #ef4444; }
 .border-blue { border-left-color: #3b82f6; }
 .border-yellow { border-left-color: #eab308; }
@@ -25,7 +25,7 @@
     margin: 0;
     font-size: 15px;
     font-weight: 700;
-    color: #333;
+    color: var(--text-strong);
 }
 
 .support-badge {
@@ -42,7 +42,7 @@
 /* Dinamik rozet arka plan renkleri */
 .bg-red { background-color: #ef4444; color: white; }
 .bg-blue { background-color: #3b82f6; color: white; }
-.bg-yellow { background-color: #eab308; color: #333; } /* Sarı zemin üzerine koyu yazı daha net okunur */
+.bg-yellow { background-color: #eab308; color: #333; }
 
 .card-body {
     margin: 0;
@@ -51,8 +51,7 @@
 .description {
     margin: 0;
     font-size: 14px;
-    color: #888;
-    /* Figma'daki gibi uzun metni tek satırda tutup sonuna ... ekler */
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -66,19 +65,19 @@
 
 .meta-info {
     font-size: 12px;
-    color: #555;
+    color: var(--text-normal);
     font-weight: 600;
 }
 
 .status-badge {
     padding: 6px 16px;
-    border-radius: 20px; /* Hap görünümü */
+    border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
     color: white;
 }
 
 /* Dinamik durum renkleri */
-.status-review { background-color: #ffa940; } /* Turuncu */
-.status-resolved { background-color: #52c41a; } /* Yeşil */
-.status-pending { background-color: #6c757d; } /* Gri */
+.status-review { background-color: #ffa940; }
+.status-resolved { background-color: #52c41a; }
+.status-pending { background-color: #6c757d; }

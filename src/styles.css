@@ -42,6 +42,12 @@
 
   /* Arka plan görselinin üzerine binen katman (aydınlıkta görünmez) */
   --bg-overlay: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+
+    /* Sekme filtresi — pasif sekme */
+  --tab-inactive-bg: #cce4ff;
+  --tab-inactive-text: #6b9be2;
+  --tab-inactive-hover: #b3d4ff;
+
     /* Login ekranındaki görselin alta doğru sayfa zeminine karışması için */
   --login-fade-top: rgba(255, 255, 255, 0);
   --login-fade-bottom: rgba(255, 255, 255, 0);
@@ -84,6 +90,11 @@ body.karanlik {
 
   /* Karanlık modda arka plan görselini koyulaştırır */
   --bg-overlay: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62));
+
+  --tab-inactive-bg: #1e3a5f;
+  --tab-inactive-text: #8ab4e8;
+  --tab-inactive-hover: #274b78;
+
   --login-fade-top: rgba(0, 0, 0, 0.45);
   --login-fade-bottom: rgba(18, 18, 18, 0.98);
   /* Koyu zeminde okunabilir mavi */
