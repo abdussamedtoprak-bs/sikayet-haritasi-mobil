@@ -48,6 +48,10 @@
   --tab-inactive-text: #6b9be2;
   --tab-inactive-hover: #b3d4ff;
 
+    /* Login ekranındaki görselin alta doğru sayfa zeminine karışması için */
+  --login-fade-top: rgba(255, 255, 255, 0);
+  --login-fade-bottom: rgba(255, 255, 255, 0);
+  
   /* Vurgu renkleri */
   --accent: #3b82f6;
   --accent-dark: #1a73e8;
@@ -91,6 +95,8 @@ body.karanlik {
   --tab-inactive-text: #8ab4e8;
   --tab-inactive-hover: #274b78;
 
+  --login-fade-top: rgba(0, 0, 0, 0.45);
+  --login-fade-bottom: rgba(18, 18, 18, 0.98);
   /* Koyu zeminde okunabilir mavi */
   --accent-text: #7ab4f5;
 }
