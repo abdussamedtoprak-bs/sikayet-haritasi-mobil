@@ -6,33 +6,33 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 15001 !important; /* DEĞİŞTİRİLDİ: Başlığın üstünde kalması için */
-    padding: 16px; 
-    box-sizing: border-box; 
+    z-index: 15001 !important;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 /* MODAL KUTUSU */
 .modal-content {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 16px;
-    width: 100%; 
+    width: 100%;
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
     padding: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px var(--shadow-strong);
     display: flex;
     flex-direction: column;
-    position: relative; /* EKLENDİ: Z-index'in düzgün çalışması için */
-    z-index: 1502 !important; /* EKLENDİ: Beyaz kutunun da karanlık arka planın üstünde kalmasını garantiler */
+    position: relative;
+    z-index: 1502 !important;
 }
 
     /* Üst Kısım */
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-title { margin: 0; font-size: 18px; font-weight: 700; }
-    .close-btn { background: none; border: none; cursor: pointer; width: 24px; height: 24px; color: #9CA3AF; padding: 0; }
+    .modal-title { margin: 0; font-size: 18px; font-weight: 700; color: var(--text-strong); }
+    .close-btn { background: none; border: none; cursor: pointer; width: 24px; height: 24px; color: var(--text-muted); padding: 0; }
 
-    /* Ana Sütun Yapısı (Sol blok ve Sağ blok yan yana) */
+    /* Ana Sütun Yapısı */
     .filter-columns {
     display: flex;
     flex-direction: row;
@@ -40,7 +40,6 @@
     align-items: flex-start;
     }
 
-    /* Sol Blok (İçinde Kategori, Durum ve Butonlar var) */
     .left-section {
     display: flex;
     flex-direction: column;
@@ -48,45 +47,40 @@
     flex: 2;
     }
 
-    /* Kategori ve Durum Sütunlarını Yan Yana Tutar */
     .top-columns {
     display: flex;
     flex-direction: row;
     gap: 12px;
     }
 
-    /* Sütunların Genel Görünümü */
     .filter-column {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px;
     }
 
-    /* Tarih Sütunu (Sağ blok) */
     .date-column {
-    flex: 1.2; /* Tarih kısmına biraz daha fazla alan tanır */
+    flex: 1.2;
     }
 
-    .column-title { margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #111827; }
-/* Kutunun ve Yazının Yan Yana Durması (Silinen Sınıfı Geri Ekliyoruz) */
+    .column-title { margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: var(--text-strong); }
+
 .radio-option {
     display: flex;
     align-items: center;
-    gap: 8px; /* Yuvarlak ile yazı arasındaki boşluk */
+    gap: 8px;
     font-size: 14px;
     margin-bottom: 12px;
-    cursor: pointer; /* Tıklanabilir olduğunu gösteren el işareti */
-    color: #4B5563;
-    white-space: nowrap; /* Yazıların asla alt satıra düşmemesini sağlar */
+    cursor: pointer;
+    color: var(--text-normal);
+    white-space: nowrap;
 }
 
-/* (Altında senin eklediğin .custom-radio kodları devam edecek...) */
-
-/* --- ÖZEL RADYO BUTONU TASARIMLARI (GÜNCELLENDİ) --- */
+/* --- ÖZEL RADYO BUTONU TASARIMLARI --- */
 .custom-radio {
     appearance: none;
     -webkit-appearance: none;
@@ -96,64 +90,64 @@
     cursor: pointer;
     margin: 0;
     outline: none;
-    
-    /* İç içe yuvarlak efekti için harika CSS hilesi */
-    background-clip: content-box; 
-    padding: 3px; /* Dış çerçeve ile içteki nokta arasındaki beyaz boşluk */
-    background-color: transparent; /* Seçili değilken içi boş */
+    background-clip: content-box;
+    padding: 3px;
+    background-color: transparent;
     transition: background-color 0.15s ease-in-out;
 }
 
 /* --- DİNAMİK RENKLER --- */
 
-/* Lacivert (Orta - Daha tok ve koyu bir mavi/lacivert) */
 .radio-blue { border: 2px solid #1E3A8A; }
 .radio-blue:checked { background-color: #1E3A8A; }
 
-/* Kırmızı (Kritik) */
 .radio-red { border: 2px solid #FF1A1A; }
 .radio-red:checked { background-color: #FF1A1A; }
 
-/* Sarı (Düşük - Daha tok Bootstrap Warning tonu) */
 .radio-yellow { border: 2px solid #e0a800; }
 .radio-yellow:checked { background-color: #e0a800; }
 
-/* Gri (Beklemede) */
 .radio-gray { border: 2px solid #6B7280; }
 .radio-gray:checked { background-color: #6B7280; }
 
-/* Koyu Turuncu (İnceleniyor - Sarıdan tamamen ayrışan, kiremit tonlarında turuncu) */
 .radio-orange { border: 2px solid #D35400; }
 .radio-orange:checked { background-color: #D35400; }
 
-/* Yeşil (Çözüldü - Daha tok Bootstrap Success tonu) */
 .radio-green { border: 2px solid #198754; }
 .radio-green:checked { background-color: #198754; }
 
-/* Siyah (Tümü ve Tarih butonları için - Bootstrap Dark tonu) */
-.radio-black { border: 2px solid #212529; }
-.radio-black:checked { background-color: #212529; }
+/* "Tümü" ve tarih seçenekleri — temaya göre koyu/açık */
+.radio-black { border: 2px solid var(--text-strong); }
+.radio-black:checked { background-color: var(--text-strong); }
 
-    /* Özel aralık etiketi için ekstra boşluk */
     .custom-range-label {
     margin-top: 8px;
     font-weight: 600;
     }
 
     /* Tarih Kutuları */
-    .date-pickers { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 8px; 
-    margin-top: 4px; 
+    .date-pickers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
     }
-    .date-pickers input { border: 1px solid #E5E7EB; border-radius: 8px; padding: 8px; font-size: 13px; outline: none; }
+    .date-pickers input {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    outline: none;
+    background-color: var(--bg-subtle);
+    color: var(--text-strong);
+    font-family: inherit;
+    }
 
-    /* Buton Alanı (Sol bloğun en altında) */
-    .modal-footer { 
-    display: flex; 
-    gap: 12px; 
+    /* Buton Alanı */
+    .modal-footer {
+    display: flex;
+    gap: 12px;
 }
 
-.btn-clear { flex: 1; padding: 12px; background: white; border: 1px solid #E5E7EB; border-radius: 8px; font-weight: 600; cursor: pointer; color: #4B5563; }
+.btn-clear { flex: 1; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-normal); }
 .btn-filter { flex: 1; padding: 12px; background: #635BFF; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer; }

@@ -43,6 +43,11 @@
   /* Arka plan görselinin üzerine binen katman (aydınlıkta görünmez) */
   --bg-overlay: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 
+    /* Sekme filtresi — pasif sekme */
+  --tab-inactive-bg: #cce4ff;
+  --tab-inactive-text: #6b9be2;
+  --tab-inactive-hover: #b3d4ff;
+
   /* Vurgu renkleri */
   --accent: #3b82f6;
   --accent-dark: #1a73e8;
@@ -81,6 +86,10 @@ body.karanlik {
 
   /* Karanlık modda arka plan görselini koyulaştırır */
   --bg-overlay: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62));
+
+  --tab-inactive-bg: #1e3a5f;
+  --tab-inactive-text: #8ab4e8;
+  --tab-inactive-hover: #274b78;
 
   /* Koyu zeminde okunabilir mavi */
   --accent-text: #7ab4f5;

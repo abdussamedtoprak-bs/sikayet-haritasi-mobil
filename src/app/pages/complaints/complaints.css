@@ -1,38 +1,37 @@
 /* Haritayı saran dış kutunun tasarımı */
 .harita-wrapper {
-    margin: 16px 4px; /* 16px 20px yerine sadece 16px yaptık. Böylece sağ, sol, alt ve üst boşluklar diğer kartlarla aynı hizaya gelecek */
+    margin: 16px 4px;
     height: 220px;
-    border-radius: 16px; /* 24px çok oval kalıyordu, diğer componentlerle aynı olması için 16px'e çektik */
-    overflow: hidden; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px var(--shadow);
     position: relative;
-    z-index: 0; 
+    z-index: 0;
 }
 
 /* Harita bileşeninin yüksekliğinin kutuyu tam doldurmasını zorluyoruz */
 .harita-wrapper ::ng-deep #map {
     height: 220px !important;
     width: 100% !important;
-    border-radius: 16px; /* İçerdeki haritanın köşelerini de dış kutuyla uyumlu 16px yaptık */
+    border-radius: 16px;
 }
 
 /* YAN MENÜ ANİMASYONU VE YERLEŞİMİ */
 app-yan-menu {
     position: fixed;
     top: 0;
-    right: -100%; /* Başlangıçta ekranın sağından tamamen dışarıda sakla */
-    width: 250px; /* Menünün genişliği */
-    height: 100vh; /* Ekranın tamamını dikeyde kapla */
-    background-color: white;
-    box-shadow: -4px 0 15px rgba(0,0,0,0.1); /* Sol tarafına hafif gölge ver */
-    transition: right 0.3s ease-in-out; /* Kayma animasyonunun hızı */
+    right: -100%;
+    width: 250px;
+    height: 100vh;
+    background-color: var(--bg-card);
+    box-shadow: -4px 0 15px var(--shadow);
+    transition: right 0.3s ease-in-out;
     z-index: 1000;
     display: block;
 }
 
-/* isMenuOpen true olduğunda [class.open] devreye girer ve bu CSS çalışır */
 app-yan-menu.open {
-  right: 0; /* Menüyü ekrana çek */
+  right: 0;
 }
 
 /* ARKA PLAN KARARTMASI */
@@ -43,5 +42,5 @@ app-yan-menu.open {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0,0,0,0.4);
-    z-index: 999; /* Menünün bir tık altında, sayfanın üstünde kalır */
+    z-index: 999;
 }

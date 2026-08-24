@@ -1,6 +1,5 @@
-
 .legend-container{
-    display: flex;/* */
+    display: flex;
     justify-content: space-around;
     align-items:center;
     padding:12px 16px;
@@ -10,25 +9,21 @@
 .legend-item{
     display:flex;
     align-items: center;
-    gap: 8px;/*nokta ile label arasındaki boşluk*/
+    gap: 8px;
 }
 
 .dot{
     width: 14px;
     height:14px;
-    border-radius:50%;/*kareyi tam bir yuvarlağa çevirir*/
-    display:inline-block;/*dotları yan yana dizmek için kullanılır*/
-
+    border-radius:50%;
+    display:inline-block;
 }
 
-/*
-Tasarımdaki renk kodları
-*/
+/* Öncelik renkleri her iki temada da aynı kalır */
 .dot-critical{
-    background-color:#FF1A1A;/*parlak kırmızı*/
+    background-color:#FF1A1A;
 }
 
-/* Orta (Lacivert) */
 .dot-medium {
     background-color: #1E3A8A;
 }
@@ -40,5 +35,5 @@ Tasarımdaki renk kodları
 .label{
     font-weight:600;
     font-size:15px;
-    color:#333333;
+    color: var(--text-normal);
 }
