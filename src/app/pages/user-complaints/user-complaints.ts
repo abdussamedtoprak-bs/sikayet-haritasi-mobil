@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ComplaintService } from '../../services/complaint';
 import { Complaint } from '../../models/complaint';
 import { AuthService } from '../../services/auth.service';
+import { MediaService } from '../../services/media.service';
 
 @Component({
   selector: 'app-user-complaints',
@@ -27,6 +28,13 @@ export class UserComplaintsComponent implements OnInit {
   private complaintService = inject(ComplaintService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef); // Angular'ı uyandırmak için servisi çağırdık!
+  private mediaService = inject(MediaService);
+
+  /**
+   * @description Yüklenen fotoğrafların önbelleği (medya kimliği → base64).
+   * Aynı fotoğrafın tekrar tekrar indirilmesini önler.
+   */
+  fotografCache: Record<string, string> = {};
 
   constructor() {
     effect(() => {
@@ -42,6 +50,9 @@ export class UserComplaintsComponent implements OnInit {
             
             // ANGULAR'I DÜRTÜYORUZ: "Veriler geldi, ekranı yenile!"
             this.cdr.detectChanges(); 
+
+                        // Fotoğrafları arka planda yükle, liste beklemesin
+            this.fotograflariYukle();
           },
           error: (err) => {
             console.error("Şikayetler çekilirken hata oluştu:", err);
@@ -52,6 +63,48 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  /**
+   * @description Listedeki şikayetlerin fotoğraflarını veritabanından çeker.
+   *
+   * Fotoğraflar şikayet kaydının içinde tutulmadığı için ayrıca istenir.
+   * Daha önce indirilenler önbellekten kullanılır, tekrar indirilmez.
+   */
+  private async fotograflariYukle(): Promise<void> {
+    const yeniIdler = this.tumSikayetler
+      .map(sikayet => sikayet.mediaIds?.[0])
+      .filter((id): id is string => !!id && !this.fotografCache[id]);
+
+    for (const id of yeniIdler) {
+      try {
+        const veri = await this.mediaService.getImageData(id);
+
+        if (veri) {
+          this.fotografCache[id] = veri;
+        }
+      } catch (error) {
+        console.error('Fotoğraf yüklenemedi:', id, error);
+      }
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * @description Bir şikayetin ilk fotoğrafını döndürür.
+   * Fotoğraf yoksa veya henüz yüklenmediyse null döner.
+   *
+   * @param {Complaint} sikayet - Fotoğrafı istenen şikayet
+   * @returns {string | null} Fotoğrafın base64 hali veya null
+   */
+  sikayetFotografi(sikayet: Complaint | null): string | null {
+    const id = sikayet?.mediaIds?.[0];
+
+    return id ? (this.fotografCache[id] ?? null) : null;
+  }
+
+
+
 
   istatistikleriHesapla() {
     this.bekleyenSayisi =
