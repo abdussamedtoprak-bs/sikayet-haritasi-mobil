@@ -4,6 +4,7 @@ export const environment = {
   firebase: {
     apiKey: "AIzaSyCdGmSdbeJXYhtWOaKCshkx9bQAo0Tj3lg",
     authDomain: "sikayet-haritasi-29b30.firebaseapp.com",
+    databaseURL: "https://sikayet-haritasi-29b30-default-rtdb.europe-west1.firebasedatabase.app/",
     projectId: "sikayet-haritasi-29b30",
     storageBucket: "sikayet-haritasi-29b30.firebasestorage.app",
     messagingSenderId: "311604387531",

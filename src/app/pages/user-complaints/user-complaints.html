@@ -21,7 +21,7 @@
   }
 
   @else {
-    
+
     <div class="filtre-sekmeleri">
       <button [class.aktif]="aktifSekme === 'Tümü'" (click)="filtrele('Tümü')">Tümü</button>
       <button [class.aktif]="aktifSekme === 'Beklemede'" (click)="filtrele('Beklemede')">Beklemede</button>
@@ -55,13 +55,16 @@
     <div class="liste-alani">
       @for (sikayet of gosterilenSikayetler; track sikayet.id) {
         <div class="sikayet-karti" (click)="detayAc(sikayet)">
-          <img src="assets/cam-kirigi.jpg" alt="Şikayet Görseli" class="kart-resim">
-          
+
+          @if (sikayetFotografi(sikayet)) {
+            <img [src]="sikayetFotografi(sikayet)" alt="Şikayet Görseli" class="kart-resim">
+          }
+
           <div class="kart-bilgi">
             <div class="kart-ust-satir">
               <h4>{{ sikayet.title }}</h4>
-              
-              <span class="durum-badge" 
+
+              <span class="durum-badge"
                     [class.beklemede]="sikayet.status === 'Beklemede'"
                     [class.inceleniyor]="sikayet.status === 'İnceleniyor'"
                     [class.cozuldu]="sikayet.status === 'Çözüldü'">
@@ -80,13 +83,15 @@
   @if (secilenSikayet) {
     <div class="modal-arkaplan" (click)="detayKapat()">
       <div class="detay-modal" (click)="$event.stopPropagation()">
-        
+
         <div class="detay-baslik">
-          <h3>{{ secilenSikayet.title }}</h3>
           <button class="kapat-buton" (click)="detayKapat()">&times;</button>
         </div>
 
-        <img src="assets/cam-kirigi.jpg" alt="Detay Görsel" class="detay-resim">
+        @if (sikayetFotografi(secilenSikayet)) {
+          <img [src]="sikayetFotografi(secilenSikayet)" alt="Detay Görsel" class="detay-resim">
+        }
+
         <p class="detay-aciklama">{{ secilenSikayet.description }}</p>
 
         <div class="detay-alt-bilgi">
@@ -97,5 +102,5 @@
       </div>
     </div>
   }
- 
+
 </div>

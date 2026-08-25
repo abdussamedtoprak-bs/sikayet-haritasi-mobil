@@ -15,5 +15,10 @@ export interface Complaint {
     isArchived?: boolean;   // "Silinen" şikayetler için (varsayılan: false)
     createdAt?: any;        // Sıralama ve tarih filtresi için (Firestore Timestamp)
     category?: string;      // (Opsiyonel) Kategori filtresinin daha sağlıklı çalışması için
-    imageUrl?: string;     // Şikayete eklenen fotoğrafın adresi
+        /**
+     * @description Şikayete eklenen fotoğrafların kimlikleri.
+     * Fotoğrafın kendisi Realtime Database'de, bilgileri Firestore'daki
+     * medias koleksiyonunda tutulur. Şikayet başına en fazla 3 fotoğraf.
+     */
+    mediaIds?: string[];
 }

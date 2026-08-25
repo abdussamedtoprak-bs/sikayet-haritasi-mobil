@@ -49,6 +49,7 @@
   </div>
 
   <!-- Fotoğraf Ekle -->
+    <!-- Fotoğraf Ekle -->
   <div class="form-group">
     <label>Fotoğraf Ekle</label>
     <div class="upload-box" (click)="fileInput.click()">
@@ -64,6 +65,12 @@
         style="display: none;" />
     </div>
 
+    @if (fotografIsleniyor()) {
+      <p style="font-size: 12px; color: var(--text-muted); margin: 8px 0 0; text-align: center;">
+        Fotoğraf hazırlanıyor...
+      </p>
+    }
+
     @if (fotograflar().length > 0) {
       <div class="preview-container">
         @for (foto of fotograflar(); track $index) {
@@ -77,8 +84,11 @@
   </div>
 
   <!-- Gönder Butonu -->
-  <button class="submit-btn" (click)="gonder()">
-    <span>🚀</span> Gönder
-  </button>
+  <button
+  class="submit-btn"
+  (click)="gonder()"
+  [disabled]="gonderiliyor() || fotografIsleniyor()">
+  {{ gonderiliyor() ? 'Gönderiliyor...' : 'Gönder' }}
+</button>
 
 </div>

@@ -15,6 +15,8 @@ import { Complaint } from '../../../models/complaint';
 import { ComplaintService } from '../../../services/complaint';
 import { AuthService } from '../../../services/auth.service';
 
+import { MediaService } from '../../../services/media.service';
+
 /**
  * Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
  * Konum, kategori, açıklama ve fotoğraf alanlarından oluşan bir form sunar.
@@ -43,6 +45,7 @@ export class SorunBildirmePaneli implements OnInit {
    */
   private readonly authService = inject(AuthService);
   private readonly complaintService = inject(ComplaintService);
+  private readonly mediaService = inject(MediaService);
 
   /**
    * Form verilerini tutan nesne.
@@ -67,6 +70,11 @@ export class SorunBildirmePaneli implements OnInit {
    * Yüklenen fotoğrafların Base64 listesi.
    */
   fotograflar = signal<string[]>([]);
+    /** @description Fotoğraf küçültülürken true olur, arayüz bekleme gösterir. */
+  fotografIsleniyor = signal<boolean>(false);
+
+  /** @description Şikayet gönderilirken true olur, mükerrer gönderimi engeller. */
+  gonderiliyor = signal<boolean>(false);
 
   ngOnInit(): void {
     if (this.gelenKonum) {
@@ -82,30 +90,40 @@ export class SorunBildirmePaneli implements OnInit {
     this.reportData.kategori = id;
   }
 
-  /**
-   * Fotoğraf seçimini gerçekleştirir.
-   * En fazla 3 fotoğraf yüklenebilir.
+  
+    /**
+   * @description Seçilen fotoğrafları küçültüp önizleme listesine ekler.
+   *
+   * Fotoğraflar seçildiği anda küçültülür; böylece hem önizleme hafif olur
+   * hem de gönderim sırasında ek bir işlem beklemeye gerek kalmaz.
+   * En fazla 3 fotoğraf eklenebilir.
+   *
+   * @param {any} event - Dosya seçme alanının change olayı
    */
-  fotografSec(event: any): void {
-    const files = event.target.files;
+  async fotografSec(event: any): Promise<void> {
+    const files: FileList = event.target.files;
 
-    if (files) {
+    if (!files || files.length === 0) return;
+
+    this.fotografIsleniyor.set(true);
+
+    try {
       for (let i = 0; i < files.length; i++) {
 
-        if (this.fotograflar().length >= 3) {
-          break;
-        }
+        if (this.fotograflar().length >= 3) break;
 
-        const reader = new FileReader();
+        const kucultulmusFotograf = await this.mediaService.resizeImage(files[i]);
 
-        reader.onload = (e: any) => {
-          this.fotograflar.update(
-            list => [...list, e.target.result]
-          );
-        };
-
-        reader.readAsDataURL(files[i]);
+        this.fotograflar.update(list => [...list, kucultulmusFotograf]);
       }
+    } catch (error) {
+      console.error('Fotoğraf işlenirken hata oluştu:', error);
+      alert('Fotoğraf işlenemedi. Lütfen başka bir dosya deneyin.');
+    } finally {
+      this.fotografIsleniyor.set(false);
+
+      // Aynı dosyanın silinip tekrar seçilebilmesi için alanı sıfırla
+      event.target.value = '';
     }
   }
 
@@ -118,124 +136,83 @@ export class SorunBildirmePaneli implements OnInit {
     );
   }
 
-  /**
-   * Formu gönderir ve şikayeti Firebase'e kaydeder.
+   /**
+   * @description Formu doğrular, fotoğrafları yükler ve şikayeti veritabanına kaydeder.
+   *
+   * Fotoğraflar şikayetten önce yüklenir; her fotoğraf için bir medya kimliği
+   * üretilir ve bu kimlikler şikayet kaydına eklenir. Fotoğrafın kendisi
+   * şikayet dokümanında tutulmaz, ayrı bir veritabanında saklanır.
    */
   async gonder(): Promise<void> {
 
-    console.log(
-      'ADIM 1: Gönder butonuna tıklandı! Fonksiyon çalıştı.'
-    );
+    // Butona üst üste basılmasını engelle
+    if (this.gonderiliyor()) return;
+
+    const currentUser = this.authService.currentUser();
+
+    if (!currentUser) {
+      alert('Şikayet bildirmek için oturum açmalısınız!');
+      return;
+    }
+
+    if (!this.reportData.aciklama.trim()) {
+      alert('Lütfen şikayetiniz için bir açıklama yazın.');
+      return;
+    }
+
+    this.gonderiliyor.set(true);
 
     try {
+      // 1. Fotoğrafları yükle, kimliklerini al
+      let mediaIds: string[] = [];
 
-      // Giriş yapan kullanıcıyı al
-      const currentUser = this.authService.currentUser();
-
-      console.log(
-        'ADIM 2: Kullanıcı kimliği alındı:',
-        currentUser ? currentUser.uid : 'Oturum Yok!'
-      );
-
-      // Kullanıcı giriş yapmamışsa işlemi durdur
-      if (!currentUser) {
-        alert('Şikayet bildirmek için oturum açmalısınız!');
-        return;
+      if (this.fotograflar().length > 0) {
+        mediaIds = await this.mediaService.uploadImages(
+          this.fotograflar(),
+          currentUser.uid
+        );
       }
 
-      // Açıklama boşsa işlemi durdur
-      if (!this.reportData.aciklama.trim()) {
-        alert('Lütfen şikayetiniz için bir açıklama yazın.');
-        return;
-      }
-
-      console.log(
-        'ADIM 3: Veriler Firebase için hazırlanıyor...'
-      );
-
-      // Konum bilgisini enlem ve boylam olarak ayır
+      // 2. Konum bilgisini enlem ve boylam olarak ayır
       const konumParcalari = this.reportData.konum.split(',');
 
-      const enlem =
-        konumParcalari.length > 1
-          ? parseFloat(konumParcalari[0].trim())
-          : 0;
+      const enlem = konumParcalari.length > 1
+        ? parseFloat(konumParcalari[0].trim())
+        : 0;
 
-      const boylam =
-        konumParcalari.length > 1
-          ? parseFloat(konumParcalari[1].trim())
-          : 0;
+      const boylam = konumParcalari.length > 1
+        ? parseFloat(konumParcalari[1].trim())
+        : 0;
 
-      // Şikayetin başlangıç destek sayısı
       const baslangicDestek = 1;
 
-      // Firebase'e gönderilecek şikayet nesnesi
+      // 3. Şikayet nesnesini hazırla
       const yeniSikayet: Complaint = {
         userId: currentUser.uid,
-
-        title:
-          'Yeni Bildirim: ' +
-          this.reportData.kategori.toUpperCase(),
-
+        title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(),
         supportCount: baslangicDestek,
-
         description: this.reportData.aciklama,
-
-        metaInfo:
-          'Genel - ' +
-          new Date().toLocaleDateString('tr-TR'),
-
+        metaInfo: 'Genel - ' + new Date().toLocaleDateString('tr-TR'),
         status: 'Beklemede',
-
-        priority:
-          this.complaintService.hesaplaOncelik(
-            baslangicDestek
-          ),
-
+        priority: this.complaintService.hesaplaOncelik(baslangicDestek),
         location: this.reportData.konum,
-
         lat: enlem,
-
         lng: boylam,
-
-        category: this.reportData.kategori
+        category: this.reportData.kategori,
+        mediaIds: mediaIds
       };
 
-      console.log(
-        'ADIM 4: Hazırlanan Şikayet Paketi:',
-        yeniSikayet
-      );
+      // 4. Veritabanına kaydet
+      await this.complaintService.addComplaint(yeniSikayet);
 
-      console.log(
-        "ADIM 5: Firebase'e gönderiliyor..."
-      );
-
-      // Firebase'e kaydet
-      await this.complaintService.addComplaint(
-        yeniSikayet
-      );
-
-      console.log(
-        'ADIM 6: BİNGO! 🚀 Firebase veriyi başarıyla kaydetti!'
-      );
-
-      alert(
-        'Şikayetiniz başarıyla kaydedildi!'
-      );
-
-      // Paneli kapat
+      alert('Şikayetiniz başarıyla kaydedildi!');
       this.panelKapat.emit();
 
     } catch (error) {
-
-      console.error(
-        '💥 ADIM X: HATA OLUŞTU!',
-        error
-      );
-
-      alert(
-        'Kaydedilirken hata oluştu. Konsola bakın.'
-      );
+      console.error('Şikayet kaydedilirken hata oluştu:', error);
+      alert('Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      this.gonderiliyor.set(false);
     }
   }
 }
