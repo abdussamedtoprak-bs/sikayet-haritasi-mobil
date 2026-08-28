@@ -58,7 +58,7 @@ export class BildirimlerComponent implements OnInit {
     }
 
     const hazirSayfalar = ['/ayarlar', '/bildirimler', '/complaints' , '/user-complaints'];
-    if (hazirSayfalar.includes(bildirim.yonlendirme) || bildirim.yonlendirme.startsWith('/sikayet-detay')) {
+    if (hazirSayfalar.includes(bildirim.yonlendirme)) {
       this.router.navigate([bildirim.yonlendirme]);
     } else {
       alert('Bu sayfa yakında eklenecek: ' + bildirim.yonlendirme);
