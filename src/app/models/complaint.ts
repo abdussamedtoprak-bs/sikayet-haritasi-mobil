@@ -13,6 +13,13 @@ export interface Complaint {
     userId: string;         // Şikayeti açan kişinin Firebase UID'si
     id?: string;            // Firestore doküman kimliği
     isArchived?: boolean;   // "Silinen" şikayetler için (varsayılan: false)
+    
+    /** @description Şikayetin arşivlendiği an. Arşivde değilse null. */
+    archivedAt?: any;
+
+    /** @description Şikayeti arşivleyen yöneticinin kimliği. Arşivde değilse null. */
+    archivedBy?: string | null;
+
     createdAt?: any;        // Sıralama ve tarih filtresi için (Firestore Timestamp)
     category?: string;      // (Opsiyonel) Kategori filtresinin daha sağlıklı çalışması için
         /**

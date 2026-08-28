@@ -76,12 +76,14 @@ export class ComplaintService {
             return;
         }
         const complaintsRef = collection(this.db, 'complaints');
+                // Öğrenci kendi şikayetlerinin hepsini görür; arşivleme yalnızca
+        // yönetici listesini ve haritayı etkiler.
         const q = query(
             complaintsRef,
             where('userId', '==', userId),
-            where('isArchived', '==', false),
             orderBy('createdAt', 'desc')
         );
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const complaints = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -174,15 +176,85 @@ async updateStatus(complaintId: string, newStatus: string): Promise<void> {
         });
     }
 }
+
+
 /**
- * @description Şikayeti veritabanından silmek yerine arşivler.
+ * @description Şikayeti silmek yerine arşivler.
+ *
+ * Arşivlenen şikayet yönetici listesinden ve haritadan kalkar, ancak
+ * veritabanında durmaya devam eder. Şikayeti açan öğrenci kendi
+ * sayfasında görmeye devam eder.
+ *
+ * @param {string} complaintId - Arşivlenecek şikayetin kimliği
+ * @param {string} adminId - İşlemi yapan yöneticinin kimliği
  */
-async archiveComplaint(complaintId: string): Promise<void> {
+async archiveComplaint(complaintId: string, adminId: string): Promise<void> {
     const complaintDocRef = doc(this.db, 'complaints', complaintId);
+
     await updateDoc(complaintDocRef, {
-    isArchived: true
+        isArchived: true,
+        archivedAt: serverTimestamp(),
+        archivedBy: adminId
     });
 }
+
+/**
+ * @description Arşivlenmiş bir şikayeti tekrar aktif listeye döndürür.
+ *
+ * @param {string} complaintId - Arşivden çıkarılacak şikayetin kimliği
+ */
+async unarchiveComplaint(complaintId: string): Promise<void> {
+    const complaintDocRef = doc(this.db, 'complaints', complaintId);
+
+    await updateDoc(complaintDocRef, {
+        isArchived: false,
+        archivedAt: null,
+        archivedBy: null
+    });
+}
+
+/**
+ * @description Arşivlenmiş şikayetleri gerçek zamanlı olarak getirir.
+ * Yalnızca yönetici arşiv görünümünde kullanılır.
+ *
+ * @returns {Observable<Complaint[]>} Arşivlenmiş şikayet akışı
+ */
+getArchivedComplaints(): Observable<Complaint[]> {
+    return new Observable<Complaint[]>(observer => {
+
+        if (!this.isBrowser) {
+            observer.next([]);
+            observer.complete();
+            return;
+        }
+
+        const complaintsRef = collection(this.db, 'complaints');
+
+        const q = query(
+            complaintsRef,
+            where('isArchived', '==', true),
+            orderBy('archivedAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const complaints = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            } as Complaint));
+
+            observer.next(complaints);
+        }, (error) => {
+            console.error('Arşivlenmiş şikayetler çekilirken hata:', error);
+            observer.error(error);
+        });
+
+        return () => unsubscribe();
+    });
+}
+
+
+
+
 /**
    * @description Şikayeti destekler. Aynı kullanıcının iki kez desteklemesini engeller.
    * Eşik değerlerine (10, 20) ulaşıldığında önceliği günceller ve yöneticiye bildirim atar.
