@@ -408,4 +408,43 @@ export class AuthService {
 
     await firstValueFrom(this.authResolved$.pipe(filter(Boolean)));
   }
+
+
+    /**
+   * @description Kullanıcı adlarının önbelleği (uid → ad soyad).
+   * Aynı kullanıcının adı tekrar tekrar sorgulanmasın diye tutulur.
+   */
+  private readonly userNameCache = new Map<string, string>();
+
+  /**
+   * @description Verilen kimliğe sahip kullanıcının adını getirir.
+   *
+   * Arşivleme gibi işlemlerde "bu işlemi kim yaptı?" bilgisini göstermek
+   * için kullanılır. Sonuç önbelleğe alınır, aynı kullanıcı için tekrar
+   * veritabanına gidilmez.
+   *
+   * @param {string} uid - Kullanıcı kimliği
+   * @returns {Promise<string>} Kullanıcının adı, bulunamazsa 'Bilinmiyor'
+   */
+  async getUserName(uid: string): Promise<string> {
+    if (!uid || !this.db) return 'Bilinmiyor';
+
+    const cached = this.userNameCache.get(uid);
+    if (cached) return cached;
+
+    try {
+      const snapshot = await getDoc(doc(this.db, 'users', uid));
+
+      const name = snapshot.exists()
+        ? ((snapshot.data() as User).fullName ?? 'Bilinmiyor')
+        : 'Bilinmiyor';
+
+      this.userNameCache.set(uid, name);
+      return name;
+
+    } catch (error) {
+      console.error('Kullanıcı adı okunamadı:', error);
+      return 'Bilinmiyor';
+    }
+  }
 }

@@ -78,6 +78,7 @@ export class Complaints implements OnInit {
    */
   ngOnInit(): void {
     this.loadComplaints();
+    this.loadArchivedComplaints();
 
     //URL den gelen harita parametrelerini dinliyoruz
     this.route.queryParams.subscribe(params=>{
@@ -112,12 +113,52 @@ export class Complaints implements OnInit {
   }
 
   /**
+   * @description Arşivlenmiş şikayetleri gerçek zamanlı olarak yükler.
+   */
+  loadArchivedComplaints(): void {
+    this.complaintService.getArchivedComplaints().subscribe({
+      next: (data) => {
+        this.archivedList = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Arşiv yüklenirken hata:', err);
+      }
+    });
+  }
+
+  /**
+   * @description Aktif liste ile arşiv görünümü arasında geçiş yapar.
+   * Görünüm değişince filtreler sıfırlanır.
+   */
+  toggleArchiveView(): void {
+    this.showArchived = !this.showArchived;
+    this.currentFilter = 'Tümü';
+    this.mapLocation = '';
+    this.searchText = '';
+  }
+
+
+
+
+
+  /**
    * @description Veritabanından (veya servisten) gelen tüm şikayetlerin tutulduğu veri listesi.
    * İçini boşalttık, artık veriler servisten asenkron olarak dolacak.
    * @type {Complaint[]} 
    */
   complaintList:Complaint[]=[];
 
+
+    /**
+   * @description Arşivlenmiş şikayetlerin listesi.
+   */
+  archivedList: Complaint[] = [];
+
+  /**
+   * @description Arşiv görünümü açık mı?
+   */
+  showArchived: boolean = false;
   
   
   /**
@@ -169,7 +210,8 @@ export class Complaints implements OnInit {
    * @returns {Array<any>} Tüm filtrelerin uygulandığı nihai şikayet dizisi.
    */
   get filteredComplaints() {
-    let result = this.complaintList;
+    // Arşiv görünümündeyken arşivlenmiş kayıtlar listelenir
+    let result = this.showArchived ? this.archivedList : this.complaintList;
 
     // 1. Sekme (Tab) Filtresi (Tümü, Acil, Orta vb.)
     if (this.currentFilter && this.currentFilter !== 'Tümü') {

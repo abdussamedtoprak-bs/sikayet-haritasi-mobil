@@ -22,32 +22,66 @@
         <span class="meta-info">{{ complaint.metaInfo }}</span>
         <!-- Durum Rozeti (Burası aynı kalıyor) -->
         <div class="status-badge"
+        
             [class.status-review]="complaint.status === 'İnceleniyor'"
             [class.status-resolved]="complaint.status === 'Çözüldü'"
             [class.status-pending]="complaint.status === 'Beklemede'">
         {{ complaint.status }}
         </div>
+                @if (arsivlenebilirMi()) {
+            <span
+                title="Bu şikayet 30 günden eski ve çözülmüş durumda"
+                style="font-size: 10px; padding: 4px 10px; border-radius: 20px; background: var(--bg-subtle); color: var(--text-muted); border: 1px dashed var(--border); white-space: nowrap;">
+                Arşivlenebilir
+            </span>
+        }
     </div>
 
+    @if (isArchiveView && arsivTarihi()) {
+    <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        📥 {{ arsivTarihi() }} tarihinde
+        @if (arsivleyenAd()) {
+            <strong>{{ arsivleyenAd() }}</strong> tarafından
+        }
+        arşivlendi
+    </div>
+}
+
 @if (currentUserRole === 'admin') {
-        <div class="admin-actions" style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
-            <button 
-                (click)="durumGuncelle('Beklemede', $event)" 
+    <div class="admin-actions" style="display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+
+        @if (isArchiveView) {
+            <button
+                (click)="geriAl($event)"
+                style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #3b82f6; color: white; cursor: pointer; font-weight: bold;">
+                ↩ Geri Al
+            </button>
+        } @else {
+            <button
+                (click)="durumGuncelle('Beklemede', $event)"
                 style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #64748b; color: white; cursor: pointer; font-weight: bold;">
                 Beklemede
             </button>
-            <button 
-                (click)="durumGuncelle('İnceleniyor', $event)" 
+            <button
+                (click)="durumGuncelle('İnceleniyor', $event)"
                 style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #fbbf24; color: white; cursor: pointer; font-weight: bold;">
                 İnceleniyor
             </button>
-            <button 
-                (click)="durumGuncelle('Çözüldü', $event)" 
+            <button
+                (click)="durumGuncelle('Çözüldü', $event)"
                 style="flex: 1; padding: 8px; border-radius: 6px; border: none; background-color: #10b981; color: white; cursor: pointer; font-weight: bold;">
                 Çözüldü
             </button>
-        </div>
-    }
+            <button
+                (click)="arsivle($event)"
+                title="Arşivle"
+                style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background-color: transparent; color: var(--text-muted); cursor: pointer; font-weight: bold;">
+                📥
+            </button>
+        }
+
+    </div>
+}
 
     <!-- YENİ EKLENEN ONAY KUTUSU (MODAL) -->
 @if (showConfirmModal) {
@@ -56,8 +90,15 @@
         <!-- Beyaz Kutu -->
         <div style="background: white; padding: 24px; border-radius: 12px; width: 320px; text-align: center; box-shadow: 0 10px 15px rgba(0,0,0,0.2);">
         
-        <p style="font-size: 16px; margin-bottom: 24px; color: #374151;">
-            Durum <strong>{{ pendingStatus }}</strong> olarak güncelleniyor. Onaylıyor musunuz?
+                <p style="font-size: 15px; margin-bottom: 24px; color: #374151; line-height: 1.5;">
+            @if (pendingAction === 'status') {
+                Durum <strong>{{ pendingStatus }}</strong> olarak güncellenecek. Onaylıyor musunuz?
+            } @else if (pendingAction === 'archive') {
+                <strong>"{{ complaint.title }}"</strong> arşivlenecek.<br>
+                Listeden kaldırılacak, arşiv sekmesinden geri alınabilecek.
+            } @else if (pendingAction === 'unarchive') {
+                <strong>"{{ complaint.title }}"</strong> arşivden çıkarılıp listeye geri dönecek.
+            }
         </p>
         
         <!-- Modal Butonları -->
