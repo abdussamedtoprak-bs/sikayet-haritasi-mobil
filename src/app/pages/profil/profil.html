@@ -34,23 +34,23 @@
     </div>
   }
 
-  <div class="istatistikler">
+    <div class="istatistikler">
 
     <div class="istatistik-karti bildirim">
       <i class="fa-regular fa-clock"></i>
-      <strong>12</strong>
+      <strong>{{ totalCount() }}</strong>
       <span>Bildirim</span>
     </div>
 
     <div class="istatistik-karti onaylanan">
       <i class="fa-regular fa-clock"></i>
-      <strong>7</strong>
-      <span>Onaylanan</span>
+      <strong>{{ resolvedCount() }}</strong>
+      <span>Çözülen</span>
     </div>
 
     <div class="istatistik-karti bekleyen">
       <i class="fa-regular fa-clock"></i>
-      <strong>2</strong>
+      <strong>{{ pendingCount() }}</strong>
       <span>Bekleyen</span>
     </div>
 
