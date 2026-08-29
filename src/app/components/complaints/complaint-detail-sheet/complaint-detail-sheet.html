@@ -53,11 +53,25 @@
             </div>
         </div>
         </div>
-        <!-- Sağ Kısım: Resim + Tarih -->
+        <!-- Sağ Kısım: Fotoğraf şeridi + Tarih -->
         <div class="media-section">
-            <!-- Fotoğraf yalnızca varsa gösterilir -->
+            <!-- Fotoğraflar yalnızca varsa gösterilir, yan yana kaydırılır -->
             @if (images().length > 0) {
-                <img [src]="images()[0]" alt="Şikayet Fotoğrafı" class="complaint-image">
+                <div class="foto-serit" (scroll)="onStripScroll($event)">
+                    @for (foto of images(); track $index) {
+                        <img [src]="foto" alt="Şikayet Fotoğrafı" class="complaint-image"
+                             (click)="openViewer($index)">
+                    }
+                </div>
+
+                <!-- Birden fazla fotoğraf varsa nokta göstergesi -->
+                @if (images().length > 1) {
+                    <div class="foto-noktalar">
+                        @for (foto of images(); track $index) {
+                            <span class="foto-nokta" [class.aktif]="activePhoto() === $index"></span>
+                        }
+                    </div>
+                }
             }
             <!-- Tarih Kısmı -->
             <div class="date">
@@ -72,3 +86,19 @@
         </div> 
     </div>
 </div>
+
+<!-- Tam ekran fotoğraf görüntüleyici -->
+@if (viewerOpen()) {
+    <div class="foto-tamekran" (click)="closeViewer()">
+        <button class="tamekran-kapat" (click)="closeViewer()">&times;</button>
+
+        <img [src]="images()[viewerIndex()]" alt="Şikayet Fotoğrafı"
+             (click)="$event.stopPropagation()">
+
+        @if (images().length > 1) {
+            <button class="tamekran-ok sol" (click)="$event.stopPropagation(); prevPhoto()">&#8249;</button>
+            <button class="tamekran-ok sag" (click)="$event.stopPropagation(); nextPhoto()">&#8250;</button>
+            <span class="tamekran-sayac">{{ viewerIndex() + 1 }} / {{ images().length }}</span>
+        }
+    </div>
+}

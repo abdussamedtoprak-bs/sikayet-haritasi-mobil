@@ -135,3 +135,124 @@
 .detay-resim { width: 100%; height: 160px; border-radius: 10px; object-fit: cover; margin-bottom: 12px; }
 .detay-aciklama { font-size: 13px; color: var(--text-normal); line-height: 1.4; margin-bottom: 16px; }
 .detay-alt-bilgi { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 10px; }
+
+/* LİSTE KARTINDAKİ FOTOĞRAF SAYISI ROZETİ */
+.kart-resim-kutu {
+  position: relative;
+  flex-shrink: 0;
+}
+.foto-rozet {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* DETAY PENCERESİNDEKİ FOTOĞRAF ŞERİDİ */
+.foto-serit {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+}
+.foto-serit::-webkit-scrollbar {
+  display: none;
+}
+.detay-resim {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 0;
+  margin-bottom: 0;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+/* Kaç fotoğraf olduğunu ve hangisinde olduğumuzu gösteren noktalar */
+.foto-noktalar {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.foto-nokta {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border);
+}
+.foto-nokta.aktif {
+  background-color: var(--accent);
+}
+
+/* TAM EKRAN GÖRÜNTÜLEYİCİ */
+/* Fotoğrafın doğru görünmesi için bu alan her iki temada da koyu kalır */
+.foto-tamekran {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.92);
+  z-index: 16000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.foto-tamekran img {
+  max-width: 92%;
+  max-height: 80%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.tamekran-kapat {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.tamekran-ok {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.tamekran-ok.sol {
+  left: 12px;
+}
+.tamekran-ok.sag {
+  right: 12px;
+}
+.tamekran-sayac {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
