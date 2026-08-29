@@ -36,6 +36,18 @@ export class ComplaintDetailSheet implements OnChanges {
   readonly imagesLoading = signal<boolean>(false);
 
   /**
+   * @description Fotoğraf şeridinde o an görünen fotoğrafın sırası.
+   * Şeridin altındaki nokta göstergesini sürer.
+   */
+  readonly activePhoto = signal<number>(0);
+
+  /** @description Tam ekran görüntüleyici açık mı? */
+  readonly viewerOpen = signal<boolean>(false);
+
+  /** @description Tam ekranda gösterilen fotoğrafın sırası. */
+  readonly viewerIndex = signal<number>(0);
+
+  /**
    * @description Kullanıcı paneli kapatmak istediğinde (çarpı butonuna basıldığında)
    * ana bileşene paneli gizlemesi için sinyal gönderir.
    */
@@ -67,6 +79,8 @@ export class ComplaintDetailSheet implements OnChanges {
    */
   private async loadImages(): Promise<void> {
     this.images.set([]);
+    this.activePhoto.set(0);
+    this.viewerOpen.set(false);
 
     const ids = this.complaint?.mediaIds;
 
@@ -82,6 +96,59 @@ export class ComplaintDetailSheet implements OnChanges {
     } finally {
       this.imagesLoading.set(false);
     }
+  }
+
+  /**
+   * @description Fotoğraf şeridi kaydırıldığında hangi fotoğrafın görünür olduğunu hesaplar.
+   * Şeritteki her fotoğraf tam genişlikte olduğu için, kaydırma miktarının
+   * şerit genişliğine bölümü doğrudan sıra numarasını verir.
+   *
+   * @param {Event} event - Şeridin kaydırma olayı
+   */
+  onStripScroll(event: Event): void {
+    const strip = event.target as HTMLElement;
+
+    if (strip.clientWidth === 0) return;
+
+    this.activePhoto.set(Math.round(strip.scrollLeft / strip.clientWidth));
+  }
+
+  /**
+   * @description Tıklanan fotoğrafı tam ekranda açar.
+   * @param {number} index - Açılacak fotoğrafın sırası
+   */
+  openViewer(index: number): void {
+    this.viewerIndex.set(index);
+    this.viewerOpen.set(true);
+  }
+
+  /** @description Tam ekran görüntüleyiciyi kapatır. */
+  closeViewer(): void {
+    this.viewerOpen.set(false);
+  }
+
+  /**
+   * @description Tam ekranda bir sonraki fotoğrafa geçer.
+   * Son fotoğraftan sonra başa döner.
+   */
+  nextPhoto(): void {
+    const total = this.images().length;
+
+    if (total === 0) return;
+
+    this.viewerIndex.set((this.viewerIndex() + 1) % total);
+  }
+
+  /**
+   * @description Tam ekranda bir önceki fotoğrafa geçer.
+   * İlk fotoğraftan önce sona döner.
+   */
+  prevPhoto(): void {
+    const total = this.images().length;
+
+    if (total === 0) return;
+
+    this.viewerIndex.set((this.viewerIndex() - 1 + total) % total);
   }
 
   /**

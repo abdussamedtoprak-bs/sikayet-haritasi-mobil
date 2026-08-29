@@ -57,7 +57,14 @@
         <div class="sikayet-karti" (click)="detayAc(sikayet)">
 
           @if (sikayetFotografi(sikayet)) {
-            <img [src]="sikayetFotografi(sikayet)" alt="Şikayet Görseli" class="kart-resim">
+            <div class="kart-resim-kutu">
+              <img [src]="sikayetFotografi(sikayet)" alt="Şikayet Görseli" class="kart-resim">
+
+              <!-- Birden fazla fotoğraf varsa kalan sayıyı gösterir -->
+              @if (fotografSayisi(sikayet) > 1) {
+                <span class="foto-rozet">+{{ fotografSayisi(sikayet) - 1 }}</span>
+              }
+            </div>
           }
 
           <div class="kart-bilgi">
@@ -88,8 +95,22 @@
           <button class="kapat-buton" (click)="detayKapat()">&times;</button>
         </div>
 
-        @if (sikayetFotografi(secilenSikayet)) {
-          <img [src]="sikayetFotografi(secilenSikayet)" alt="Detay Görsel" class="detay-resim">
+        <!-- Fotoğraflar yan yana kaydırılarak gezilir -->
+        @if (sikayetFotograflari(secilenSikayet).length > 0) {
+          <div class="foto-serit" (scroll)="seritKaydirildi($event)">
+            @for (foto of sikayetFotograflari(secilenSikayet); track $index) {
+              <img [src]="foto" alt="Detay Görsel" class="detay-resim"
+                   (click)="tamEkranAc($index)">
+            }
+          </div>
+
+          @if (sikayetFotograflari(secilenSikayet).length > 1) {
+            <div class="foto-noktalar">
+              @for (foto of sikayetFotograflari(secilenSikayet); track $index) {
+                <span class="foto-nokta" [class.aktif]="aktifFotograf === $index"></span>
+              }
+            </div>
+          }
         }
 
         <p class="detay-aciklama">{{ secilenSikayet.description }}</p>
@@ -100,6 +121,22 @@
         </div>
 
       </div>
+    </div>
+  }
+
+  <!-- Tam ekran fotoğraf görüntüleyici -->
+  @if (tamEkranAcik && secilenSikayet) {
+    <div class="foto-tamekran" (click)="tamEkranKapat()">
+      <button class="tamekran-kapat" (click)="tamEkranKapat()">&times;</button>
+
+      <img [src]="sikayetFotograflari(secilenSikayet)[tamEkranIndex]" alt="Şikayet Fotoğrafı"
+           (click)="$event.stopPropagation()">
+
+      @if (sikayetFotograflari(secilenSikayet).length > 1) {
+        <button class="tamekran-ok sol" (click)="$event.stopPropagation(); oncekiFotograf()">&#8249;</button>
+        <button class="tamekran-ok sag" (click)="$event.stopPropagation(); sonrakiFotograf()">&#8250;</button>
+        <span class="tamekran-sayac">{{ tamEkranIndex + 1 }} / {{ sikayetFotograflari(secilenSikayet).length }}</span>
+      }
     </div>
   }
 

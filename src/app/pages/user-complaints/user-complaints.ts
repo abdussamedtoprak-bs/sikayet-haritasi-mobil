@@ -36,6 +36,18 @@ export class UserComplaintsComponent implements OnInit {
    */
   fotografCache: Record<string, string> = {};
 
+  /**
+   * @description Detay penceresindeki fotoğraf şeridinde o an görünen fotoğrafın sırası.
+   * Şeridin altındaki nokta göstergesini sürer.
+   */
+  aktifFotograf: number = 0;
+
+  /** @description Tam ekran fotoğraf görüntüleyici açık mı? */
+  tamEkranAcik: boolean = false;
+
+  /** @description Tam ekranda gösterilen fotoğrafın sırası. */
+  tamEkranIndex: number = 0;
+
   constructor() {
     effect(() => {
       const user = this.authService.currentUser();
@@ -65,9 +77,10 @@ export class UserComplaintsComponent implements OnInit {
   ngOnInit() {}
 
   /**
-   * @description Listedeki şikayetlerin fotoğraflarını veritabanından çeker.
+   * @description Listedeki şikayetlerin kapak fotoğraflarını veritabanından çeker.
    *
-   * Fotoğraflar şikayet kaydının içinde tutulmadığı için ayrıca istenir.
+   * Liste hızlı açılsın diye her şikayetin yalnızca ilk fotoğrafı indirilir;
+   * kalan fotoğraflar detay penceresi açıldığında yüklenir.
    * Daha önce indirilenler önbellekten kullanılır, tekrar indirilmez.
    */
   private async fotograflariYukle(): Promise<void> {
@@ -91,7 +104,32 @@ export class UserComplaintsComponent implements OnInit {
   }
 
   /**
-   * @description Bir şikayetin ilk fotoğrafını döndürür.
+   * @description Detayı açılan şikayetin bütün fotoğraflarını indirir.
+   * Kapak fotoğrafı zaten önbellekte olduğu için yalnızca eksikler istenir.
+   *
+   * @param {Complaint} sikayet - Detay penceresi açılan şikayet
+   */
+  private async detayFotograflariniYukle(sikayet: Complaint): Promise<void> {
+    const eksikIdler = (sikayet.mediaIds ?? [])
+      .filter(id => !this.fotografCache[id]);
+
+    for (const id of eksikIdler) {
+      try {
+        const veri = await this.mediaService.getImageData(id);
+
+        if (veri) {
+          this.fotografCache[id] = veri;
+        }
+      } catch (error) {
+        console.error('Fotoğraf yüklenemedi:', id, error);
+      }
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * @description Bir şikayetin kapak (ilk) fotoğrafını döndürür.
    * Fotoğraf yoksa veya henüz yüklenmediyse null döner.
    *
    * @param {Complaint} sikayet - Fotoğrafı istenen şikayet
@@ -103,8 +141,82 @@ export class UserComplaintsComponent implements OnInit {
     return id ? (this.fotografCache[id] ?? null) : null;
   }
 
+  /**
+   * @description Bir şikayetin indirilmiş bütün fotoğraflarını sırasıyla döndürür.
+   * Henüz inmemiş fotoğraflar listeye girmez.
+   *
+   * @param {Complaint} sikayet - Fotoğrafları istenen şikayet
+   * @returns {string[]} Fotoğrafların base64 listesi
+   */
+  sikayetFotograflari(sikayet: Complaint | null): string[] {
+    return (sikayet?.mediaIds ?? [])
+      .map(id => this.fotografCache[id])
+      .filter((veri): veri is string => !!veri);
+  }
 
+  /**
+   * @description Bir şikayete yüklenmiş toplam fotoğraf sayısını döndürür.
+   * Liste kartındaki "+2" rozeti bu sayıdan hesaplanır.
+   *
+   * @param {Complaint} sikayet - Sayısı istenen şikayet
+   * @returns {number} Fotoğraf sayısı
+   */
+  fotografSayisi(sikayet: Complaint | null): number {
+    return sikayet?.mediaIds?.length ?? 0;
+  }
 
+  /**
+   * @description Fotoğraf şeridi kaydırıldığında görünen fotoğrafın sırasını hesaplar.
+   * Şeritteki her fotoğraf tam genişlikte olduğu için, kaydırma miktarının
+   * şerit genişliğine bölümü doğrudan sıra numarasını verir.
+   *
+   * @param {Event} olay - Şeridin kaydırma olayı
+   */
+  seritKaydirildi(olay: Event): void {
+    const serit = olay.target as HTMLElement;
+
+    if (serit.clientWidth === 0) return;
+
+    this.aktifFotograf = Math.round(serit.scrollLeft / serit.clientWidth);
+  }
+
+  /**
+   * @description Tıklanan fotoğrafı tam ekranda açar.
+   * @param {number} index - Açılacak fotoğrafın sırası
+   */
+  tamEkranAc(index: number): void {
+    this.tamEkranIndex = index;
+    this.tamEkranAcik = true;
+  }
+
+  /** @description Tam ekran görüntüleyiciyi kapatır. */
+  tamEkranKapat(): void {
+    this.tamEkranAcik = false;
+  }
+
+  /**
+   * @description Tam ekranda bir sonraki fotoğrafa geçer.
+   * Son fotoğraftan sonra başa döner.
+   */
+  sonrakiFotograf(): void {
+    const toplam = this.sikayetFotograflari(this.secilenSikayet).length;
+
+    if (toplam === 0) return;
+
+    this.tamEkranIndex = (this.tamEkranIndex + 1) % toplam;
+  }
+
+  /**
+   * @description Tam ekranda bir önceki fotoğrafa geçer.
+   * İlk fotoğraftan önce sona döner.
+   */
+  oncekiFotograf(): void {
+    const toplam = this.sikayetFotograflari(this.secilenSikayet).length;
+
+    if (toplam === 0) return;
+
+    this.tamEkranIndex = (this.tamEkranIndex - 1 + toplam) % toplam;
+  }
 
   istatistikleriHesapla() {
     this.bekleyenSayisi =
@@ -137,9 +249,14 @@ export class UserComplaintsComponent implements OnInit {
 
   detayAc(sikayet: Complaint) {
     this.secilenSikayet = sikayet;
+    this.aktifFotograf = 0;
+    this.tamEkranAcik = false;
+
+    this.detayFotograflariniYukle(sikayet);
   }
 
   detayKapat() {
     this.secilenSikayet = null;
+    this.tamEkranAcik = false;
   }
 }
