@@ -42,10 +42,42 @@
     <span>Ayarlar</span>
   </div>
 
-  <div class="cikis" (click)="logout()" style="cursor: pointer;">
+  <div class="cikis" (click)="cikisiSor()" style="cursor: pointer;">
     <span>
       <i class="fa-solid fa-door-open"></i>
     </span>
   </div>
 
 </div>
+
+<!--
+  Çıkış onayı.
+  Menünün İÇİNE değil dışına konur: .yan-menu üzerinde transform olduğu için
+  içine konan tam ekran bir katman menünün sınırlarına hapsolur.
+-->
+@if (cikisOnayiAcik) {
+  <div class="onay-arkaplan" (click)="cikisiIptalEt()">
+    <div class="onay-kutusu" (click)="$event.stopPropagation()">
+
+      <i class="fa-solid fa-door-open onay-ikon"></i>
+
+      <h3>Çıkış yapılsın mı?</h3>
+
+      <p>
+        Hesabınızdan çıkış yapacaksınız. Şikayetleriniz silinmez,
+        tekrar giriş yaptığınızda yerinde durur.
+      </p>
+
+      <div class="onay-butonlar">
+        <button class="btn-vazgec" (click)="cikisiIptalEt()">
+          Vazgeç
+        </button>
+
+        <button class="btn-cikis" (click)="logout()" [disabled]="cikisYapiliyor">
+          {{ cikisYapiliyor ? 'Çıkılıyor...' : 'Çıkış Yap' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

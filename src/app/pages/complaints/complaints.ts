@@ -1,5 +1,6 @@
-import { Component,OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { PriorityLegend } from '../../components/complaints/priority-legend/priority-legend';
 import{ActiveFilterBadges} from '../../components/complaints/active-filter-badges/active-filter-badges';
 import{FilterPanel} from '../../components/complaints/filter-panel/filter-panel';
@@ -30,7 +31,14 @@ import { YanMenu } from '../../components/yan-menu/yan-menu';
  * Şikayet verilerini tutar ve kullanıcı etkileşimlerine göre (arama, sekme değişimi, detaylı filtreleme) 
  * listeyi dinamik olarak günceller.
  */
-export class Complaints implements OnInit {
+export class Complaints implements OnInit, OnDestroy {
+
+    /**
+   * @description Sayfadaki tüm canlı veri aboneliklerini tek elden tutar.
+   * Sayfa kapanınca hepsi birden iptal edilir.
+   */
+  private readonly subscriptions = new Subscription();
+
 
 
   // Menünün görünürlüğünü kontrol eden değişken
@@ -80,53 +88,67 @@ export class Complaints implements OnInit {
     this.loadComplaints();
     this.loadArchivedComplaints();
 
-    //URL den gelen harita parametrelerini dinliyoruz
-    this.route.queryParams.subscribe(params=>{
-      if(params['priority']){
-        //haritadan  gelen orta acil gibi degeri sekmefiltresine eşitliyoruz
-        this.currentFilter=params['priority'];
-      }
-      if(params['location']){
-        //haritadan gelen konumu değikene atıyoruz
-        this.mapLocation=params['location'];
-      }
-    });
+        //URL den gelen harita parametrelerini dinliyoruz
+    this.subscriptions.add(
+      this.route.queryParams.subscribe(params=>{
+        if(params['priority']){
+          //haritadan  gelen orta acil gibi degeri sekmefiltresine eşitliyoruz
+          this.currentFilter=params['priority'];
+        }
+        if(params['location']){
+          //haritadan gelen konumu değikene atıyoruz
+          this.mapLocation=params['location'];
+        }
+      })
+    );
   }
 
 
-  /**
+    /**
    * @description Şikayet servisi üzerinden asenkron veri akışına abone olur (subscribe) 
    * ve gelen verileri yerel `complaintList` dizisine aktarır.
+   * Abonelik, sayfa kapanınca iptal edilmek üzere kaydedilir.
    */
   loadComplaints(): void {
-    this.complaintService.getComplaints().subscribe({
-      next: (data) => {
-        console.log("Firebase'den gelen veri dizisi:", data);
-        // Servisten gelen tertemiz veriyi sayfamızdaki listeye aktardık
-        this.complaintList = data; 
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Hata:', err);
-      }
-    });
+    this.subscriptions.add(
+      this.complaintService.getComplaints().subscribe({
+        next: (data) => {
+          // Servisten gelen tertemiz veriyi sayfamızdaki listeye aktardık
+          this.complaintList = data; 
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Hata:', err);
+        }
+      })
+    );
   }
 
   /**
    * @description Arşivlenmiş şikayetleri gerçek zamanlı olarak yükler.
    */
   loadArchivedComplaints(): void {
-    this.complaintService.getArchivedComplaints().subscribe({
-      next: (data) => {
-        this.archivedList = data;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Arşiv yüklenirken hata:', err);
-      }
-    });
+    this.subscriptions.add(
+      this.complaintService.getArchivedComplaints().subscribe({
+        next: (data) => {
+          this.archivedList = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Arşiv yüklenirken hata:', err);
+        }
+      })
+    );
   }
 
+  /**
+   * @description Sayfadan ayrılırken (çıkış yapmak da buna dahildir) canlı
+   * dinleyicileri kapatır. Kapatılmazsa Firestore bağlantısı açık kalır ve
+   * artık ekranda olmayan bir sayfa için veri akmaya devam eder.
+   */
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
   /**
    * @description Aktif liste ile arşiv görünümü arasında geçiş yapar.
    * Görünüm değişince filtreler sıfırlanır.

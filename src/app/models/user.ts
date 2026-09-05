@@ -76,4 +76,15 @@ export interface User {
    * Her başarılı girişte güncellenir.
    */
   lastLoginAt: Timestamp;
+
+  
+  /**
+   * @description Kullanıcının karanlık mod tercihi.
+   *
+   * Tema cihaza değil hesaba bağlıdır; kullanıcı başka bir cihazdan
+   * giriş yaptığında da aynı tema ile karşılaşır.
+   *
+   * Alan yoksa (eski kayıtlar) işletim sisteminin tercihi kullanılır.
+   */
+  darkMode?: boolean;
 }
