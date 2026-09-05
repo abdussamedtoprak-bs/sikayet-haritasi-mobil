@@ -15,14 +15,13 @@ export class KonumButonu {
   constructor(private zone: NgZone) {}
 
   butonaBas() {
-    console.log('1. ADIM: Butona tıklandı (konum-butonu.ts)');
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           // Angular'ı zorla uyandırıyoruz (zone.run)
           this.zone.run(() => {
-            console.log('Konum bulundu! Haritaya fırlatılıyor...');
+  
             this.konumAlindi.emit({ 
               lat: position.coords.latitude, 
               lng: position.coords.longitude 
