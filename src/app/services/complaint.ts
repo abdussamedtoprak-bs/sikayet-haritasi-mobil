@@ -259,10 +259,6 @@ getArchivedComplaints(): Observable<Complaint[]> {
    * @description Şikayeti destekler. Aynı kullanıcının iki kez desteklemesini engeller.
    * Eşik değerlerine (10, 20) ulaşıldığında önceliği günceller ve yöneticiye bildirim atar.
    */
-/**
-   * @description Şikayeti destekler. Aynı kullanıcının iki kez desteklemesini engeller.
-   * Eşik değerlerine (10, 20) ulaşıldığında önceliği günceller ve yöneticiye bildirim atar.
-   */
     async supportComplaint(complaintId: string, userId: string): Promise<void> {
         // 1. Benzersiz ID oluştur (ŞikayetID_KullanıcıID)
         const supportDocId = `${complaintId}_${userId}`;

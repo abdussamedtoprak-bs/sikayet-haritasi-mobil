@@ -1,6 +1,6 @@
 import { Component, inject, signal, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ComplaintService } from '../../services/complaint';
@@ -13,7 +13,7 @@ import { ComplaintService } from '../../services/complaint';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './profil.html',
   styleUrl: './profil.css',
 })

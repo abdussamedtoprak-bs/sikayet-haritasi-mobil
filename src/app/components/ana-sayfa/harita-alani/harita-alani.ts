@@ -66,17 +66,14 @@ async ngAfterViewInit(): Promise<void> {
         zoomControl: true
       }).setView([38.900023, 40.487786], 17); 
       // 3. TERTEMİZ UYDU KATMANI (Etiketler silindi -> lyrs=s yapıldı)
-      L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 19,       
         maxNativeZoom: 19, 
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '© Google Maps'
       }).addTo(this.map);
-      // --- KOORDİNAT BULUCU ARAÇ (İşin bitince bu 3 satırı silebilirsin) ---
-      this.map.on('click', (e: any) => {
-        console.log(`Tıkladığın yerin koordinatı -> lat: ${e.latlng.lat}, lng: ${e.latlng.lng}`);
-      });
-      // ---------------------------------------------------------------------
+      
+      
       // 4. KAMPÜS BİNALARI KIRMIZI ETİKETLER
       const kampusBinalari = [
         { isim: 'Sosyal Bilimler enstitüsü', lat: 38.89634450658831, lng: 40.490836804153126}, 
