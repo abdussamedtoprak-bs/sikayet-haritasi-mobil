@@ -31,13 +31,58 @@ export class YanMenu {
    */
   readonly authService = inject(AuthService);
 
-  private readonly router = inject(Router);
+    private readonly router = inject(Router);
+
+  /** @description Çıkış onay penceresi açık mı? */
+  cikisOnayiAcik: boolean = false;
 
   /**
-   * @description Kullanıcı oturumunu sonlandırır ve giriş sayfasına yönlendirir.
+   * @description Çıkış işlemi sürüyor mu?
+   * Butona arka arkaya basılmasını ve mükerrer isteği önler.
+   */
+  cikisYapiliyor: boolean = false;
+
+  /**
+   * @description Çıkış onay penceresini açar.
+   *
+   * Oturumu kapatmak geri alınamayan bir işlemdir; yanlışlıkla dokunan
+   * kullanıcının doğrudan atılmaması için önce onay istenir.
+   */
+  cikisiSor(): void {
+    this.cikisOnayiAcik = true;
+  }
+
+  /**
+   * @description Onay penceresini kapatır, oturum açık kalır.
+   */
+  cikisiIptalEt(): void {
+    this.cikisOnayiAcik = false;
+  }
+
+  /**
+   * @description Kullanıcı onay verdikten sonra oturumu sonlandırır ve
+   * giriş sayfasına yönlendirir.
+   *
+   * Çıkış başarısız olursa kullanıcı bilgilendirilir ve sayfada kalır.
+   * Sessizce başarısız olan bir çıkış butonu, kullanıcının çıktığını
+   * sanmasına yol açar.
    */
   async logout(): Promise<void> {
-    await this.authService.logout();
-    this.router.navigate(['/login']);
+    if (this.cikisYapiliyor) return;
+
+    this.cikisYapiliyor = true;
+
+    try {
+      await this.authService.logout();
+
+      this.cikisOnayiAcik = false;
+
+      await this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Çıkış yapılamadı:', error);
+      alert('Çıkış yapılamadı. Lütfen tekrar deneyin.');
+    } finally {
+      this.cikisYapiliyor = false;
+    }
   }
 }

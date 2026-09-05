@@ -1,4 +1,5 @@
-import { Component, OnInit, effect, inject, ChangeDetectorRef } from '@angular/core'; // ChangeDetectorRef eklendi
+import { Component, OnInit, OnDestroy, effect, inject, ChangeDetectorRef } from '@angular/core'; // ChangeDetectorRef eklendi
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ComplaintService } from '../../services/complaint';
@@ -13,7 +14,7 @@ import { MediaService } from '../../services/media.service';
   templateUrl: './user-complaints.html',
   styleUrls: ['./user-complaints.css']
 })
-export class UserComplaintsComponent implements OnInit {
+export class UserComplaintsComponent implements OnInit, OnDestroy {
   tumSikayetler: Complaint[] = [];
   gosterilenSikayetler: Complaint[] = [];
   secilenSikayet: Complaint | null = null;
@@ -48,33 +49,57 @@ export class UserComplaintsComponent implements OnInit {
   /** @description Tam ekranda gösterilen fotoğrafın sırası. */
   tamEkranIndex: number = 0;
 
-  constructor() {
+  /** @description Şikayet akışına ait abonelik. Kullanıcı değişince yenilenir. */
+  private sikayetAboneligi?: Subscription;
+
+    constructor() {
     effect(() => {
       const user = this.authService.currentUser();
       const userId = user ? user.uid : null;
 
-      if (userId) {
-        this.complaintService.getMyComplaints(userId).subscribe({
-          next: (data: Complaint[]) => {
-            this.tumSikayetler = data;
-            this.istatistikleriHesapla();
-            this.filtrele(this.aktifSekme);
-            
-            // ANGULAR'I DÜRTÜYORUZ: "Veriler geldi, ekranı yenile!"
-            this.cdr.detectChanges(); 
+      // Önceki aboneliği kapat, birden fazla akış birikmesin
+      this.sikayetAboneligi?.unsubscribe();
 
-                        // Fotoğrafları arka planda yükle, liste beklemesin
-            this.fotograflariYukle();
-          },
-          error: (err) => {
-            console.error("Şikayetler çekilirken hata oluştu:", err);
-          }
-        });
+      // Çıkış yapıldıysa ekranda ve bellekte kişisel veri bırakma
+      if (!userId) {
+        this.tumSikayetler = [];
+        this.gosterilenSikayetler = [];
+        this.secilenSikayet = null;
+        this.fotografCache = {};
+        this.istatistikleriHesapla();
+        return;
       }
+
+      this.sikayetAboneligi = this.complaintService.getMyComplaints(userId).subscribe({
+        next: (data: Complaint[]) => {
+          this.tumSikayetler = data;
+          this.istatistikleriHesapla();
+          this.filtrele(this.aktifSekme);
+
+          // ANGULAR'I DÜRTÜYORUZ: "Veriler geldi, ekranı yenile!"
+          this.cdr.detectChanges();
+
+          // Fotoğrafları arka planda yükle, liste beklemesin
+          this.fotograflariYukle();
+        },
+        error: (err) => {
+          console.error("Şikayetler çekilirken hata oluştu:", err);
+        }
+      });
     });
   }
 
   ngOnInit() {}
+
+  /**
+   * @description Sayfadan ayrılırken canlı akışı kapatır ve fotoğraf
+   * önbelleğini boşaltır. Fotoğraflar base64 olarak tutulduğu için
+   * bellekte gereksiz yer kaplarlar; ayrıca kişisel veridirler.
+   */
+  ngOnDestroy(): void {
+    this.sikayetAboneligi?.unsubscribe();
+    this.fotografCache = {};
+  }
 
   /**
    * @description Listedeki şikayetlerin kapak fotoğraflarını veritabanından çeker.

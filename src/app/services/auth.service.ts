@@ -233,15 +233,27 @@ export class AuthService {
     }
   }
 
-  /**
-   * @description Kullanıcı oturumunu sonlandırır ve yerel durumu temizler.
+    /**
+   * @description Kullanıcı oturumunu sonlandırır ve cihazda kalan izleri temizler.
+   *
+   * Firebase'in oturum anahtarını silmesi tek başına yeterli değildir.
+   * Bellekte tutulan kişisel veriler de temizlenmelidir; aksi halde aynı
+   * cihazda başka biri giriş yaptığında önceki kullanıcıya ait bilgiler
+   * bellekte kalmaya devam eder.
+   *
+   * Çıkış başarısız olursa oturum kapanmamış sayılır ve hata yukarı taşınır.
+   * Kullanıcıya yanlışlıkla "çıkış yapıldı" izlenimi verilmez.
+   *
    * @returns {Promise<void>}
    */
   async logout(): Promise<void> {
     if (!this.auth) return;
 
     await signOut(this.auth);
+
     this.currentUserSignal.set(null);
+    this.authErrorSignal.set(null);
+    this.userNameCache.clear();
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -391,6 +403,33 @@ export class AuthService {
 
     this.currentUserSignal.set({ ...user, ...updates } as User);
   }
+
+  
+  /**
+   * @description Kullanıcının tema tercihini hesabına kaydeder.
+   *
+   * Tercih tarayıcıda değil hesapta tutulur. Böylece aynı cihazda başka
+   * biri giriş yaptığında önceki kullanıcının teması ona geçmez.
+   *
+   * @param {boolean} isDark - Karanlık mod açık mı?
+   * @returns {Promise<void>}
+   */
+  async updateDarkMode(isDark: boolean): Promise<void> {
+    const user = this.currentUserSignal();
+
+    if (!user || !this.db) return;
+
+    // Zaten aynı değerdeyse gereksiz yazma yapma
+    if (user.darkMode === isDark) return;
+
+    const userRef = doc(this.db, 'users', user.uid);
+    await updateDoc(userRef, { darkMode: isDark });
+
+    this.currentUserSignal.set({ ...user, darkMode: isDark });
+  }
+
+
+
 
     /**
    * @description Firebase'in oturum durumunu bildirmesini bekler.

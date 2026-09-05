@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -17,7 +17,7 @@ import { ComplaintService } from '../../services/complaint';
   templateUrl: './profil.html',
   styleUrl: './profil.css',
 })
-export class Profil {
+export class Profil implements OnDestroy {
 
   private readonly router = inject(Router);
   private readonly complaintService = inject(ComplaintService);
@@ -72,6 +72,16 @@ export class Profil {
         });
     });
   }
+
+    /**
+   * @description Sayfadan ayrılırken istatistik akışını kapatır.
+   * Çıkış yapıldığında da bu metot çalışır, çünkü giriş sayfasına
+   * yönlendirme bu bileşeni yok eder.
+   */
+  ngOnDestroy(): void {
+    this.statsSubscription?.unsubscribe();
+  }
+
 
   geriDon() {
     this.router.navigate(['/anasayfa']);

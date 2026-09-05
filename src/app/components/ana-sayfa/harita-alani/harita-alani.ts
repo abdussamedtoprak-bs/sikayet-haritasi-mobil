@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, Inject, PLATFORM_ID,OnDestroy,OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -14,6 +15,8 @@ import { Complaint } from '../../../models/complaint';
 })
 export class HaritaAlani implements OnInit, AfterViewInit,OnDestroy{
   private map: any;
+    /** @description Şikayet pinlerini besleyen canlı akışın aboneliği. */
+  private complaintsSubscription?: Subscription;
   currentUserRole: any = null;
   //modalın görünürlüğü ve alınan koordinatları tutacağımız değişkenler
   isSorunBildirModalOpen=false;
@@ -147,7 +150,7 @@ async ngAfterViewInit(): Promise<void> {
   }
 // 'L' parametresini Leaflet instance'ı olarak alıyoruz
   addComplaintPins(L: any) {
-    this.complaintService.getComplaints().subscribe((complaints) => {
+        this.complaintsSubscription = this.complaintService.getComplaints().subscribe((complaints) => {
       complaints.forEach((complaint: Complaint) => {
         // 1. Önceliğe göre pin rengini belirle
         let pinColor = '#eab308'; // Varsayılan: Sarı (Düşük)
@@ -273,12 +276,15 @@ async onPinClick(complaint:Complaint,marker:any):Promise<void>{
     // 3. Olay dinleyiciyi ekledikten sonra popup'ı aç
     marker.openPopup();
 }
-// 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı tamamen yok et
+// 2. TEMİZLİK: Bileşen ekrandan ayrılırken haritayı ve canlı dinleyiciyi kapat
 ngOnDestroy(): void {
+  // Şikayet akışı kapatılmazsa harita yok olsa bile veri gelmeye devam eder
+  this.complaintsSubscription?.unsubscribe();
+
   if (this.map) {
     this.map.off();
     this.map.remove();
     this.map = undefined;
   }
-}  
+}    
 }
