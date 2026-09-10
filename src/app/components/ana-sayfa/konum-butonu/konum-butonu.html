@@ -1,7 +1,14 @@
 <div class="konum-butonu-alani">
   <button 
     class="ikon-butonu" 
-    (click)="butonaBas()">
-    <i class="fa-solid fa-location-crosshairs"></i>
+    (click)="butonaBas()"
+    [disabled]="aliniyor()"
+    [attr.aria-label]="aliniyor() ? 'Konum alınıyor' : 'Konumumu bul'">
+
+    @if (aliniyor()) {
+      <i class="fa-solid fa-spinner fa-spin"></i>
+    } @else {
+      <i class="fa-solid fa-location-crosshairs"></i>
+    }
   </button>
 </div>

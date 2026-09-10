@@ -222,3 +222,37 @@ textarea:focus {
 .submit-btn:hover {
   background: #2563eb;
 }
+
+/* PANELİ KAPATMA BUTONU */
+.report-header {
+  position: relative;
+}
+
+.kapat-buton {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.kapat-buton:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  color: var(--text-strong);
+}
+
+.kapat-buton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

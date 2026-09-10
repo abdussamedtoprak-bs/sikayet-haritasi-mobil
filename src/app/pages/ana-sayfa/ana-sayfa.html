@@ -1,14 +1,27 @@
 <app-baslik (menuAcildi)="paneliKapat()"></app-baslik>
-<app-harita-alani #haritaBileseni></app-harita-alani>
+
+<app-harita-alani
+  #haritaBileseni
+  [konumSecmeAktif]="currentUserRole !== 'admin'"
+  (konumSecildi)="haritadanKonumSecildi($event)">
+</app-harita-alani>
+
+<!-- Konum alınamadığında kullanıcıyı haritadan seçmeye yönlendiren şerit -->
+@if (konumUyarisi) {
+  <div class="konum-uyarisi">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>{{ konumUyarisi }}</span>
+    <button class="uyari-kapat" (click)="uyariyiKapat()" aria-label="Kapat">&times;</button>
+  </div>
+}
+
 @if (currentUserRole !== 'admin') {
-  <app-konum-butonu 
-    (konumAlindi)="haritaBileseni.onKonumGeldi($event); secilenKonum = $event; paneliAc()">
-  </app-konum-butonu>
+  <app-konum-butonu (konumSonucu)="konumSonucuGeldi($event)"></app-konum-butonu>
 }
 
 @if (panelAcik) {
   <app-sorun-bildirme-paneli
     [gelenKonum]="secilenKonum"
-    (panelKapat)="panelAcik = false">
+    (panelKapat)="paneliKapat()">
   </app-sorun-bildirme-paneli>
 }

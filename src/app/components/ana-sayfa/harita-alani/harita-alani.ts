@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, PLATFORM_ID,OnDestroy,OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, Output, EventEmitter, PLATFORM_ID, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,18 +14,109 @@ import { Complaint } from '../../../models/complaint';
   styleUrl: './harita-alani.css'
 })
 export class HaritaAlani implements OnInit, AfterViewInit,OnDestroy{
-  private map: any;
-    /** @description Şikayet pinlerini besleyen canlı akışın aboneliği. */
+    private map: any;
+
+  /** @description Leaflet kütüphanesi. Dinamik yüklendiği için saklanır. */
+  private leaflet: any;
+
+  /** @description Şikayet pinlerini besleyen canlı akışın aboneliği. */
   private complaintsSubscription?: Subscription;
+
+  /** @description Kullanıcının haritadan seçtiği noktayı gösteren işaretçi. */
+  private secimIsaretcisi: any = null;
+
   currentUserRole: any = null;
-  //modalın görünürlüğü ve alınan koordinatları tutacağımız değişkenler
-  isSorunBildirModalOpen=false;
-  secilenKonum: {lat:number,lng:number} | null=null;
-onKonumGeldi(koordinat: { lat: number, lng: number } | null) {
-  if (koordinat && this.map) {
-    this.map.flyTo([koordinat.lat, koordinat.lng], 18, { animate: true, duration: 1.5 });
+
+  /**
+   * @description Haritaya tıklayarak konum seçilebilsin mi?
+   *
+   * Yalnızca ana sayfada açıktır. Yönetici sayfasındaki harita salt
+   * görüntüleme amaçlıdır, orada tıklama bir şey yapmaz.
+   */
+  @Input() konumSecmeAktif: boolean = false;
+
+  /** @description Kullanıcı haritada bir noktaya tıkladığında yayınlanır. */
+  @Output() konumSecildi = new EventEmitter<{ lat: number; lng: number }>();
+
+  /**
+   * @description Kampüsün coğrafi sınırları.
+   *
+   * Hem haritanın gezinme alanını hem de seçilen konumun geçerliliğini
+   * belirler. Tek yerde tanımlanır ki iki kontrol birbirinden ayrılmasın.
+   */
+  private static readonly KAMPUS_SINIRLARI = {
+    minLat: 38.8920,
+    minLng: 40.4750,
+    maxLat: 38.9080,
+    maxLng: 40.5000
+  };
+
+  /**
+   * @description Verilen koordinatın kampüs sınırları içinde olup olmadığını söyler.
+   *
+   * @param {number} lat - Enlem
+   * @param {number} lng - Boylam
+   * @returns {boolean} Kampüs içindeyse true
+   */
+  kampusIcindeMi(lat: number, lng: number): boolean {
+    const sinir = HaritaAlani.KAMPUS_SINIRLARI;
+
+    return lat >= sinir.minLat && lat <= sinir.maxLat
+        && lng >= sinir.minLng && lng <= sinir.maxLng;
   }
-}
+
+  /**
+   * @description Cihazdan alınan konuma uçar ve orayı işaretler.
+   *
+   * @param {{lat: number, lng: number} | null} koordinat - Gidilecek nokta
+   */
+  onKonumGeldi(koordinat: { lat: number, lng: number } | null): void {
+    if (!koordinat || !this.map) return;
+
+    this.map.flyTo([koordinat.lat, koordinat.lng], 18, { animate: true, duration: 1.5 });
+    this.konumIsaretle(koordinat.lat, koordinat.lng);
+  }
+
+  /**
+   * @description Seçilen konumu haritada geçici bir işaretçi ile gösterir.
+   * Yeni bir nokta seçilince önceki işaretçi kaldırılır.
+   *
+   * @param {number} lat - Enlem
+   * @param {number} lng - Boylam
+   */
+  private konumIsaretle(lat: number, lng: number): void {
+    if (!this.map || !this.leaflet) return;
+
+    this.secimiTemizle();
+
+    const isaret = this.leaflet.divIcon({
+      className: 'secim-isaretcisi',
+      html: `<div style="
+        width: 20px;
+        height: 20px;
+        background-color: #1a73e8;
+        border: 3px solid #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.35);
+      "></div>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10]
+    });
+
+    this.secimIsaretcisi = this.leaflet.marker([lat, lng], { icon: isaret }).addTo(this.map);
+  }
+
+  /**
+   * @description Haritadaki seçim işaretçisini kaldırır.
+   * Şikayet paneli kapatıldığında çağrılır.
+   */
+  secimiTemizle(): void {
+    if (this.secimIsaretcisi && this.map) {
+      this.map.removeLayer(this.secimIsaretcisi);
+      this.secimIsaretcisi = null;
+    }
+  }
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private authService:AuthService,
@@ -39,6 +130,7 @@ onKonumGeldi(koordinat: { lat: number, lng: number } | null) {
 async ngAfterViewInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
       const L = await import('leaflet');
+      this.leaflet = L;
       // 1. GÜVENLİK KONTROLÜ: Harita daha önce çizilmişse temizle
       if (this.map) {
         this.map.off(); // Tüm event listener'ları kaldırır
@@ -48,9 +140,11 @@ async ngAfterViewInit(): Promise<void> {
         this.map.remove();
       }
       // 1. KAMPÜS SINIRLARI (Orijinal ayarların korundu)
+            const sinir = HaritaAlani.KAMPUS_SINIRLARI;
+
       const kampusSinirlari = L.latLngBounds(
-        [38.8920, 40.4750], 
-        [38.9080, 40.5000]  
+        [sinir.minLat, sinir.minLng],
+        [sinir.maxLat, sinir.maxLng]
       );
       // Haritanın bağlı olduğu HTML elementini zorla temizleme (Leaflet'in inatçılığına karşı)
       let mapContainer = document.getElementById('map');
@@ -72,6 +166,15 @@ async ngAfterViewInit(): Promise<void> {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '© Google Maps'
       }).addTo(this.map);
+      
+      // Haritaya tıklayarak konum seçme.
+      // Konum izni olmayan kullanıcının da şikayet bildirebilmesini sağlar.
+      if (this.konumSecmeAktif) {
+        this.map.on('click', (e: any) => {
+          this.konumIsaretle(e.latlng.lat, e.latlng.lng);
+          this.konumSecildi.emit({ lat: e.latlng.lat, lng: e.latlng.lng });
+        });
+      }
       
       
       // 4. KAMPÜS BİNALARI KIRMIZI ETİKETLER
