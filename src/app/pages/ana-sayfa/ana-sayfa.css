@@ -1,0 +1,49 @@
+/* KONUM BİLGİLENDİRME ŞERİDİ */
+.konum-uyarisi {
+  position: fixed;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 400px;
+  z-index: 9000;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px var(--shadow-strong);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-normal);
+  animation: uyariAc 0.2s ease;
+}
+
+@keyframes uyariAc {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.konum-uyarisi i {
+  color: var(--warning);
+  font-size: 15px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.konum-uyarisi span {
+  flex: 1;
+}
+
+.uyari-kapat {
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}

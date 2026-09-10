@@ -5,7 +5,8 @@ import {
   signal,
   Input,
   OnInit,
-  inject
+  inject,
+  HostListener
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -84,6 +85,51 @@ export class SorunBildirmePaneli implements OnInit {
   }
 
   /**
+   * @description Panelde kaydedilmemiş bir içerik var mı?
+   * Açıklama yazılmışsa veya fotoğraf eklenmişse true döner.
+   *
+   * @returns {boolean} Form doluysa true
+   */
+  private dolduMu(): boolean {
+    return this.reportData.aciklama.trim().length > 0
+        || this.fotograflar().length > 0;
+  }
+
+  /**
+   * @description Paneli kapatır.
+   *
+   * Gönderim sürerken kapatma çalışmaz; yarıda kesilen bir kayıt,
+   * veritabanında sahipsiz fotoğraf bırakır.
+   *
+   * Formda yazılmış bir şey varsa kullanıcıya sorulur. Uzun bir açıklama
+   * yazıp üç fotoğraf yüklemiş bir kullanıcının emeği tek dokunuşla
+   * silinmemelidir.
+   */
+  kapat(): void {
+    if (this.gonderiliyor()) return;
+
+    if (this.dolduMu()) {
+      const onay = confirm('Yazdıklarınız kaybolacak. Paneli kapatmak istiyor musunuz?');
+
+      if (!onay) return;
+    }
+
+    this.panelKapat.emit();
+  }
+
+  /**
+   * @description ESC tuşuna basıldığında paneli kapatır.
+   * Klavye kullanan kullanıcılar için beklenen davranıştır.
+   */
+  @HostListener('document:keydown.escape')
+  escBasildi(): void {
+    this.kapat();
+  }
+
+
+
+
+  /**
    * Kategori seçimini gerçekleştirir.
    */
   kategoriSec(id: string): void {
@@ -155,8 +201,18 @@ export class SorunBildirmePaneli implements OnInit {
       return;
     }
 
-    if (!this.reportData.aciklama.trim()) {
+       if (!this.reportData.aciklama.trim()) {
       alert('Lütfen şikayetiniz için bir açıklama yazın.');
+      return;
+    }
+
+    // Konumsuz şikayet kaydedilemez.
+    // Aksi halde koordinat 0,0 olarak yazılır ve şikayet haritada
+    // kampüs sınırlarının dışında, görünmez bir noktaya düşer.
+    const konum = this.gelenKonum;
+
+    if (!konum) {
+      alert('Şikayetin konumu belirlenemedi. Lütfen haritadan bir nokta seçin.');
       return;
     }
 
@@ -173,16 +229,11 @@ export class SorunBildirmePaneli implements OnInit {
         );
       }
 
-      // 2. Konum bilgisini enlem ve boylam olarak ayır
-      const konumParcalari = this.reportData.konum.split(',');
-
-      const enlem = konumParcalari.length > 1
-        ? parseFloat(konumParcalari[0].trim())
-        : 0;
-
-      const boylam = konumParcalari.length > 1
-        ? parseFloat(konumParcalari[1].trim())
-        : 0;
+            // 2. Koordinat doğrudan seçilen noktadan alınır.
+      //    Metin alanından ayrıştırmak güvenilir değildi: kullanıcı metni
+      //    değiştirebiliyor, konum alınamadığında da yer tutucu yazı kalıyordu.
+      const enlem = konum.lat;
+      const boylam = konum.lng;
 
       const baslangicDestek = 1;
 

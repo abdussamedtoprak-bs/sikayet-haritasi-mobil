@@ -1,6 +1,13 @@
 <div class="report-container">
 
-  <div class="report-header">
+    <div class="report-header">
+    <button
+      type="button"
+      class="kapat-buton"
+      (click)="kapat()"
+      [disabled]="gonderiliyor()"
+      aria-label="Paneli kapat">&times;</button>
+
     <div class="drag-handle"></div>
     <h2>Sorun Bildir</h2>
     <p>Yaşadığınız sorunu bize bildirerek çözüm sürecine katkıda bulunun.</p>

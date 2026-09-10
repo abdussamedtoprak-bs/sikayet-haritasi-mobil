@@ -1,4 +1,22 @@
-import { Component, Output, EventEmitter, NgZone } from '@angular/core'; // NgZone eklendi
+import { Component, Output, EventEmitter, signal } from '@angular/core';
+
+/**
+ * @description Konum alınamama sebepleri.
+ * Her sebep kullanıcıya farklı bir yönlendirme gerektirdiği için ayrı tutulur.
+ */
+export type KonumHataSebebi =
+  | 'desteklenmiyor'
+  | 'izin-yok'
+  | 'bulunamadi'
+  | 'zaman-asimi';
+
+/**
+ * @description Konum alma denemesinin sonucu.
+ * Başarılıysa koordinatı, başarısızsa sebebini taşır.
+ */
+export type KonumSonucu =
+  | { basarili: true; lat: number; lng: number }
+  | { basarili: false; sebep: KonumHataSebebi };
 
 @Component({
   selector: 'app-konum-butonu',
@@ -7,36 +25,89 @@ import { Component, Output, EventEmitter, NgZone } from '@angular/core'; // NgZo
   templateUrl: './konum-butonu.html',
   styleUrl: './konum-butonu.css'
 })
+/**
+ * @description Kullanıcının cihaz konumunu isteyen butondur.
+ *
+ * Sonucu her durumda üst bileşene bildirir. Konum alınamadığında sessiz
+ * kalmaz; sebebi ayrıştırarak iletir, çünkü izin reddi ile sinyal
+ * bulunamaması kullanıcıya farklı şeyler söylemeyi gerektirir.
+ */
 export class KonumButonu {
-  
-  @Output() konumAlindi = new EventEmitter<{lat: number, lng: number} | null>();
 
-  // Angular'ın değişim algılayıcısını (Zone) kurucu metoda (constructor) ekliyoruz
-  constructor(private zone: NgZone) {}
+  /** @description Konum alma denemesinin sonucunu üst bileşene iletir. */
+  @Output() konumSonucu = new EventEmitter<KonumSonucu>();
 
-  butonaBas() {
+  /**
+   * @description Konum alınıyor mu?
+   * Butonun tekrar tekrar basılmasını engeller ve kullanıcıya bekleme gösterir.
+   */
+  readonly aliniyor = signal<boolean>(false);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // Angular'ı zorla uyandırıyoruz (zone.run)
-          this.zone.run(() => {
-  
-            this.konumAlindi.emit({ 
-              lat: position.coords.latitude, 
-              lng: position.coords.longitude 
-            });
-          });
-        },
-        (error) => {
-          this.zone.run(() => {
-            console.warn('Konum izni reddedildi, null fırlatılıyor...');
-            this.konumAlindi.emit(null);
-          });
-        }
-      );
-    } else {
-      this.konumAlindi.emit(null);
+  /**
+   * @description Konum isteği ayarları.
+   *
+   * timeout verilmezse tarayıcının varsayılanı sonsuzdur; kapalı ortamda
+   * buton hiç cevap vermez ve kullanıcı uygulamanın donduğunu sanır.
+   * maximumAge sayesinde son bir dakikada alınmış konum yeniden ölçülmeden
+   * kullanılır, bu hem hızlıdır hem pil tüketimini azaltır.
+   */
+  private static readonly SECENEKLER: PositionOptions = {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 60000
+  };
+
+  /**
+   * @description Butona basıldığında cihaz konumunu ister.
+   */
+  butonaBas(): void {
+    if (this.aliniyor()) return;
+
+    if (!navigator.geolocation) {
+      this.konumSonucu.emit({ basarili: false, sebep: 'desteklenmiyor' });
+      return;
+    }
+
+    this.aliniyor.set(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.aliniyor.set(false);
+
+        this.konumSonucu.emit({
+          basarili: true,
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      (error) => {
+        this.aliniyor.set(false);
+
+        this.konumSonucu.emit({
+          basarili: false,
+          sebep: this.hataSebebi(error)
+        });
+      },
+      KonumButonu.SECENEKLER
+    );
+  }
+
+  /**
+   * @description Tarayıcının döndürdüğü hata kodunu anlamlı bir sebebe çevirir.
+   *
+   * @param {GeolocationPositionError} error - Tarayıcı hatası
+   * @returns {KonumHataSebebi} Kullanıcıya anlatılabilir sebep
+   */
+  private hataSebebi(error: GeolocationPositionError): KonumHataSebebi {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return 'izin-yok';
+      case error.POSITION_UNAVAILABLE:
+        return 'bulunamadi';
+      case error.TIMEOUT:
+        return 'zaman-asimi';
+      default:
+        return 'bulunamadi';
     }
   }
 }
