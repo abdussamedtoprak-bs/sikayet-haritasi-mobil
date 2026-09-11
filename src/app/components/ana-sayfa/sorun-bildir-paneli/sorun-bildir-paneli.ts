@@ -17,6 +17,7 @@ import { ComplaintService } from '../../../services/complaint';
 import { AuthService } from '../../../services/auth.service';
 
 import { MediaService } from '../../../services/media.service';
+import { ConnectionService } from '../../../services/connection.service';
 
 /**
  * Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
@@ -46,7 +47,28 @@ export class SorunBildirmePaneli implements OnInit {
    */
   private readonly authService = inject(AuthService);
   private readonly complaintService = inject(ComplaintService);
-  private readonly mediaService = inject(MediaService);
+  
+    private readonly mediaService = inject(MediaService);
+
+  /** @description Bağlantı durumu. Şablonda okunduğu için public. */
+  readonly baglantiService = inject(ConnectionService);
+
+  /**
+   * @description Bu gönderim için üretilen belge kimliği.
+   *
+   * Zaman aşımına uğrayan bir gönderim tekrar denendiğinde aynı kimlik
+   * kullanılır. Böylece ilk deneme sonradan sunucuya ulaşsa bile ikinci
+   * bir şikayet kaydı oluşmaz.
+   */
+  private belgeId: string | null = null;
+
+  /**
+   * @description Bu gönderimde yüklenmiş fotoğrafların kimlikleri.
+   *
+   * Tekrar denemede fotoğraflar yeniden yüklenmez; aksi halde her
+   * denemede veritabanında sahipsiz kopyalar birikirdi.
+   */
+  private yuklenenMediaIds: string[] | null = null;
 
   /**
    * Form verilerini tutan nesne.
@@ -211,23 +233,38 @@ export class SorunBildirmePaneli implements OnInit {
     // kampüs sınırlarının dışında, görünmez bir noktaya düşer.
     const konum = this.gelenKonum;
 
-    if (!konum) {
+        if (!konum) {
       alert('Şikayetin konumu belirlenemedi. Lütfen haritadan bir nokta seçin.');
       return;
+    }
+
+    // Çevrimdışıyken gönderim hiç denenmez.
+    // Firestore yazmaları sunucu onayı beklediği için bağlantı yokken
+    // sonuçlanmaz ve kullanıcı sonsuza kadar bekler.
+    if (this.baglantiService.cevrimdisi()) {
+      alert('İnternet bağlantınız yok. Bağlantı sağlandığında tekrar deneyin.');
+      return;
+    }
+
+    // Tekrar denemede aynı kimlik kullanılsın diye yalnızca ilk seferde üretilir
+    if (!this.belgeId) {
+      this.belgeId = crypto.randomUUID();
     }
 
     this.gonderiliyor.set(true);
 
     try {
-      // 1. Fotoğrafları yükle, kimliklerini al
-      let mediaIds: string[] = [];
-
-      if (this.fotograflar().length > 0) {
-        mediaIds = await this.mediaService.uploadImages(
-          this.fotograflar(),
-          currentUser.uid
-        );
+            // 1. Fotoğrafları yükle, kimliklerini al.
+      //    Daha önce yüklendiyse tekrar yüklenmez.
+      if (!this.yuklenenMediaIds) {
+        this.yuklenenMediaIds = this.fotograflar().length > 0
+          ? await this.baglantiService.zamanAsimiIle(
+              this.mediaService.uploadImages(this.fotograflar(), currentUser.uid)
+            )
+          : [];
       }
+
+      const mediaIds = this.yuklenenMediaIds;
 
             // 2. Koordinat doğrudan seçilen noktadan alınır.
       //    Metin alanından ayrıştırmak güvenilir değildi: kullanıcı metni
@@ -243,7 +280,10 @@ export class SorunBildirmePaneli implements OnInit {
         title: 'Yeni Bildirim: ' + this.reportData.kategori.toUpperCase(),
         supportCount: baslangicDestek,
         description: this.reportData.aciklama,
-        metaInfo: 'Genel - ' + new Date().toLocaleDateString('tr-TR'),
+                // Kategori adı seçilen değerden okunur; daha önce sabit "Genel" yazılıyor
+        // ve kullanıcının seçimi hiçbir ekranda görünmüyordu.
+        metaInfo: (this.categories.find(k => k.id === this.reportData.kategori)?.name ?? 'Genel')
+                  + ' - ' + new Date().toLocaleDateString('tr-TR'),
         status: 'Beklemede',
         priority: this.complaintService.hesaplaOncelik(baslangicDestek),
         location: this.reportData.konum,
@@ -254,14 +294,21 @@ export class SorunBildirmePaneli implements OnInit {
       };
 
       // 4. Veritabanına kaydet
-      await this.complaintService.addComplaint(yeniSikayet);
+      await this.baglantiService.zamanAsimiIle(
+        this.complaintService.addComplaint(yeniSikayet, this.belgeId)
+      );
 
       alert('Şikayetiniz başarıyla kaydedildi!');
       this.panelKapat.emit();
 
-    } catch (error) {
+        } catch (error) {
       console.error('Şikayet kaydedilirken hata oluştu:', error);
-      alert('Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
+
+      if (this.baglantiService.zamanAsimiMi(error)) {
+        alert('Şikayet gönderilemedi. Bağlantınız kesilmiş veya çok yavaş olabilir. Lütfen tekrar deneyin.');
+      } else {
+        alert('Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.');
+      }
     } finally {
       this.gonderiliyor.set(false);
     }

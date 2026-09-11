@@ -94,8 +94,14 @@
   <button
   class="submit-btn"
   (click)="gonder()"
-  [disabled]="gonderiliyor() || fotografIsleniyor()">
+  [disabled]="gonderiliyor() || fotografIsleniyor() || baglantiService.cevrimdisi()">
   {{ gonderiliyor() ? 'Gönderiliyor...' : 'Gönder' }}
 </button>
+
+@if (baglantiService.cevrimdisi()) {
+  <p class="baglanti-uyarisi">
+    İnternet bağlantınız yok. Yazdıklarınız duruyor, bağlantı gelince gönderebilirsiniz.
+  </p>
+}
 
 </div>

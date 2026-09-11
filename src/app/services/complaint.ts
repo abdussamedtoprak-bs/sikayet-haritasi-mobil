@@ -102,19 +102,31 @@ export class ComplaintService {
    * Yeni kayıtta status, isArchived, supportCount ve createdAt otomatik eklenir.
    * Yöneticilere de yeni şikayet bildirimi gönderir.
    */
-    async addComplaint(complaint: Complaint): Promise<void> {
+        async addComplaint(complaint: Complaint, belgeId?: string): Promise<void> {
         const complaintsRef = collection(this.db, 'complaints');
+
+        // Belge kimliği dışarıdan verilebilir.
+        // Zaman aşımına uğrayan bir gönderim tekrar denendiğinde aynı kimlik
+        // kullanılır; ilk deneme sonradan sunucuya ulaşsa bile aynı belgenin
+        // üzerine yazılır ve ikinci bir şikayet kaydı oluşmaz.
+        const belgeRef = belgeId
+            ? doc(this.db, 'complaints', belgeId)
+            : doc(complaintsRef);
+
         //şikayeti veri tabanına kaydet
-        await addDoc(complaintsRef, {
+        await setDoc(belgeRef, {
         ...complaint,
         status: 'Beklemede', // Varsayılan durum
         isArchived: false,   // Yeni şikayet arşivli olamaz
         supportCount: 1,     // İlk destek ekleyenin kendisinden
         createdAt: serverTimestamp() // Firestore sunucu saati
         });
+
         //yöneticilere bildirim gönder
-        const bildirimlerRef=collection(this.db,'bildirimler');
-        await addDoc(bildirimlerRef,{
+        //bildirim kimliği şikayete bağlanır ki tekrar denemede ikinci bildirim düşmesin
+        const bildirimRef = doc(this.db, 'bildirimler', `yeni-${belgeRef.id}`);
+
+        await setDoc(bildirimRef,{
             tip:'yeni',
             baslik:'Sisteme yeni şikayet eklendi',
             mesaj:`"${complaint.title}" konulu yeni bir şikayet bildirildi. Lütfen kontrol ediniz.`,
@@ -124,6 +136,7 @@ export class ComplaintService {
             createdAt:serverTimestamp()
         });
     }
+    
     /**
      * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.
      * Şikayeti oluşturan kullanıcıya durum güncellemesi bildirimi gönderir.
