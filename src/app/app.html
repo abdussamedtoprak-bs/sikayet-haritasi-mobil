@@ -1,1 +1,12 @@
+<!--
+  Çevrimdışı bilgi şeridi.
+  Tüm sayfalarda görünmesi gerektiği için uygulamanın en üst bileşenindedir.
+-->
+@if (baglantiService.cevrimdisi()) {
+  <div class="cevrimdisi-serit">
+    <i class="fa-solid fa-plug-circle-xmark"></i>
+    <span>İnternet bağlantısı yok</span>
+  </div>
+}
+
 <router-outlet></router-outlet>

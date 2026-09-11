@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './services/theme.service';
+import { ConnectionService } from './services/connection.service';
 
 @Component({
   selector: 'app-root',
@@ -19,4 +20,10 @@ export class App {
    * uygulanır; sayfa yenilendiğinde uygulama aydınlık açılırdı.
    */
   private readonly themeService = inject(ThemeService);
+
+  /**
+   * @description Bağlantı durumu servisi.
+   * Çevrimdışı şeridi tüm sayfalarda görünsün diye burada tutulur.
+   */
+  readonly baglantiService = inject(ConnectionService);
 }

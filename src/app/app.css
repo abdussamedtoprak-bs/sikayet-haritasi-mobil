@@ -1,0 +1,25 @@
+/* ÇEVRİMDIŞI BİLGİ ŞERİDİ */
+/* Üst başlığın hemen altına oturur, onu kapatmaz. */
+.cevrimdisi-serit {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  z-index: 14000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background-color: #b45309;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  animation: seritAc 0.2s ease;
+}
+
+@keyframes seritAc {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}

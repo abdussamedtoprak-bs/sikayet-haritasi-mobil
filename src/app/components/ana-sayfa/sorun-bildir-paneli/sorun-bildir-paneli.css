@@ -256,3 +256,12 @@ textarea:focus {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ÇEVRİMDIŞI UYARISI */
+.baglanti-uyarisi {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--text-muted);
+}

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, inject, signal } from '
 import { Complaint } from '../../../models/complaint';
 import { ComplaintService } from '../../../services/complaint';
 import { AuthService } from '../../../services/auth.service';
+import { ConnectionService } from '../../../services/connection.service';
 
 @Component({
   selector: 'app-complaint-card',
@@ -29,6 +30,7 @@ export class ComplaintCard implements OnInit {
 
   private readonly complaintService = inject(ComplaintService);
   private readonly authService = inject(AuthService);
+  private readonly connectionService = inject(ConnectionService);
 
   currentUserRole: any = 'admin';
 
@@ -93,7 +95,14 @@ export class ComplaintCard implements OnInit {
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    if (!this.complaint.id || !this.pendingAction) return;
+        if (!this.complaint.id || !this.pendingAction) return;
+
+    // Çevrimdışıyken işlem denenmez; veritabanı yazması sonuçlanmaz
+    // ve yönetici hiçbir geri bildirim almadan bekler.
+    if (this.connectionService.cevrimdisi()) {
+      alert('İnternet bağlantınız yok. Bağlantı sağlandığında tekrar deneyin.');
+      return;
+    }
 
     // Kullanıcı ikinci kez basamasın diye kutuyu hemen kapatıyoruz
     this.showConfirmModal = false;
@@ -102,23 +111,34 @@ export class ComplaintCard implements OnInit {
       switch (this.pendingAction) {
 
         case 'status':
-          await this.complaintService.updateStatus(this.complaint.id, this.pendingStatus);
+          await this.connectionService.zamanAsimiIle(
+            this.complaintService.updateStatus(this.complaint.id, this.pendingStatus)
+          );
           this.complaint.status = this.pendingStatus;
           break;
 
         case 'archive': {
           const adminId = this.authService.currentUser()?.uid ?? '';
-          await this.complaintService.archiveComplaint(this.complaint.id, adminId);
+          await this.connectionService.zamanAsimiIle(
+            this.complaintService.archiveComplaint(this.complaint.id, adminId)
+          );
           break;
         }
 
         case 'unarchive':
-          await this.complaintService.unarchiveComplaint(this.complaint.id);
+          await this.connectionService.zamanAsimiIle(
+            this.complaintService.unarchiveComplaint(this.complaint.id)
+          );
           break;
       }
     } catch (error) {
       console.error('İşlem sırasında hata oluştu:', error);
-      alert('İşlem tamamlanamadı. Lütfen tekrar deneyin.');
+
+      if (this.connectionService.zamanAsimiMi(error)) {
+        alert('İşlem tamamlanamadı. Bağlantınız kesilmiş veya çok yavaş olabilir. Lütfen tekrar deneyin.');
+      } else {
+        alert('İşlem tamamlanamadı. Lütfen tekrar deneyin.');
+      }
     } finally {
       this.pendingAction = null;
     }
