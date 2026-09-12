@@ -48,11 +48,20 @@
       <span>Çözülen</span>
     </div>
 
-    <div class="istatistik-karti bekleyen">
+       <div class="istatistik-karti bekleyen">
       <i class="fa-regular fa-clock"></i>
       <strong>{{ pendingCount() }}</strong>
       <span>Bekleyen</span>
     </div>
+
+    <!-- Geri çekilmiş şikayeti olmayan kullanıcıyı bu kartla meşgul etmiyoruz -->
+    @if (withdrawnCount() > 0) {
+      <div class="istatistik-karti geri-cekildi">
+        <i class="fa-solid fa-rotate-left"></i>
+        <strong>{{ withdrawnCount() }}</strong>
+        <span>Geri Çekilen</span>
+      </div>
+    }
 
   </div>
 

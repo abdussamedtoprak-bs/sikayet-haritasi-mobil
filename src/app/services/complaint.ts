@@ -3,6 +3,8 @@ import { Observable, of } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { isPlatformBrowser } from '@angular/common';
 import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc,getDoc,getDocs, serverTimestamp, orderBy ,arrayUnion,increment,setDoc} from 'firebase/firestore';
+import {kategoriAdi} from '../models/category';
+
 /**
  * @description Şikayet verilerinin yönetiminden (CRUD işlemleri) sorumlu servis katmanıdır.
  * Bileşenler (components) doğrudan veritabanı ile konuşmaz, bu servisi aracı olarak kullanır.
@@ -136,6 +138,132 @@ export class ComplaintService {
             createdAt:serverTimestamp()
         });
     }
+
+            /**
+     * @description Şikayetin içeriğinin düzenlenip düzenlenemeyeceğini söyler.
+     *
+     * Yalnızca yönetici işleme almadan önce düzenlenebilir. Bu kısıt destek
+     * verenleri değil, YÖNETİCİNİN EMEĞİNİ korur: inceleme başladıktan sonra
+     * altından metin değişirse yönetici yanlış işe yönelmiş olur.
+     *
+     * Destek sayısı düzenlemeyi engellemez. Destek almış bir şikayet
+     * düzenlenirse kullanıcı uyarılır ve kayıt 'düzenlendi' olarak işaretlenir.
+     *
+     * @param {Complaint} complaint - Kontrol edilecek şikayet
+     * @returns {boolean} Düzenlenebiliyorsa true
+     */
+    canEditComplaint(complaint: Complaint): boolean {
+        return complaint.status === 'Beklemede';
+    }
+
+    /**
+     * @description Şikayetin geri çekilip çekilemeyeceğini söyler.
+     *
+     * Düzenlemeden daha geniş tutulmuştur: kullanıcı incelemeye alınmış bir
+     * şikayeti de geri çekebilir. Şikayet kullanıcının kendi bildirimidir;
+     * yanlışlıkla yüklenmiş bir fotoğraf veya hatalı bir kayıt söz konusu
+     * olabilir. Kendi bildirimini geri alma hakkı, yöneticinin iş yükünden
+     * önce gelir. Bu durumda yöneticiye bildirim gönderilir.
+     *
+     * Çözülmüş şikayet geri çekilemez; iş tamamlanmıştır, kayıt kalmalıdır.
+     *
+     * @param {Complaint} complaint - Kontrol edilecek şikayet
+     * @returns {boolean} Geri çekilebiliyorsa true
+     */
+    canWithdrawComplaint(complaint: Complaint): boolean {
+        return complaint.status === 'Beklemede' || complaint.status === 'İnceleniyor';
+    }
+
+    /**
+     * @description Kullanıcının kendi şikayetinin içeriğini günceller.
+     *
+     * Yalnızca açıklama, kategori ve fotoğraf listesi değişir.
+     * Durum, öncelik, destek sayısı ve sahiplik bilgisine dokunulmaz.
+     *
+     * @param {string} complaintId - Şikayet kimliği
+     * @param {Object} changes - Yeni içerik
+     * @returns {Promise<void>}
+     */
+    async updateComplaint(
+        complaintId: string,
+        changes: { description: string; category: string; mediaIds: string[] }
+    ): Promise<void> {
+        const complaintRef = doc(this.db, 'complaints', complaintId);
+        const snap = await getDoc(complaintRef);
+
+        if (!snap.exists()) return;
+
+        const data = snap.data() as Complaint;
+
+        // Ekrandaki kilit yeterli değil: kullanıcı sayfayı açık bırakmışken
+        // durum değişmiş olabilir. Yazmadan hemen önce tekrar doğruluyoruz.
+        if (!this.canEditComplaint(data)) {
+            throw new Error('DUZENLENEMEZ');
+        }
+
+        // Tarih kısmı korunur, yalnızca kategori adı yenilenir
+        const eskiTarih = (data.metaInfo ?? '').split('-')[1]?.trim() ?? '';
+
+        await updateDoc(complaintRef, {
+            description: changes.description,
+            category: changes.category,
+            title: 'Yeni Bildirim: ' + changes.category.toUpperCase(),
+            metaInfo: `${kategoriAdi(changes.category)} - ${eskiTarih}`,
+            mediaIds: changes.mediaIds,
+            updatedAt: serverTimestamp()
+        });
+    }
+
+    /**
+     * @description Kullanıcının kendi şikayetini geri çekmesini sağlar.
+     *
+     * Kayıt SİLİNMEZ. Durumu 'Geri Çekildi' olur ve arşive alınır.
+     * Arşiv işaretinin kullanılmasının sebebi pratik: haritayı ve yönetici
+     * listesini besleyen sorgu zaten arşivlenmişleri dışarıda bırakıyor,
+     * böylece yeni bir sorgu veya indeks gerekmiyor.
+     *
+     * @param {string} complaintId - Şikayet kimliği
+     * @returns {Promise<void>}
+     */
+    async withdrawComplaint(complaintId: string): Promise<void> {
+        const complaintRef = doc(this.db, 'complaints', complaintId);
+        const snap = await getDoc(complaintRef);
+
+        if (!snap.exists()) return;
+
+                const data = snap.data() as Complaint;
+
+        if (!this.canWithdrawComplaint(data)) {
+            throw new Error('GERI_CEKILEMEZ');
+        }
+
+        const inceleniyorMuydu = data.status === 'İnceleniyor';
+
+        await updateDoc(complaintRef, {
+            status: 'Geri Çekildi',
+            isArchived: true,
+            withdrawnAt: serverTimestamp()
+        });
+
+        // Yönetici bu şikayet üzerinde çalışıyorduysa haberdar edilmeli;
+        // aksi halde artık dolaşımda olmayan bir kayıtla uğraşmaya devam eder.
+        // Beklemede olan şikayetlerde bildirim gönderilmez, gereksiz gürültü olur.
+        if (inceleniyorMuydu) {
+            const bildirimRef = doc(this.db, 'bildirimler', `geri-cekildi-${complaintId}`);
+
+            await setDoc(bildirimRef, {
+                tip: 'bilgi',
+                baslik: 'Bir şikayet geri çekildi',
+                mesaj: `"${data.title}" konulu şikayet, bildiren kullanıcı tarafından geri çekildi. İnceleme gerektirmiyor.`,
+                okundu: false,
+                yonlendirme: '/complaints',
+                targetRole: 'admin',
+                createdAt: serverTimestamp()
+            });
+        }
+    }
+
+
     
     /**
      * @description Yöneticinin şikayet durumunu değiştirmesini sağlar.

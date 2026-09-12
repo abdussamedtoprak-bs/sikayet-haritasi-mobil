@@ -185,4 +185,26 @@ export class MediaService {
 
     return results.filter((data): data is string => data !== null);
   }
+
+
+  /**
+   * @description Bir fotoğrafı "kaldırıldı" olarak işaretler.
+   *
+   * Fotoğraf silinmez. Kayıt yerinde kalır, yalnızca durumu değişir.
+   * Böylece hem geri dönülemez bir kayıp yaşanmaz hem de ileride bir
+   * temizlik yapılacak olursa aday listesi taramaya gerek kalmadan hazır olur.
+   *
+   * @param {string} mediaId - Medya kimliği
+   * @returns {Promise<void>}
+   */
+  async markAsRemoved(mediaId: string): Promise<void> {
+    if (!this.isBrowser || !mediaId) return;
+
+    await setDoc(
+      doc(this.db, 'medias', mediaId),
+      { status: 'removed', removedAt: serverTimestamp() },
+      { merge: true }
+    );
+  }
+
 }

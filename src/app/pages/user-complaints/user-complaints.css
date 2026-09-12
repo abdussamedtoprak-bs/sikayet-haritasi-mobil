@@ -60,8 +60,9 @@
 }
 .filtre-sekmeleri button.aktif { background: var(--accent); color: white; border-color: var(--accent); }
 
+/* Kart sayısı değişebildiği için sütunlar içeriğe göre bölüşülür */
 .istatistikler {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; margin-bottom: 20px;
 }
 .istatistik-karti {
   border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px;
@@ -255,4 +256,198 @@
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
+}
+
+/* GERİ ÇEKİLDİ DURUMU */
+.durum-badge.geri-cekildi {
+  background-color: var(--text-faint);
+}
+
+.istatistik-karti.geri-cekildi i {
+  color: var(--text-muted);
+}
+
+/* DETAY PENCERESİ İŞLEMLERİ */
+.detay-islemler,
+.duzenleme-formu,
+.geri-cekme-onayi {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.duzenleme-butonlari {
+  display: flex;
+  gap: 10px;
+}
+
+.duzenleme-butonlari button {
+  flex: 1;
+  padding: 11px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.duzenleme-butonlari button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-birincil {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+.btn-ikincil {
+  background-color: var(--bg-subtle);
+  color: var(--text-strong);
+}
+
+.btn-tehlike {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+.btn-tehlike-ince {
+  background-color: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger) !important;
+}
+
+.islem-aciklamasi {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.duzenlendi-notu {
+  margin: 8px 0 0;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* DÜZENLEME FORMU */
+.form-etiket {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.form-etiket:first-child {
+  margin-top: 0;
+}
+
+.kategori-listesi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kategori-secenegi {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background-color: var(--bg-card);
+  color: var(--text-normal);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.kategori-secenegi.secili {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.duzenleme-alani {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: var(--bg-card);
+  color: var(--text-strong);
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.duzenleme-fotograflari {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.duzenleme-foto {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.duzenleme-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.foto-kaldir {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--danger);
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.form-ipucu {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.geri-cekme-onayi p {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-normal);
+}
+
+/* Düzenleme formu ve onay ekranı uzayabildiği için pencere kaydırılabilir olmalı */
+.detay-modal {
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+/* DESTEK UYARISI */
+.destek-uyarisi {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background-color: var(--icon-warning);
+  color: var(--text-strong);
+  font-size: 11px;
+  line-height: 1.5;
 }
