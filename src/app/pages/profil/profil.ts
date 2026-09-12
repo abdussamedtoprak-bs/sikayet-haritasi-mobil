@@ -33,6 +33,13 @@ export class Profil implements OnDestroy {
   /** @description Henüz çözülmemiş (bekleyen veya incelenen) şikayet sayısı. */
   readonly pendingCount = signal<number>(0);
 
+  
+  /**
+   * @description Kullanıcının geri çektiği şikayet sayısı.
+   * Ayrı sayılır; aksi halde toplam, çözülen ve bekleyenin toplamını tutmaz.
+   */
+  readonly withdrawnCount = signal<number>(0);
+
   /** @description Şikayet akışına ait abonelik. Kullanıcı değişince yenilenir. */
   private statsSubscription?: Subscription;
 
@@ -47,6 +54,7 @@ export class Profil implements OnDestroy {
         this.totalCount.set(0);
         this.resolvedCount.set(0);
         this.pendingCount.set(0);
+        this.withdrawnCount.set(0);
         return;
       }
 
@@ -60,10 +68,15 @@ export class Profil implements OnDestroy {
               list.filter(c => c.status === 'Çözüldü').length
             );
 
-            // Çözülmemiş her şikayet "bekleyen" sayılır
-            // (Beklemede ve İnceleniyor durumları birlikte)
-            this.pendingCount.set(
-              list.filter(c => c.status !== 'Çözüldü').length
+                        // Çözülmemiş her şikayet "bekleyen" sayılır
+            // (Beklemede ve İnceleniyor durumları birlikte).
+            // Geri çekilenler işlem görmeyi beklemediği için dışarıda kalır.
+                        this.pendingCount.set(
+              list.filter(c => c.status !== 'Çözüldü' && c.status !== 'Geri Çekildi').length
+            );
+
+            this.withdrawnCount.set(
+              list.filter(c => c.status === 'Geri Çekildi').length
             );
           },
           error: (error) => {

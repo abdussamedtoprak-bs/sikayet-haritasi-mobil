@@ -20,6 +20,22 @@ export interface Complaint {
     /** @description Şikayeti arşivleyen yöneticinin kimliği. Arşivde değilse null. */
     archivedBy?: string | null;
 
+
+    
+    /**
+     * @description Kullanıcının şikayeti geri çektiği an.
+     * Geri çekme silme değildir; kayıt yerinde kalır, yalnızca
+     * durumu 'Geri Çekildi' olur ve dolaşımdan çıkarılır.
+     */
+    withdrawnAt?: any;
+
+    /**
+     * @description Şikayetin son düzenlendiği an.
+     * Alan varsa şikayet bildirildikten sonra düzenlenmiş demektir.
+     */
+    updatedAt?: any;
+    
+
     createdAt?: any;        // Sıralama ve tarih filtresi için (Firestore Timestamp)
     category?: string;      // (Opsiyonel) Kategori filtresinin daha sağlıklı çalışması için
         /**

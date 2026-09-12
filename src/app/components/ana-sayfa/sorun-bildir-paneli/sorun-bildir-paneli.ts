@@ -19,6 +19,8 @@ import { AuthService } from '../../../services/auth.service';
 import { MediaService } from '../../../services/media.service';
 import { ConnectionService } from '../../../services/connection.service';
 
+import { SIKAYET_KATEGORILERI, kategoriAdi } from '../../../models/category';
+
 /**
  * Kullanıcının kampüs sorunlarını bildirebildiği panel bileşenidir.
  * Konum, kategori, açıklama ve fotoğraf alanlarından oluşan bir form sunar.
@@ -82,12 +84,7 @@ export class SorunBildirmePaneli implements OnInit {
   /**
    * Seçilebilir kategori listesi.
    */
-  categories = [
-    { id: 'cevre', name: 'Çevre', icon: '🍃' },
-    { id: 'aydinlatma', name: 'Aydınlatma', icon: '💡' },
-    { id: 'cop', name: 'Çöp', icon: '🗑️' },
-    { id: 'diger', name: 'Diğer', icon: '⋯' }
-  ];
+  categories = SIKAYET_KATEGORILERI;
 
   /**
    * Yüklenen fotoğrafların Base64 listesi.
@@ -282,8 +279,7 @@ export class SorunBildirmePaneli implements OnInit {
         description: this.reportData.aciklama,
                 // Kategori adı seçilen değerden okunur; daha önce sabit "Genel" yazılıyor
         // ve kullanıcının seçimi hiçbir ekranda görünmüyordu.
-        metaInfo: (this.categories.find(k => k.id === this.reportData.kategori)?.name ?? 'Genel')
-                  + ' - ' + new Date().toLocaleDateString('tr-TR'),
+                metaInfo: kategoriAdi(this.reportData.kategori) + ' - ' + new Date().toLocaleDateString('tr-TR'),
         status: 'Beklemede',
         priority: this.complaintService.hesaplaOncelik(baslangicDestek),
         location: this.reportData.konum,

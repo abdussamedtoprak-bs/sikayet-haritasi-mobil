@@ -26,7 +26,12 @@
       <button [class.aktif]="aktifSekme === 'Tümü'" (click)="filtrele('Tümü')">Tümü</button>
       <button [class.aktif]="aktifSekme === 'Beklemede'" (click)="filtrele('Beklemede')">Beklemede</button>
       <button [class.aktif]="aktifSekme === 'İnceleniyor'" (click)="filtrele('İnceleniyor')">İnceleniyor</button>
-      <button [class.aktif]="aktifSekme === 'Çözüldü'" (click)="filtrele('Çözüldü')">Çözüldü</button>
+            <button [class.aktif]="aktifSekme === 'Çözüldü'" (click)="filtrele('Çözüldü')">Çözüldü</button>
+
+      <!-- Geri çekilmiş şikayeti olmayan kullanıcıyı bu sekme ile meşgul etmiyoruz -->
+      @if (geriCekilenSayisi > 0) {
+        <button [class.aktif]="aktifSekme === 'Geri Çekildi'" (click)="filtrele('Geri Çekildi')">Geri Çekildi</button>
+      }
     </div>
 
     <div class="istatistikler">
@@ -45,11 +50,19 @@
         <strong>{{ incelenenSayisi }}</strong>
         <span>İnceleniyor</span>
       </div>
-      <div class="istatistik-karti cozuldu">
+            <div class="istatistik-karti cozuldu">
         <i class="fa-regular fa-clock"></i>
         <strong>{{ cozulenSayisi }}</strong>
         <span>Çözüldü</span>
       </div>
+
+      @if (geriCekilenSayisi > 0) {
+        <div class="istatistik-karti geri-cekildi">
+          <i class="fa-solid fa-rotate-left"></i>
+          <strong>{{ geriCekilenSayisi }}</strong>
+          <span>Geri Çekildi</span>
+        </div>
+      }
     </div>
 
     <div class="liste-alani">
@@ -74,7 +87,8 @@
               <span class="durum-badge"
                     [class.beklemede]="sikayet.status === 'Beklemede'"
                     [class.inceleniyor]="sikayet.status === 'İnceleniyor'"
-                    [class.cozuldu]="sikayet.status === 'Çözüldü'">
+                    [class.cozuldu]="sikayet.status === 'Çözüldü'"
+                    [class.geri-cekildi]="sikayet.status === 'Geri Çekildi'">
                 {{ sikayet.status }}
               </span>
 
@@ -115,10 +129,109 @@
 
         <p class="detay-aciklama">{{ secilenSikayet.description }}</p>
 
-        <div class="detay-alt-bilgi">
+                <div class="detay-alt-bilgi">
           <span><i class="fa-solid fa-hard-hat"></i> {{ secilenSikayet.metaInfo }}</span>
           <span><i class="fa-solid fa-map-pin"></i> {{ secilenSikayet.location }}</span>
         </div>
+
+        @if (secilenSikayet.updatedAt) {
+          <p class="duzenlendi-notu">Bu şikayet daha sonra düzenlenmiştir.</p>
+        }
+
+        <!-- DÜZENLEME FORMU -->
+        @if (duzenlemeModu) {
+                    <div class="duzenleme-formu">
+
+            @if (duzenlemeDestekUyarisi()) {
+              <p class="destek-uyarisi">{{ duzenlemeDestekUyarisi() }}</p>
+            }
+
+            <label class="form-etiket">Kategori</label>
+            <div class="kategori-listesi">
+              @for (kategori of kategoriler; track kategori.id) {
+                <button
+                  class="kategori-secenegi"
+                  [class.secili]="duzenlenenKategori === kategori.id"
+                  (click)="duzenlemeKategoriSec(kategori.id)">
+                  <span>{{ kategori.icon }}</span>
+                  {{ kategori.name }}
+                </button>
+              }
+            </div>
+
+            <label class="form-etiket">Açıklama</label>
+            <textarea
+              class="duzenleme-alani"
+              [(ngModel)]="duzenlenenAciklama"
+              rows="3"
+              placeholder="Şikayetinizi açıklayın..."></textarea>
+
+            @if (duzenlemeFotograflari().length > 0) {
+              <label class="form-etiket">Fotoğraflar</label>
+              <div class="duzenleme-fotograflari">
+                @for (foto of duzenlemeFotograflari(); track $index) {
+                  <div class="duzenleme-foto">
+                    <img [src]="foto" alt="Şikayet fotoğrafı">
+                    <button class="foto-kaldir" (click)="duzenlemeFotografKaldir($index)">&times;</button>
+                  </div>
+                }
+              </div>
+              <p class="form-ipucu">
+                Kaldırdığınız fotoğraf şikayetten çıkarılır. Yeni fotoğraf eklemek şu an mümkün değildir.
+              </p>
+            }
+
+            <div class="duzenleme-butonlari">
+              <button class="btn-ikincil" (click)="duzenlemeyiIptalEt()" [disabled]="kaydediliyor">
+                Vazgeç
+              </button>
+              <button class="btn-birincil" (click)="duzenlemeyiKaydet()" [disabled]="kaydediliyor">
+                {{ kaydediliyor ? 'Kaydediliyor...' : 'Kaydet' }}
+              </button>
+            </div>
+
+          </div>
+        }
+
+        <!-- GERİ ÇEKME ONAYI -->
+        @else if (geriCekmeOnayi) {
+                    <div class="geri-cekme-onayi">
+            @if (geriCekmeDestekUyarisi()) {
+              <p class="destek-uyarisi">{{ geriCekmeDestekUyarisi() }}</p>
+            }
+
+            <p>
+              Şikayetiniz geri çekilecek ve haritadan kaldırılacak.
+              Kaydınız silinmez, Şikayetlerim sayfanızda kalmaya devam eder.
+              Bu işlem geri alınamaz.
+            </p>
+
+            <div class="duzenleme-butonlari">
+              <button class="btn-ikincil" (click)="geriCekmeyiIptalEt()" [disabled]="geriCekiliyor">
+                Vazgeç
+              </button>
+              <button class="btn-tehlike" (click)="geriCekmeyiOnayla()" [disabled]="geriCekiliyor">
+                {{ geriCekiliyor ? 'İşleniyor...' : 'Evet, geri çek' }}
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- İŞLEM BUTONLARI -->
+        @else {
+          <div class="detay-islemler">
+            <div class="duzenleme-butonlari">
+              <button class="btn-ikincil" (click)="duzenlemeyiAc()" [disabled]="!duzenlenebilirMi()">
+                Düzenle
+              </button>
+                            <button class="btn-tehlike-ince" (click)="geriCekmeyiSor()" [disabled]="!geriCekilebilirMi()">
+                Geri Çek
+              </button>
+            </div>
+
+            <p class="islem-aciklamasi">{{ duzenlemeAciklamasi() }}</p>
+          </div>
+        }
 
       </div>
     </div>

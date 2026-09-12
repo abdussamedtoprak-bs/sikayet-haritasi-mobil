@@ -6,11 +6,14 @@ import { ComplaintService } from '../../services/complaint';
 import { Complaint } from '../../models/complaint';
 import { AuthService } from '../../services/auth.service';
 import { MediaService } from '../../services/media.service';
+import { ConnectionService } from '../../services/connection.service';
+import { SIKAYET_KATEGORILERI, SikayetKategorisi } from '../../models/category';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-complaints',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './user-complaints.html',
   styleUrls: ['./user-complaints.css']
 })
@@ -24,6 +27,7 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
   bekleyenSayisi: number = 0;
   incelenenSayisi: number = 0;
   cozulenSayisi: number = 0;
+  geriCekilenSayisi: number = 0;
 
   private router = inject(Router);
   private complaintService = inject(ComplaintService);
@@ -51,6 +55,40 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
 
   /** @description Şikayet akışına ait abonelik. Kullanıcı değişince yenilenir. */
   private sikayetAboneligi?: Subscription;
+
+  
+  private connectionService = inject(ConnectionService);
+
+  /** @description Seçilebilir kategoriler. Düzenleme formunda kullanılır. */
+  readonly kategoriler: SikayetKategorisi[] = SIKAYET_KATEGORILERI;
+
+  /** @description Detay penceresi düzenleme modunda mı? */
+  duzenlemeModu: boolean = false;
+
+  /** @description Düzenleme formundaki açıklama metni. */
+  duzenlenenAciklama: string = '';
+
+  /** @description Düzenleme formunda seçili kategori. */
+  duzenlenenKategori: string = '';
+
+  /** @description Düzenleme formunda duran fotoğraf kimlikleri. */
+  duzenlenenMediaIds: string[] = [];
+
+  /**
+   * @description Düzenleme sırasında listeden çıkarılan fotoğrafların kimlikleri.
+   * Kaydet'e basılınca "kaldırıldı" olarak işaretlenirler; silinmezler.
+   */
+  private kaldirilanMediaIds: string[] = [];
+
+  /** @description Düzenleme kaydediliyor mu? */
+  kaydediliyor: boolean = false;
+
+  /** @description Geri çekme onayı bekleniyor mu? */
+  geriCekmeOnayi: boolean = false;
+
+  /** @description Geri çekme işlemi sürüyor mu? */
+  geriCekiliyor: boolean = false;
+
 
     constructor() {
     effect(() => {
@@ -243,7 +281,7 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
     this.tamEkranIndex = (this.tamEkranIndex - 1 + toplam) % toplam;
   }
 
-  istatistikleriHesapla() {
+    istatistikleriHesapla() {
     this.bekleyenSayisi =
       this.tumSikayetler.filter(s => s.status === 'Beklemede').length;
 
@@ -252,6 +290,11 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
 
     this.cozulenSayisi =
       this.tumSikayetler.filter(s => s.status === 'Çözüldü').length;
+
+    // Geri çekilenler ayrı sayılır; aksi halde toplam diğerlerinin
+    // toplamını tutmaz ve ekrandaki sayılar tutarsız görünür.
+    this.geriCekilenSayisi =
+      this.tumSikayetler.filter(s => s.status === 'Geri Çekildi').length;
   }
 
   filtrele(durum: string) {
@@ -272,10 +315,11 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/anasayfa']); 
   }
 
-  detayAc(sikayet: Complaint) {
+    detayAc(sikayet: Complaint) {
     this.secilenSikayet = sikayet;
     this.aktifFotograf = 0;
     this.tamEkranAcik = false;
+    this.duzenlemeyiSifirla();
 
     this.detayFotograflariniYukle(sikayet);
   }
@@ -283,5 +327,257 @@ export class UserComplaintsComponent implements OnInit, OnDestroy {
   detayKapat() {
     this.secilenSikayet = null;
     this.tamEkranAcik = false;
+    this.duzenlemeyiSifirla();
+  }
+
+  /** @description Düzenleme ve geri çekme durumunu başlangıca döndürür. */
+  private duzenlemeyiSifirla(): void {
+    this.duzenlemeModu = false;
+    this.kaydediliyor = false;
+    this.geriCekmeOnayi = false;
+    this.geriCekiliyor = false;
+    this.kaldirilanMediaIds = [];
+  }
+
+    /**
+   * @description Seçili şikayet düzenlenebilir mi?
+   * Kural servis katmanında tanımlıdır, ekran onu okur.
+   */
+  duzenlenebilirMi(): boolean {
+    if (!this.secilenSikayet) return false;
+
+    return this.complaintService.canEditComplaint(this.secilenSikayet);
+  }
+
+  /**
+   * @description Seçili şikayet geri çekilebilir mi?
+   * Düzenlemeden daha geniştir; incelemeye alınmış şikayet de geri çekilebilir.
+   */
+  geriCekilebilirMi(): boolean {
+    if (!this.secilenSikayet) return false;
+
+    return this.complaintService.canWithdrawComplaint(this.secilenSikayet);
+  }
+
+  /**
+   * @description Şikayete başkalarından gelen destek sayısı.
+   * Kullanıcının kendi desteği (kayıt anındaki 1) sayılmaz.
+   *
+   * @returns {number} Başkalarının verdiği destek sayısı
+   */
+  private baskaDestekSayisi(): number {
+    return (this.secilenSikayet?.supportCount ?? 1) - 1;
+  }
+
+  /**
+   * @description Düzenleme formunda gösterilecek destek uyarısı.
+   * Destek yoksa boş döner.
+   */
+  duzenlemeDestekUyarisi(): string {
+    const destek = this.baskaDestekSayisi();
+
+    if (destek <= 0) return '';
+
+    return `Bu şikayet ${destek} kişi tarafından desteklendi. `
+         + 'Düzenlerseniz şikayetiniz "düzenlendi" olarak işaretlenecek.';
+  }
+
+  /**
+   * @description Geri çekme onayında gösterilecek destek uyarısı.
+   * Destek yoksa boş döner.
+   */
+  geriCekmeDestekUyarisi(): string {
+    const destek = this.baskaDestekSayisi();
+
+    if (destek <= 0) return '';
+
+    return `Bu şikayet ${destek} kişi tarafından desteklendi. `
+         + 'Geri çekerseniz verdikleri destek de geçersiz olacak.';
+  }
+
+  /**
+   * @description Düzenleme kapalıysa sebebini, açıksa hatırlatma metnini döndürür.
+   *
+   * Soluk bir butonun yanında sebep yazmıyorsa kullanıcı neyin yanlış
+   * gittiğini anlamaz; sadece uygulamanın bozuk olduğunu düşünür.
+   *
+   * @returns {string} Ekranda gösterilecek açıklama
+   */
+    duzenlemeAciklamasi(): string {
+    const sikayet = this.secilenSikayet;
+
+    if (!sikayet) return '';
+
+    if (sikayet.status === 'Geri Çekildi') {
+      return 'Bu şikayeti geri çektiniz. Üzerinde değişiklik yapılamaz.';
+    }
+
+    if (sikayet.status === 'Çözüldü') {
+      return 'Şikayetiniz çözüldü. Kayıt olduğu gibi kalır, düzenlenemez veya geri çekilemez.';
+    }
+
+    if (sikayet.status === 'İnceleniyor') {
+      return 'Şikayetiniz incelemeye alındı. İçeriği artık düzenlenemez, '
+           + 'ancak isterseniz geri çekebilirsiniz.';
+    }
+
+    return 'Şikayetinizi düzenleyebilir veya geri çekebilirsiniz. '
+         + 'Düzenleme, şikayetiniz incelemeye alındığında kapanır.';
+  }
+
+  /** @description Düzenleme formunu açar ve mevcut değerleri forma doldurur. */
+  duzenlemeyiAc(): void {
+    if (!this.secilenSikayet || !this.duzenlenebilirMi()) return;
+
+    this.duzenlenenAciklama = this.secilenSikayet.description ?? '';
+    this.duzenlenenKategori = this.secilenSikayet.category ?? 'diger';
+    this.duzenlenenMediaIds = [...(this.secilenSikayet.mediaIds ?? [])];
+    this.kaldirilanMediaIds = [];
+    this.duzenlemeModu = true;
+  }
+
+  /** @description Düzenlemeden vazgeçer, hiçbir değişiklik kaydedilmez. */
+  duzenlemeyiIptalEt(): void {
+    this.duzenlemeModu = false;
+    this.kaldirilanMediaIds = [];
+  }
+
+  /**
+   * @description Düzenleme formunda kategori seçer.
+   * @param {string} id - Kategori kimliği
+   */
+  duzenlemeKategoriSec(id: string): void {
+    this.duzenlenenKategori = id;
+  }
+
+  /**
+   * @description Düzenleme formunda bir fotoğrafı listeden çıkarır.
+   * Fotoğraf burada silinmez, yalnızca listeden düşer; kaydedilince
+   * "kaldırıldı" olarak işaretlenir.
+   *
+   * @param {number} index - Çıkarılacak fotoğrafın sırası
+   */
+  duzenlemeFotografKaldir(index: number): void {
+    const id = this.duzenlenenMediaIds[index];
+
+    if (!id) return;
+
+    this.kaldirilanMediaIds.push(id);
+    this.duzenlenenMediaIds.splice(index, 1);
+  }
+
+  /**
+   * @description Düzenleme formundaki fotoğrafların verilerini döndürür.
+   * @returns {string[]} Base64 fotoğraf listesi
+   */
+  duzenlemeFotograflari(): string[] {
+    return this.duzenlenenMediaIds
+      .map(id => this.fotografCache[id])
+      .filter((veri): veri is string => !!veri);
+  }
+
+  /** @description Düzenlemeyi veritabanına kaydeder. */
+  async duzenlemeyiKaydet(): Promise<void> {
+    const sikayet = this.secilenSikayet;
+
+    if (!sikayet?.id || this.kaydediliyor) return;
+
+    if (!this.duzenlenenAciklama.trim()) {
+      alert('Açıklama boş bırakılamaz.');
+      return;
+    }
+
+    if (this.connectionService.cevrimdisi()) {
+      alert('İnternet bağlantınız yok. Bağlantı sağlandığında tekrar deneyin.');
+      return;
+    }
+
+    this.kaydediliyor = true;
+
+    try {
+      await this.connectionService.zamanAsimiIle(
+        this.complaintService.updateComplaint(sikayet.id, {
+          description: this.duzenlenenAciklama.trim(),
+          category: this.duzenlenenKategori,
+          mediaIds: this.duzenlenenMediaIds
+        })
+      );
+
+      // Listeden çıkarılan fotoğraflar silinmez, işaretlenir
+      for (const id of this.kaldirilanMediaIds) {
+        try {
+          await this.mediaService.markAsRemoved(id);
+        } catch (error) {
+          console.error('Fotoğraf işaretlenemedi:', id, error);
+        }
+      }
+
+      this.duzenlemeModu = false;
+      this.kaldirilanMediaIds = [];
+
+    } catch (error) {
+      console.error('Şikayet güncellenemedi:', error);
+
+      if (error instanceof Error && error.message === 'DUZENLENEMEZ') {
+        alert('Bu şikayet artık düzenlenemez. Destek almış veya incelemeye alınmış olabilir.');
+        this.duzenlemeModu = false;
+      } else if (this.connectionService.zamanAsimiMi(error)) {
+        alert('Değişiklik kaydedilemedi. Bağlantınız kesilmiş olabilir, tekrar deneyin.');
+      } else {
+        alert('Değişiklik kaydedilemedi. Lütfen tekrar deneyin.');
+      }
+    } finally {
+      this.kaydediliyor = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  /** @description Geri çekme onayını açar. */
+    geriCekmeyiSor(): void {
+    if (!this.geriCekilebilirMi()) return;
+
+    this.geriCekmeOnayi = true;
+  }
+
+  /** @description Geri çekmeden vazgeçer. */
+  geriCekmeyiIptalEt(): void {
+    this.geriCekmeOnayi = false;
+  }
+
+  /** @description Şikayeti geri çeker. Kayıt silinmez, durumu değişir. */
+  async geriCekmeyiOnayla(): Promise<void> {
+    const sikayet = this.secilenSikayet;
+
+    if (!sikayet?.id || this.geriCekiliyor) return;
+
+    if (this.connectionService.cevrimdisi()) {
+      alert('İnternet bağlantınız yok. Bağlantı sağlandığında tekrar deneyin.');
+      return;
+    }
+
+    this.geriCekiliyor = true;
+
+    try {
+      await this.connectionService.zamanAsimiIle(
+        this.complaintService.withdrawComplaint(sikayet.id)
+      );
+
+      this.detayKapat();
+
+    } catch (error) {
+      console.error('Şikayet geri çekilemedi:', error);
+
+      if (error instanceof Error && error.message === 'GERI_CEKILEMEZ') {
+        alert('Bu şikayet artık geri çekilemez. Destek almış veya incelemeye alınmış olabilir.');
+        this.geriCekmeOnayi = false;
+      } else if (this.connectionService.zamanAsimiMi(error)) {
+        alert('İşlem tamamlanamadı. Bağlantınız kesilmiş olabilir, tekrar deneyin.');
+      } else {
+        alert('İşlem tamamlanamadı. Lütfen tekrar deneyin.');
+      }
+    } finally {
+      this.geriCekiliyor = false;
+      this.cdr.detectChanges();
+    }
   }
 }
