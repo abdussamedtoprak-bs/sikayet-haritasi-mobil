@@ -26,7 +26,7 @@ Android uygulamasına dönüştürülmektedir.
 |---|---|---|
 | 0 | Geliştirme ortamı (Android Studio, SDK) | ⏳ |
 | 1 | Depo ayrımı | ✅ |
-| 2 | SSR sökümü, statik build | ⏳ |
+| 2 | SSR sökümü, statik build | ✅ |
 | 3 | Capacitor kabuğu + Android platformu | ⏳ |
 | 4 | Native eklentiler (konum, kamera, ağ, depolama) | ⏳ |
 | 5 | Google girişinin native'e taşınması | ⏳ |

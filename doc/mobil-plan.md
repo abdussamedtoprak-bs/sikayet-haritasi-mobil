@@ -57,7 +57,7 @@ Mobil klasörün git bağlantısı web deposundan koparıldı:
 
 Web projesinin 186 commit'lik geçmişi korunmuştur.
 
-### Aşama 2 — SSR sökümü
+### Aşama 2 — SSR sökümü ✅
 
 Silinecek dosyalar:
 
@@ -79,6 +79,18 @@ Capacitor'ın okuyabileceği biçim budur.
 Servislerdeki `isPlatformBrowser` kontrolleri bu aşamada korunur; artık
 gereksizdirler ama zarar vermezler ve ileride web sürümüyle kod paylaşımı
 kolaylaşır.
+
+**Uygulama sonucu:** Çıktı `dist/sikayet-haritasi/browser` altında oluşuyor,
+sunucu dosyası üretilmiyor. Uygulama tarayıcıda sorunsuz açıldı, konsolda hata yok.
+
+Planda olmayan iki ek değişiklik gerekti:
+
+- `@angular/fire` kaldırıldı. Projede hiç kullanılmıyordu — tüm Firebase
+  erişimi ham SDK ile yapılıyor — ve Angular 20 istediği için Angular 22 ile
+  kurulumu engelliyordu. Eski kilit dosyası bu çakışmayı gizliyormuş.
+- Üretim boyut limitleri yükseltildi (ilk paket 2MB uyarı / 4MB hata, bileşen
+  CSS'i 12kB / 24kB). Varsayılan limitler web'de ağdan indirme süresi içindir;
+  mobilde paket APK içinde gelir, cihazın diskinden açılır.
 
 ### Aşama 3 — Capacitor kabuğu
 
