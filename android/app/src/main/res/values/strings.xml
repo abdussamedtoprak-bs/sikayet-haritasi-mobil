@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Şikayet Haritası</string>
+    <string name="title_activity_main">Şikayet Haritası</string>
+    <string name="package_name">tr.edu.bingol.sikayetharitasi</string>
+    <string name="custom_url_scheme">tr.edu.bingol.sikayetharitasi</string>
+</resources>

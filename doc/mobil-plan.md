@@ -39,7 +39,7 @@ Mobilde sorun çıkaracak noktalar:
 
 ## Aşamalar
 
-### Aşama 0 — Geliştirme ortamı
+### Aşama 0 — Geliştirme ortamı ✅
 
 Android Studio kurulumu, SDK Manager üzerinden Platform-Tools ve bir Android
 API seviyesi. `JAVA_HOME` ve `ANDROID_HOME` ortam değişkenlerinin tanımlanması.
@@ -92,7 +92,7 @@ Planda olmayan iki ek değişiklik gerekti:
   CSS'i 12kB / 24kB). Varsayılan limitler web'de ağdan indirme süresi içindir;
   mobilde paket APK içinde gelir, cihazın diskinden açılır.
 
-### Aşama 3 — Capacitor kabuğu
+### Aşama 3 — Capacitor kabuğu ✅
 
 ```
 @capacitor/core  @capacitor/cli  @capacitor/android
@@ -110,6 +110,26 @@ Planda olmayan iki ek değişiklik gerekti:
 
 Aşama sonunda uygulama cihazda açılmalı ve giriş ekranı görünmelidir
 (giriş henüz çalışmayacaktır — Aşama 5).
+
+**Uygulama sonucu:** Capacitor 8.5.3 kuruldu (`@capacitor/core`, `@capacitor/cli`,
+`@capacitor/android`), `npx cap add android` ile `android/` klasörü oluşturuldu.
+
+- `capacitor.config.ts` → appId `tr.edu.bingol.sikayetharitasi`,
+  appName "Şikayet Haritası", webDir `dist/sikayet-haritasi/browser`
+- Manifest izinleri eklendi: `INTERNET`, `ACCESS_NETWORK_STATE`,
+  `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION`, `CAMERA`,
+  `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE` (maxSdk 32).
+  GPS ve kamera `required="false"` işaretlendi — donanımı olmayan cihazlar da
+  uygulamayı kurabilsin, konum alınamazsa haritadan seçme akışı zaten var.
+- `android/.gitignore` içinde imzalama anahtarları (`*.jks`, `*.keystore`)
+  yorum satırından çıkarıldı. Aşama 9'da üretilecek anahtar kazara depoya
+  girerse uygulamanın imzası ele geçer; bu yüzden şimdiden kapatıldı.
+- `npm run build:android` (derle + Android'e kopyala) ve `npm run open:android`
+  betikleri eklendi.
+- `android/local.properties` SDK yolunu gösterir, depoya girmez.
+
+Kurulu SDK'da yalnızca API 37 platformu vardı; Gradle eksik olan Platform 36 ve
+Build-Tools 35 bileşenlerini ilk derlemede kendisi indirdi.
 
 ### Aşama 4 — Native eklentiler
 

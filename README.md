@@ -15,7 +15,7 @@ Android uygulamasına dönüştürülmektedir.
 | Katman | Kullanılan |
 |---|---|
 | Arayüz | Angular 22 (standalone bileşenler, signal tabanlı durum) |
-| Native kabuk | Capacitor 7 — Android |
+| Native kabuk | Capacitor 8 — Android |
 | Veritabanı | Firebase Firestore + Realtime Database |
 | Kimlik | Firebase Authentication (Google ile giriş) |
 | Harita | Leaflet + OpenStreetMap |
@@ -24,10 +24,10 @@ Android uygulamasına dönüştürülmektedir.
 
 | Aşama | İş | Durum |
 |---|---|---|
-| 0 | Geliştirme ortamı (Android Studio, SDK) | ⏳ |
+| 0 | Geliştirme ortamı (Android Studio, SDK) | ✅ |
 | 1 | Depo ayrımı | ✅ |
 | 2 | SSR sökümü, statik build | ✅ |
-| 3 | Capacitor kabuğu + Android platformu | ⏳ |
+| 3 | Capacitor kabuğu + Android platformu | ✅ |
 | 4 | Native eklentiler (konum, kamera, ağ, depolama) | ⏳ |
 | 5 | Google girişinin native'e taşınması | ⏳ |
 | 6 | Uygulama ikonu, açılış ekranı, tema | ⏳ |
@@ -45,7 +45,7 @@ Ayrıntılı plan: [doc/mobil-plan.md](doc/mobil-plan.md)
 
 ## Geliştirme
 
-Tarayıcıda çalıştırmak için:
+### Tarayıcı
 
 ```bash
 npm install
@@ -54,13 +54,44 @@ npm start
 
 Uygulama `http://localhost:4200/` adresinde açılır.
 
-Android tarafı Aşama 3'te kurulacaktır; komutlar o aşamada bu belgeye eklenecektir.
+### Android
+
+Web çıktısını derleyip Android projesine kopyalar:
+
+```bash
+npm run build:android
+```
+
+Android Studio'da açar:
+
+```bash
+npm run open:android
+```
+
+Komut satırından debug APK alır:
+
+```bash
+cd android
+./gradlew assembleDebug
+```
+
+APK şurada oluşur: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+> `android/local.properties` dosyası SDK yolunu tutar ve depoya girmez.
+> Android Studio projeyi ilk açışında bu dosyayı kendisi oluşturur; elle
+> oluşturmak gerekirse içeriği tek satırdır:
+> `sdk.dir=C:/Users/<kullanıcı>/AppData/Local/Android/Sdk`
 
 ## Testler
 
 ```bash
 npm test
 ```
+
+> Not: Test takımı şu an derlenmiyor. Angular CLI'ın otomatik ürettiği spec
+> dosyaları gerçekte var olmayan sınıf adlarını import ediyor (`Ayarlar`
+> yerine `AyarlarComponent` gibi). Bu sorun web sürümünden devralınmıştır ve
+> Aşama 7'de bileşenler elden geçerken giderilecektir.
 
 ## Depo yapısı
 
@@ -70,3 +101,5 @@ Bu depoda iki uzak bağlantı tanımlıdır:
 - `upstream` → web deposu, **yalnızca okuma**. Web tarafındaki değişiklikleri
   almak için `git fetch upstream` kullanılabilir. Kazara gönderim yapılmasın
   diye push adresi bilerek geçersiz bırakılmıştır.
+
+Çalışma dalı `develop`'tır.
